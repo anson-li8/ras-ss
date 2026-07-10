@@ -8,3 +8,10 @@ $$LPRS_i = \sum_{j=1}^{m} X_{ij} \hat{\beta}_j$$
 Where in a specific window of $m$ SNPs, it calculates a Localized Polygenic Risk Score (LPRS) for each individual $i$. $X_{ij}$ is the genotype dosage of individual $i$ at SNP $j$, and $\hat{\beta}_j$ is the marginal effect size of SNP $j$ estimated from the training split.
 
 It then tests the joint significance by taking the vector of LPRS values outputted and runs a regression against the vector of actual phenotypes. The p-value is calculated to determine if the slope of this regression line is statistically significant.
+
+# Summary Statistic Equivalent:
+Given vector of marginal Z-scores for the $m$ SNPs in the window: $$Z = (Z_1, Z_2, ..., Z_m)^T$$
+Let $R$ be the $m \times m$ Linkage Disequilibrium (LD) correlation matrix of these SNPs, which can be estimated from an external reference (e.g., 1000 Genomes).
+
+Under null hypothesis of the SNP window having absolutely no effect on phenotype, a multivariate normal distribution can be created from this Z-score vector.
+$$Z \sim N(0, R)$$
