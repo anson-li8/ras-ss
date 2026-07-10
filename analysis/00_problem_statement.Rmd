@@ -11,7 +11,29 @@ It then tests the joint significance by taking the vector of LPRS values outputt
 
 # Summary Statistic Equivalent:
 Given vector of marginal Z-scores for the $m$ SNPs in the window: $$Z = (Z_1, Z_2, ..., Z_m)^T$$
+
+To make sure $Z$ is a valid replacement for the original individual data, summary statistics must be generated from target-cohort GWAS that adjusted for the same set of covariates (age, sex, etc.) used in the original model ($y \sim \text{LPRS} + X$).
+
 Let $R$ be the $m \times m$ Linkage Disequilibrium (LD) correlation matrix of these SNPs, which can be estimated from an external reference (e.g., 1000 Genomes).
+
+Let $w = (w_1, w_2, ..., w_m)^T$ be the vector of weights derived from the training data. Reflecting the true design of the original individual-level pipeline, $w$ is comprised entirely of ordinary single-SNP marginal regression effects ($\hat{\beta}$) obtained from standard GWAS procedures on the training split, with no joint regression or LD-based joint-effect reconstruction.
 
 Under null hypothesis of the SNP window having absolutely no effect on phenotype, a multivariate normal distribution can be created from this Z-score vector.
 $$Z \sim N(0, R)$$
+
+# The Test Statistic:
+Current `ras_scan` algorithm needs single p-value for whole window, not `m` different Z-scores, so these `m` dimensions have to be compressed down to a single number.
+
+We can use a generalized version of the Wald-type quadratic test statistic to do this. Equation:
+$$T = Z^T R^{-1} Z$$
+- $T$ is calculated test statistic
+- $Z^T$ is the transpose of the Z-score vector (row vector) and $Z$ is column vector
+- $R^{-1}$ is the inverse of the LD correlation matrix
+
+With `T` calculated, the window p-value can be found by running a Chi-square test with `m` degrees of freedom ($\chi^2_m$). The RAS is simply $-log_{10}(p-value)$.
+
+# Regularization:
+SNPs in a window are often so highly correlated that their LD matrix $R$ has duplicate columns (singular). In such cases, `R^{-1}` will result in faulty math and produce unexpected p-values.
+
+Therefore, we can force `R` to be inversible through Ridge Regularization: $$R_{\lambda} = R + \lambda I$$
+Where $I$ is the identity matrix and $\lambda$ is a small tuning constant.
