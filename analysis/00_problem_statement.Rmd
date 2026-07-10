@@ -1,0 +1,10 @@
+---
+title: "00_problem_statement"
+output: html_document
+---
+
+# Current RAS algorithm:
+$$LPRS_i = \sum_{j=1}^{m} X_{ij} \hat{\beta}_j$$
+Where in a specific window of $m$ SNPs, it calculates a Localized Polygenic Risk Score (LPRS) for each individual $i$. $X_{ij}$ is the genotype dosage of individual $i$ at SNP $j$, and $\hat{\beta}_j$ is the marginal effect size of SNP $j$ estimated from the training split.
+
+It then tests the joint significance by taking the vector of LPRS values outputted and runs a regression against the vector of actual phenotypes. The p-value is calculated to determine if the slope of this regression line is statistically significant.
