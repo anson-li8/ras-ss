@@ -18,3 +18,9 @@ Significant Inputs: The Localized Polygenic Risk Scores (LPRS) for every individ
 Math: Run joint regression to find the window p-value
 Without individual data? It is impossible to run this joint regression with only summary statistics. There are two key inputs that we do not explicitly know, with those being the Localized Polygenic Risk Scores (LPRS) for every individual and the actual phenotypic values of the individuals (both are individualistic thus are not given along with summary statistics).
 Replacement: We can use population-level information to approximate the same joint p-value without the individual data. We can use a statistical analytical formula to find the window p-value with just two key inputs: The independent effect sizes of the SNPs and the LD correlation matrix that represents how the SNPs interact with each other.
+4. `ras_scan`
+Location: R/pipeline.R
+Significant Inputs: Requires the individual data for the 50/50 train/hold-out splits and num_rep loops.
+Math: Loops through data multiple times to split individuals 50/50 for training/ testing to average out the results and prevent overfit
+Without individual data? We do no longer need the 50/50 train/holdout splits because the weights are already given by the summary statistics, as explained earlier.
+Replacement: It doesn't need to loop because it could just run the analytical equations directly through the SNP data a single time to receive the same output.
