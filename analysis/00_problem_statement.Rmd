@@ -12,28 +12,51 @@ It then tests the joint significance by taking the vector of LPRS values outputt
 # Summary Statistic Equivalent:
 Given vector of marginal Z-scores for the $m$ SNPs in the window: $$Z = (Z_1, Z_2, ..., Z_m)^T$$
 
-To make sure $Z$ is a valid replacement for the original individual data, summary statistics must be generated from target-cohort GWAS that adjusted for the same set of covariates (age, sex, etc.) used in the original model ($y \sim \text{LPRS} + X$).
+To make sure $Z$ is a valid replacement for the original individual data, summary statistics must be generated from target-cohort GWAS that was adjusted for the same set of covariates (age, sex, etc.) used in the original model ($y \sim \text{LPRS} + X$).
 
-Let $R$ be the $m \times m$ Linkage Disequilibrium (LD) correlation matrix of these SNPs, which can be estimated from an external reference (e.g., 1000 Genomes).
+Let $R$ be the $m \times m$ Linkage Disequilibrium (LD) correlation matrix of these SNPs, which can be estimated from an external reference (e.g., 1000 Genomes). $R$ must be ancestry-matched.
 
-Let $w = (w_1, w_2, ..., w_m)^T$ be the vector of weights derived from the training data. Reflecting the true design of the original individual-level pipeline, $w$ is comprised entirely of ordinary single-SNP marginal regression effects ($\hat{\beta}$) obtained from standard GWAS procedures on the training split, with no joint regression or LD-based joint-effect reconstruction.
+Let $w = (w_1, w_2, ..., w_m)^T$ be vector of weights derived from training data. Similar to original algorithm, $w$ contains the SNP marginal effect sizes ($\hat{\beta}$) from standard GWAS procedures ran on the training split.
 
-Under null hypothesis of the SNP window having absolutely no effect on phenotype, a multivariate normal distribution can be created from this Z-score vector.
+Under null hypothesis ($H_0$) of the SNP window having absolutely no effect on phenotype, a multivariate normal distribution can be created from this Z-score vector (assuming large enough target-cohort $N$ for this approximation to hold).
 $$Z \sim N(0, R)$$
 
 # The Test Statistic:
 Current `ras_scan` algorithm needs single p-value for whole window, not `m` different Z-scores, so these `m` dimensions have to be compressed down to a single number.
 
-We can use a generalized version of the Wald-type quadratic test statistic to do this. Equation:
-$$T = Z^T R^{-1} Z$$
-- $T$ is calculated test statistic
-- $Z^T$ is the transpose of the Z-score vector (row vector) and $Z$ is column vector
-- $R^{-1}$ is the inverse of the LD correlation matrix
+Instead of a multi-degree-of-freedom test, the marginal Z-scores are projected onto the weight vector $w$ to form a 1 degree-of-freedom localized weighted burden statistic. Since $w$ consists of marginal effects sizes, $R$ is not used to reconstruct joint effects, but rather in the denominator to model the null covariance structure of the target-cohort Z-scores.
 
-With `T` calculated, the window p-value can be found by running a Chi-square test with `m` degrees of freedom ($\chi^2_m$). The RAS is simply $-log_{10}(p-value)$.
+Equation:
+$$T_{\text{burden}} = \frac{w^T Z}{\sqrt{w^T R w}}$$
 
-# Regularization:
-SNPs in a window are often so highly correlated that their LD matrix $R$ has duplicate columns (singular). In such cases, `R^{-1}` will result in faulty math and produce unexpected p-values.
+- $T_{\text{burden}}$ is the calculated 1-DF burden test statistic
+- $w^T Z$ is the dot product of the weights and the marginal Z-scores (the summary-statistic analog of the LPRS calculation)
+- $\sqrt{w^T R w}$ is the standard deviation of this weighted sum, adjusting for the correlation structure defined by the LD matrix $R$
 
-Therefore, we can force `R` to be inversible through Ridge Regularization: $$R_{\lambda} = R + \lambda I$$
-Where $I$ is the identity matrix and $\lambda$ is a small tuning constant.
+With $T_{\text{burden}}$ calculated, under the null hypothesis it follows a standard normal distribution:
+$$T_{\text{burden}} \sim N(0, 1)$$
+
+The two-tailed window p-value is calculated analytically using the standard normal cumulative distribution function ($\Phi$):
+$$p = 2(1 - \Phi(|T_{\text{burden}}|))$$
+
+The RAS is simply $-log_{10}(p-value)$.
+
+# Quality Control/Regularization:
+SNPs in a window are often so highly correlated that their LD matrix $R$ is almost singular. In these cases, the denominator variance ($w^T R w$) can become unstable or approach zero, which would cause the test statistic to inflate unexpectedly.
+
+1. **LD Pruning:** Replicating the original design to prevent score inflation, apply LD pruning at $r^2 < 0.2$ to the reference panel correlation structure before computing the denominator. This solves near-singularity by omitting highly redundant variants.
+2. **Ridge Regularization:** Apply Ridge Regularization to the pruned matrix:
+$$R_{\lambda} = R + \lambda I$$
+Where $I$ is the identity matrix and $\lambda$ is a small shrinkage tuning constant determined by a shrinkage estimator rather than a fixed value. This expands the denominator to $w^T R_{\lambda} w = w^T R w + \lambda \|w\|^2$, boosting null variance estimate so that the test becomes conservative (fewer false positives) at the cost of some power.
+
+# Weight Source Decision: (PENDING)
+In the original individual algorithm, a 50/50 data-splitting protocol provides an independent training set to fit weights and a testing set to evaluate them, eliminating overfitting. Since summary-statistic workflows don't have those individual-level splits, we must choose between two methods for defining $w$:
+
+* **Method A:** Derive the weight vector $w$ from an independent, external discovery summary-statistic dataset (e.g., a large public study) and test it against the target cohort's Z-scores. This is statistically rigorous because it avoids overfitting winner's curse bias.
+* **Method B:** If only a single summary-statistic dataset is available, deriving $w$ from the same marginal effects we are testing ($w = \hat{\beta}$) introduces severe winner's curse bias, inflating the burden statistic.
+
+A joint-effect, LD-reconstruction approach (e.g. SuSiE-RSS) is a possible but more complex alternative, extending beyond replicating the paper's original method.
+
+# Validation:
+1. **Type I error calibration (required before trusting any output):** null simulation of the full algorithm (pruning, ridge, and max-over-$t$ window selection), reporting empirical type I error, similar to Table 1 of the original paper.
+2. **Convergence validation:** compare summary-stat RAS output against individual-data RAS on the same simulated data, varying $N$ and LD-panel quality
