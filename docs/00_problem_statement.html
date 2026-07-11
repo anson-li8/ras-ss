@@ -425,15 +425,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree5be68378b52c8d789a8abf7f3e81265d4e0c6f50targetblank5be6837a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree0580b0fa8e81b4405847f5a2915864455fb5dd74targetblank0580b0fa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/5be68378b52c8d789a8abf7f3e81265d4e0c6f50" target="_blank">5be6837</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/0580b0fa8e81b4405847f5a2915864455fb5dd74" target="_blank">0580b0f</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree5be68378b52c8d789a8abf7f3e81265d4e0c6f50targetblank5be6837a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree0580b0fa8e81b4405847f5a2915864455fb5dd74targetblank0580b0fa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -443,7 +443,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/5be68378b52c8d789a8abf7f3e81265d4e0c6f50" target="_blank">5be6837</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/0580b0fa8e81b4405847f5a2915864455fb5dd74" target="_blank">0580b0f</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -509,6 +509,91 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/anson-li8/ras-ss/blob/0580b0fa8e81b4405847f5a2915864455fb5dd74/analysis/00_problem_statement.Rmd" target="_blank">0580b0f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+small revisions
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/d6f96765ea14c63b8f1bc55a43896dc24bfc3087/analysis/00_problem_statement.Rmd" target="_blank">d6f9676</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+second version of solution
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/3e0f5593023b26d3635404ac7e2399672786e1c9/analysis/00_problem_statement.Rmd" target="_blank">3e0f559</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+mistakened 50-DF algorithm?
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/80fd5c4549f05ecb121de1235ec1ab44f2a90153/analysis/00_problem_statement.Rmd" target="_blank">80fd5c4</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+fix caught tpo. new section on the derivation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/c41ea503efa878716b1713b6174257b919262176/docs/00_problem_statement.html" target="_blank">c41ea50</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/anson-li8/ras-ss/blob/5be68378b52c8d789a8abf7f3e81265d4e0c6f50/analysis/00_problem_statement.Rmd" target="_blank">5be6837</a>
 </td>
 <td>
@@ -545,6 +630,131 @@ training split.</p>
 values outputted and runs a regression against the vector of actual
 phenotypes. The p-value is calculated to determine if the slope of this
 regression line is statistically significant.</p>
+</div>
+<div id="summary-statistic-equivalent" class="section level1">
+<h1>Summary Statistic Equivalent:</h1>
+<p>Given vector of marginal Z-scores for the <span
+class="math inline">\(m\)</span> SNPs in the window: <span
+class="math display">\[Z = (Z_1, Z_2, ..., Z_m)^T\]</span></p>
+<p>To make sure <span class="math inline">\(Z\)</span> is a valid
+replacement for the original individual data, summary statistics must be
+generated from target-cohort GWAS that was adjusted for the same set of
+covariates (age, sex, etc.) used in the original model (<span
+class="math inline">\(y \sim \text{LPRS} + X\)</span>).</p>
+<p>Let <span class="math inline">\(R\)</span> be the <span
+class="math inline">\(m \times m\)</span> Linkage Disequilibrium (LD)
+correlation matrix of these SNPs, which can be estimated from an
+external reference (e.g., 1000 Genomes). <span
+class="math inline">\(R\)</span> must be ancestry-matched.</p>
+<p>Let <span class="math inline">\(w = (w_1, w_2, ..., w_m)^T\)</span>
+be vector of weights derived from training data. Similar to original
+algorithm, <span class="math inline">\(w\)</span> contains the SNP
+marginal effect sizes (<span class="math inline">\(\hat{\beta}\)</span>)
+from standard GWAS procedures ran on the training split.</p>
+<p>Under null hypothesis (<span class="math inline">\(H_0\)</span>) of
+the SNP window having absolutely no effect on phenotype, a multivariate
+normal distribution can be created from this Z-score vector (assuming
+large enough target-cohort <span class="math inline">\(N\)</span> for
+this approximation to hold). <span class="math display">\[Z \sim N(0,
+R)\]</span></p>
+</div>
+<div id="the-test-statistic" class="section level1">
+<h1>The Test Statistic:</h1>
+<p>Current <code>ras_scan</code> algorithm needs single p-value for
+whole window, not <code>m</code> different Z-scores, so these
+<code>m</code> dimensions have to be compressed down to a single
+number.</p>
+<p>Instead of a multi-degree-of-freedom test, the marginal Z-scores are
+projected onto the weight vector <span class="math inline">\(w\)</span>
+to form a 1 degree-of-freedom localized weighted burden statistic.
+Instead of estimating joint effects (already in <span
+class="math inline">\(w\)</span>), the correlation matrix <span
+class="math inline">\(R\)</span> is used only to account for linkage
+disequilibrium (LD) when evaluating the null distribution of the
+weighted burden statistic.</p>
+<p>Equation: <span class="math display">\[T_{\text{burden}} = \frac{w^T
+Z}{\sqrt{w^T R w}}\]</span></p>
+<ul>
+<li><span class="math inline">\(T_{\text{burden}}\)</span> is the
+calculated 1 d.f. burden test statistic</li>
+<li><span class="math inline">\(w^T Z\)</span> is the dot product of the
+weights and the marginal Z-scores (the summary-stat version of the LPRS
+calculation)</li>
+<li><span class="math inline">\(\sqrt{w^T R w}\)</span> is the std
+deviation of this weighted sum, adjusting for correlation structure
+defined by the LD matrix <span class="math inline">\(R\)</span></li>
+</ul>
+<p>With <span class="math inline">\(T_{\text{burden}}\)</span>
+calculated, under the null hypothesis it follows a standard normal
+distribution: <span class="math display">\[T_{\text{burden}} \sim N(0,
+1)\]</span></p>
+<p>The two-tailed window p-value can be calculated analytically with the
+standard normal cumulative distribution function (<span
+class="math inline">\(\Phi\)</span>): <span class="math display">\[p =
+2(1 - \Phi(|T_{\text{burden}}|))\]</span></p>
+<p>The RAS is simply <span
+class="math inline">\(-log_{10}(p-value)\)</span>.</p>
+</div>
+<div id="quality-controlregularization" class="section level1">
+<h1>Quality Control/Regularization:</h1>
+<p>SNPs in a window are often so highly correlated that their LD matrix
+<span class="math inline">\(R\)</span> is almost singular. In these
+cases, the denominator variance (<span class="math inline">\(w^T R
+w\)</span>) can become unstable or approach zero, which would cause the
+test statistic to inflate unexpectedly.</p>
+<ol style="list-style-type: decimal">
+<li><strong>LD Pruning:</strong> Replicating the original design to
+prevent score inflation, apply LD pruning at <span
+class="math inline">\(r^2 &lt; 0.2\)</span> to the reference panel
+correlation structure before computing the denominator. This solves
+near-singularity by omitting highly redundant variants.</li>
+<li><strong>Ridge Regularization:</strong> Apply Ridge Regularization to
+the pruned matrix: <span class="math display">\[R_{\lambda} = R +
+\lambda I\]</span> Where <span class="math inline">\(I\)</span> is the
+identity matrix and <span class="math inline">\(\lambda\)</span> is a
+small shrinkage tuning constant determined by a shrinkage estimator
+rather than a fixed value. This expands the denominator to <span
+class="math inline">\(w^T R_{\lambda} w = w^T R w + \lambda
+\|w\|^2\)</span>, boosting null variance estimate so that the test
+becomes conservative (fewer false positives) at the cost of some
+power.</li>
+</ol>
+</div>
+<div id="weight-source-decision-pending" class="section level1">
+<h1>Weight Source Decision: (PENDING)</h1>
+<p>In the original individual algorithm, a 50/50 data-splitting protocol
+provides an independent training set to fit weights and a testing set to
+evaluate them, eliminating overfitting. Since summary-statistic
+algorithms don’t have those individual-level splits, must choose between
+two methods for defining <span class="math inline">\(w\)</span>:</p>
+<ul>
+<li><strong>Method A:</strong> Derive the weight vector <span
+class="math inline">\(w\)</span> from an independent, external discovery
+summary-statistic dataset (e.g., a large public study) and test it
+against the target cohort’s Z-scores. This is statistically rigorous
+because it avoids overfitting winner’s curse bias.</li>
+<li><strong>Method B:</strong> If only a single summary-statistic
+dataset is available, deriving <span class="math inline">\(w\)</span>
+from the same marginal effects we are testing (<span
+class="math inline">\(w = \hat{\beta}\)</span>) introduces severe
+winner’s curse bias, inflating the burden statistic.</li>
+</ul>
+<p>While a joint-effect approach with LD reconstruction (e.g.,
+SuSiE-RSS) is a possible alternative, implementing it goes beyond the
+scope of replicating the original methodology</p>
+</div>
+<div id="validation-for-after" class="section level1">
+<h1>Validation: (FOR AFTER)</h1>
+<ol style="list-style-type: decimal">
+<li><strong>Type I error calibration (required before trusting any
+output):</strong> null simulation of the full algorithm (pruning, ridge,
+and max-over-<span class="math inline">\(t\)</span> window selection),
+reporting empirical type I error, similar to Table 1 of the original
+paper.</li>
+<li><strong>Convergence validation:</strong> compare summary-stat RAS
+output against individual-data RAS on the same simulated data, varying
+<span class="math inline">\(N\)</span> and LD-panel quality</li>
+</ol>
 </div>
 </div>
 </div>
