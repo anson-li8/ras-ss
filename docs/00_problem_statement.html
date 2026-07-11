@@ -357,7 +357,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -368,8 +368,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -382,9 +382,9 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -407,33 +407,36 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree0580b0fa8e81b4405847f5a2915864455fb5dd74targetblank0580b0fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree33d472fe169186520d5dddee28571d3ad7287a4ftargetblank33d472fa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/0580b0fa8e81b4405847f5a2915864455fb5dd74" target="_blank">0580b0f</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/33d472fe169186520d5dddee28571d3ad7287a4f" target="_blank">33d472f</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree0580b0fa8e81b4405847f5a2915864455fb5dd74targetblank0580b0fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree33d472fe169186520d5dddee28571d3ad7287a4ftargetblank33d472fa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -443,7 +446,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/0580b0fa8e81b4405847f5a2915864455fb5dd74" target="_blank">0580b0f</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/33d472fe169186520d5dddee28571d3ad7287a4f" target="_blank">33d472f</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -460,6 +463,9 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+
+Unstaged changes:
+    Modified:   analysis/00_problem_statement.Rmd
 
 </code></pre>
 <p>
@@ -504,6 +510,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/33d472fe169186520d5dddee28571d3ad7287a4f/docs/00_problem_statement.html" target="_blank">33d472f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+rebuild w/ updated problem statement
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -681,8 +704,9 @@ calculated 1 d.f. burden test statistic</li>
 weights and the marginal Z-scores (the summary-stat version of the LPRS
 calculation)</li>
 <li><span class="math inline">\(\sqrt{w^T R w}\)</span> is the std
-deviation of this weighted sum, adjusting for correlation structure
-defined by the LD matrix <span class="math inline">\(R\)</span></li>
+deviation (sqrt of the Quadratic Form) of this weighted sum, adjusting
+for correlation structure defined by the LD matrix <span
+class="math inline">\(R\)</span></li>
 </ul>
 <p>With <span class="math inline">\(T_{\text{burden}}\)</span>
 calculated, under the null hypothesis it follows a standard normal
@@ -706,17 +730,18 @@ test statistic to inflate unexpectedly.</p>
 <li><strong>LD Pruning:</strong> Replicating the original design to
 prevent score inflation, apply LD pruning at <span
 class="math inline">\(r^2 &lt; 0.2\)</span> to the reference panel
-correlation structure before computing the denominator. This solves
-near-singularity by omitting highly redundant variants.</li>
+correlation structure before computing the denominator. This solves the
+problem of cases being very close to singular by omitting highly
+redundant variants.</li>
 <li><strong>Ridge Regularization:</strong> Apply Ridge Regularization to
 the pruned matrix: <span class="math display">\[R_{\lambda} = R +
 \lambda I\]</span> Where <span class="math inline">\(I\)</span> is the
 identity matrix and <span class="math inline">\(\lambda\)</span> is a
 small shrinkage tuning constant determined by a shrinkage estimator
-rather than a fixed value. This expands the denominator to <span
+rather than a fixed value. This increases the denominator to <span
 class="math inline">\(w^T R_{\lambda} w = w^T R w + \lambda
-\|w\|^2\)</span>, boosting null variance estimate so that the test
-becomes conservative (fewer false positives) at the cost of some
+\|w\|^2\)</span>, also increasing null variance estimate so that the
+test becomes conservative (fewer false positives) at the cost of some
 power.</li>
 </ol>
 </div>

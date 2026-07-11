@@ -31,7 +31,7 @@ $$T_{\text{burden}} = \frac{w^T Z}{\sqrt{w^T R w}}$$
 
 - $T_{\text{burden}}$ is the calculated 1 d.f. burden test statistic
 - $w^T Z$ is the dot product of the weights and the marginal Z-scores (the summary-stat version of the LPRS calculation)
-- $\sqrt{w^T R w}$ is the std deviation of this weighted sum, adjusting for correlation structure defined by the LD matrix $R$
+- $\sqrt{w^T R w}$ is the std deviation (sqrt of the Quadratic Form) of this weighted sum, adjusting for correlation structure defined by the LD matrix $R$
 
 With $T_{\text{burden}}$ calculated, under the null hypothesis it follows a standard normal distribution:
 $$T_{\text{burden}} \sim N(0, 1)$$
@@ -44,10 +44,10 @@ The RAS is simply $-log_{10}(p-value)$.
 # Quality Control/Regularization:
 SNPs in a window are often so highly correlated that their LD matrix $R$ is almost singular. In these cases, the denominator variance ($w^T R w$) can become unstable or approach zero, which would cause the test statistic to inflate unexpectedly.
 
-1. **LD Pruning:** Replicating the original design to prevent score inflation, apply LD pruning at $r^2 < 0.2$ to the reference panel correlation structure before computing the denominator. This solves near-singularity by omitting highly redundant variants.
+1. **LD Pruning:** Replicating the original design to prevent score inflation, apply LD pruning at $r^2 < 0.2$ to the reference panel correlation structure before computing the denominator. This solves the problem of cases being very close to singular by omitting highly redundant variants.
 2. **Ridge Regularization:** Apply Ridge Regularization to the pruned matrix:
 $$R_{\lambda} = R + \lambda I$$
-Where $I$ is the identity matrix and $\lambda$ is a small shrinkage tuning constant determined by a shrinkage estimator rather than a fixed value. This expands the denominator to $w^T R_{\lambda} w = w^T R w + \lambda \|w\|^2$, boosting null variance estimate so that the test becomes conservative (fewer false positives) at the cost of some power.
+Where $I$ is the identity matrix and $\lambda$ is a small shrinkage tuning constant determined by a shrinkage estimator rather than a fixed value. This increases the denominator to $w^T R_{\lambda} w = w^T R w + \lambda \|w\|^2$, also increasing null variance estimate so that the test becomes conservative (fewer false positives) at the cost of some power.
 
 # Weight Source Decision: (PENDING)
 In the original individual algorithm, a 50/50 data-splitting protocol provides an independent training set to fit weights and a testing set to evaluate them, eliminating overfitting. Since summary-statistic algorithms don't have those individual-level splits, must choose between two methods for defining $w$:
