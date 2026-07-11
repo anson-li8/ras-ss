@@ -24,19 +24,19 @@ $$Z \sim N(0, R)$$
 # The Test Statistic:
 Current `ras_scan` algorithm needs single p-value for whole window, not `m` different Z-scores, so these `m` dimensions have to be compressed down to a single number.
 
-Instead of a multi-degree-of-freedom test, the marginal Z-scores are projected onto the weight vector $w$ to form a 1 degree-of-freedom localized weighted burden statistic. Since $w$ consists of marginal effects sizes, $R$ is not used to reconstruct joint effects, but rather in the denominator to model the null covariance structure of the target-cohort Z-scores.
+Instead of a multi-degree-of-freedom test, the marginal Z-scores are projected onto the weight vector $w$ to form a 1 degree-of-freedom localized weighted burden statistic. Instead of estimating joint effects (already in $w$), the correlation matrix $R$ is used only to account for linkage disequilibrium (LD) when evaluating the null distribution of the weighted burden statistic.
 
 Equation:
 $$T_{\text{burden}} = \frac{w^T Z}{\sqrt{w^T R w}}$$
 
-- $T_{\text{burden}}$ is the calculated 1-DF burden test statistic
-- $w^T Z$ is the dot product of the weights and the marginal Z-scores (the summary-statistic analog of the LPRS calculation)
-- $\sqrt{w^T R w}$ is the standard deviation of this weighted sum, adjusting for the correlation structure defined by the LD matrix $R$
+- $T_{\text{burden}}$ is the calculated 1 d.f. burden test statistic
+- $w^T Z$ is the dot product of the weights and the marginal Z-scores (the summary-stat version of the LPRS calculation)
+- $\sqrt{w^T R w}$ is the std deviation of this weighted sum, adjusting for correlation structure defined by the LD matrix $R$
 
 With $T_{\text{burden}}$ calculated, under the null hypothesis it follows a standard normal distribution:
 $$T_{\text{burden}} \sim N(0, 1)$$
 
-The two-tailed window p-value is calculated analytically using the standard normal cumulative distribution function ($\Phi$):
+The two-tailed window p-value can be calculated analytically with the standard normal cumulative distribution function ($\Phi$):
 $$p = 2(1 - \Phi(|T_{\text{burden}}|))$$
 
 The RAS is simply $-log_{10}(p-value)$.
@@ -50,13 +50,13 @@ $$R_{\lambda} = R + \lambda I$$
 Where $I$ is the identity matrix and $\lambda$ is a small shrinkage tuning constant determined by a shrinkage estimator rather than a fixed value. This expands the denominator to $w^T R_{\lambda} w = w^T R w + \lambda \|w\|^2$, boosting null variance estimate so that the test becomes conservative (fewer false positives) at the cost of some power.
 
 # Weight Source Decision: (PENDING)
-In the original individual algorithm, a 50/50 data-splitting protocol provides an independent training set to fit weights and a testing set to evaluate them, eliminating overfitting. Since summary-statistic workflows don't have those individual-level splits, we must choose between two methods for defining $w$:
+In the original individual algorithm, a 50/50 data-splitting protocol provides an independent training set to fit weights and a testing set to evaluate them, eliminating overfitting. Since summary-statistic algorithms don't have those individual-level splits, must choose between two methods for defining $w$:
 
 * **Method A:** Derive the weight vector $w$ from an independent, external discovery summary-statistic dataset (e.g., a large public study) and test it against the target cohort's Z-scores. This is statistically rigorous because it avoids overfitting winner's curse bias.
 * **Method B:** If only a single summary-statistic dataset is available, deriving $w$ from the same marginal effects we are testing ($w = \hat{\beta}$) introduces severe winner's curse bias, inflating the burden statistic.
 
-A joint-effect, LD-reconstruction approach (e.g. SuSiE-RSS) is a possible but more complex alternative, extending beyond replicating the paper's original method.
+While a joint-effect approach with LD reconstruction (e.g., SuSiE-RSS) is a possible alternative, implementing it goes beyond the scope of replicating the original methodology
 
-# Validation:
+# Validation: (FOR AFTER)
 1. **Type I error calibration (required before trusting any output):** null simulation of the full algorithm (pruning, ridge, and max-over-$t$ window selection), reporting empirical type I error, similar to Table 1 of the original paper.
 2. **Convergence validation:** compare summary-stat RAS output against individual-data RAS on the same simulated data, varying $N$ and LD-panel quality
