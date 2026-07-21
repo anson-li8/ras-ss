@@ -11,6 +11,7 @@ library(mvtnorm)
 library(RAS)
 library(future.apply)
 plan(multisession) 
+options(future.rng.onMisuse = "ignore") # hide verbose
 ```
 
 ```{r config}
