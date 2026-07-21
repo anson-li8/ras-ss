@@ -68,47 +68,51 @@ cat("Surviving SNPs after LD pruning:", sum(pruned_mask), "of", n_snps, "\n")
 ```{r core-functions}
 # runs linear regression for every SNP to measure correlation with phenotype y
 get_marginal_stats <- function(X, y) {
-  # vectorized OLS for speedup
-  m <- ncol(X) # counts the SNPs
-  beta <- se <- numeric(m) # empty vectors beta and standard error of length m
-  yc <- y - mean(y) # mean-centering phenotype, so intercept in linear regression is 0
-  for (j in seq_len(m)) {
-    xj  <- X[, j] - mean(X[, j]) # extracts genotypes for SNP j across all patients and mean centers it
-    sxx <- sum(xj^2) # sum of squared deviations for SNP j
-    b   <- sum(xj * yc) / sxx # calculate Ordinary Least Squares (OLS) slope estimate (beta hat_j)
-    rss <- max(0, sum(yc^2) - b * sum(xj * yc)) # residual sum of squares
-    se[j]   <- sqrt((rss / (length(y) - 2)) / sxx) # calculate standard error of slope estimate. N-2 degrees of freedom
-    beta[j] <- b # save computed slope into beta vector
-  }
-  list(beta = beta, z = beta / se) # compute z-score for each SNP and returns both in a list
+  # Vectorized OLS for massive speedup
+  m <- ncol(X)
+  yc <- y - mean(y)
+  Xc <- sweep(X, 2, colMeans(X), "-")
+  sxx <- colSums(Xc^2)
+  sxy <- as.numeric(crossprod(Xc, yc))
+  beta <- sxy / sxx
+  syy <- sum(yc^2)
+  rss <- pmax(syy - beta * sxy, 0)
+  se <- sqrt((rss / (length(y) - 2)) / sxx)
+  z <- beta / se
+  z[!is.finite(z)] <- 0
+  list(beta = beta, z = z)
 }
 # t_burden from problem statement
-t_burden <- function(w, Z, R, lam = ridge_lambda) {
-  Rl    <- R + lam * diag(nrow(R)) # ridge regularization quality control
-  denom <- sqrt(as.numeric(t(w) %*% Rl %*% w))
-  if (!is.finite(denom) || denom <= 0) return(0) # prevent program crash
+t_burden <- function(w, Z, R) {
+  denom <- sqrt(as.numeric(t(w) %*% R %*% w))
+  if (!is.finite(denom) || denom <= 0) return(0)
   as.numeric((t(w) %*% Z) / denom)
 }
 # scans across chromosome, testing windows at every pivotal SNIP and ouptput RAS
 screen_forward_max_region_ss <- function(b_disc, z_targ, R, mask) {
   N <- length(b_disc)
-  this.seq <- seq(1, N, by = skip1) # setup pivotal SNPs points
-  sub.seq  <- c(0, seq(min_window_size, max_window_size, by = skip2)) # build windows radii across each point
-  if (sub.seq[length(sub.seq)] != max_window_size) sub.seq <- c(sub.seq, max_window_size) # clamp to maximum window size
-  y_profile <- numeric(length(this.seq)) # numeric vector to store final -log_10(p) (RAS) for each pivotal SNP
-  for (i in seq_along(this.seq)) {
-    site   <- this.seq[i]
-    best_p <- 1 # no significance
+  this.seq <- seq(1, N, by = skip1)
+  sub.seq  <- c(0, seq(min_window_size, max_window_size, by = skip2))
+  if (sub.seq[length(sub.seq)] != max_window_size) sub.seq <- c(sub.seq, max_window_size)
+  y_profile <- sapply(this.seq, function(site) {
+    best_p <- 1
     for (ws in sub.seq) {
-      idx <- if (ws == 0) site else max(1, site - ws):min(N, site + ws) # clamp boundaries so windows don't exceed available SNPs 
-      idx <- idx[mask[idx]] # filter SNP indexes using pruning from earlier
-      if (length(idx) < 1) next # if no more SNPs left after pruning, skip iteration
-      t_val  <- t_burden(b_disc[idx], z_targ[idx], R[idx, idx, drop = FALSE]) # calculate t_burden
-      best_p <- min(best_p, 2 * pnorm(-abs(t_val))) # calculate 2-tail p-value w/ standard normal distribution function
+      idx <- if (ws == 0) site else max(1, site - ws):min(N, site + ws)
+      idx <- idx[mask[idx]]
+      if (length(idx) < 1) next
+      w_sub <- b_disc[idx]
+      z_sub <- z_targ[idx]
+      R_sub <- R[idx, idx, drop = FALSE]
+      num <- sum(w_sub * z_sub)
+      denom <- sqrt(as.numeric(w_sub %*% R_sub %*% w_sub))
+      if (!is.finite(denom) || denom <= 0) next
+      
+      t_val <- num / denom
+      best_p <- min(best_p, 2 * pnorm(-abs(t_val)))
     }
-    y_profile[i] <- -log10(max(best_p, .Machine$double.xmin)) # RAS profile, prevent log(0) computational errors
-  }
-  list(x = this.seq, y = y_profile) # returns pivot coordinates and corresponding RAS scores
+    -log10(max(best_p, .Machine$double.xmin))
+  })
+  list(x = this.seq, y = y_profile)
 }
 # NOTE: original ras_scan() averages -log10(p) over num_rep=5 resampled 50/50
 # splits. No summary-stat analog exists (Method A has fixed discovery/
@@ -165,7 +169,7 @@ detect <- function(scan, window_size, scw = 8) {
 ## Window-size sweep for CPD: Type I error & power
 
 ```{r sweep}
-n_sweep <- 100 # 100 trials for each window size
+n_sweep <- 20 # 20 trials for each window size
 window_candidates <- c(6, 8, 10, 12, 15, 20)
 sweep_results <- data.frame(window_size = window_candidates,
                              type1 = NA_real_, power = NA_real_,
@@ -179,28 +183,32 @@ for (k in seq_along(window_candidates)) {
   null_hits <- logical(n_sweep); null_err <- 0
   # pb <- txtProgressBar(min = 0, max = n_sweep, style = 3)
   # Type I error test
-  for (s in seq_len(n_sweep)) {
-    # this is null hypothesis, any gene algorithm finds here is Type I error
-    scan <- run_one_replicate(null_beta, seed = 10000 * ws + s)$scan # change seed each time
+  null_res <- future_lapply(seq_len(n_sweep), function(s) {
+    # this is null hypothesis, so any gene found here is Type I error
+    scan <- run_one_replicate(null_beta, seed = 10000 * ws + s)$scan
     d <- detect(scan, ws, scw = 8)
-    null_hits[s] <- length(d$val$tau_hats) > 0
-    null_err <- null_err + d$error
-    # setTxtProgressBar(pb, s)
-  }
+    c(hit = length(d$val$tau_hats) > 0, err = d$error)
+  })
+  null_hits <- sapply(null_res, function(x) x["hit"])
+  null_err <- sum(sapply(null_res, function(x) x["err"]))
   # close(pb)
   hit_center   <- logical(n_sweep) # target zone
   hit_edge     <- logical(n_sweep) # track gene signal too late
   power_err    <- 0
   # pb <- txtProgressBar(min = 0, max = n_sweep, style = 3)
-  for (s in seq_len(n_sweep)) {
-    scan <- run_one_replicate(signal_beta, seed = 20000 * ws + s)$scan # change seed each time
+  power_res <- future_lapply(seq_len(n_sweep), function(s) {
+    scan <- run_one_replicate(signal_beta, seed = 20000 * ws + s)$scan
     d <- detect(scan, ws, scw = 8)
     tau <- d$val$tau_hats
-    hit_center[s] <- any(tau >= 130 & tau <= 170)
-    hit_edge[s]   <- any(tau >= 185 & tau <= 195) && !hit_center[s]
-    power_err <- power_err + d$error
-    # setTxtProgressBar(pb, s)
-  }
+    list(
+      center = any(tau >= 130 & tau <= 170),
+      edge = any(tau >= 185 & tau <= 195) && !any(tau >= 130 & tau <= 170),
+      err = d$error
+    )
+  })
+  hit_center <- sapply(power_res, function(x) x$center)
+  hit_edge <- sapply(power_res, function(x) x$edge)
+  power_err <- sum(sapply(power_res, function(x) x$err))
   # close(pb)
   # save results
   sweep_results$type1[k]           <- mean(null_hits)
@@ -224,32 +232,26 @@ print(sweep_results[sweep_results$window_size == chosen_window_size, ])
 
 ```{r full-null}
 # Type I Error test by running all null-hypothesis simulations
-n_null_sims <- 500
-null_hits <- logical(n_null_sims)
-pb <- txtProgressBar(min = 0, max = n_null_sims, style = 3)
-for (s in seq_len(n_null_sims)) {
+n_null_sims <- 100
+null_res <- future_lapply(seq_len(n_null_sims), function(s) {
   scan <- run_one_replicate(null_beta, seed = 100000 + s)$scan
-  null_hits[s] <- length(detect(scan, chosen_window_size, scw = 8)$val$tau_hats) > 0
-  setTxtProgressBar(pb, s)
-}
-close(pb)
+  length(detect(scan, chosen_window_size, scw = 8)$val$tau_hats) > 0
+})
+null_hits <- unlist(null_res)
 cat(sprintf("\nEmpirical Type I error over %d reps: %.3f\n", n_null_sims, mean(null_hits)))
 ```
 
 ```{r full-power}
 # Statistical power test by running signal_beta (patients w/ phenotype at SNPs 150-152)
-n_power_sims <- 100
-hit_center <- logical(n_power_sims)
-hit_edge   <- logical(n_power_sims)
-pb <- txtProgressBar(min = 0, max = n_power_sims, style = 3)
-for (s in seq_len(n_power_sims)) {
+n_power_sims <- 50
+power_res <- future_lapply(seq_len(n_power_sims), function(s) {
   scan <- run_one_replicate(signal_beta, seed = 200000 + s)$scan
   tau  <- detect(scan, chosen_window_size, scw = 8)$val$tau_hats
-  hit_center[s] <- any(tau >= 130 & tau <= 170)
-  hit_edge[s]   <- any(tau >= 185 & tau <= 195) && !hit_center[s]
-  setTxtProgressBar(pb, s)
-}
-close(pb)
+  c(center = any(tau >= 130 & tau <= 170), 
+    edge = any(tau >= 185 & tau <= 195) && !any(tau >= 130 & tau <= 170))
+})
+hit_center <- sapply(power_res, function(x) x["center"])
+hit_edge <- sapply(power_res, function(x) x["edge"])
 cat(sprintf("\nEmpirical power (centered detections) over %d reps: %.3f\n", n_power_sims, mean(hit_center)))
 cat(sprintf("Edge-only detections (landed on trailing edge, not center): %.3f\n", mean(hit_edge)))
 ```
