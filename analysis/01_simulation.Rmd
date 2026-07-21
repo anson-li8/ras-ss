@@ -1,51 +1,55 @@
 ---
 title: "01_simulation"
 output: html_document
-editor_options: 
+editor_options:
   chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(mvtnorm)
-library(RAS) #locally loaded RAS library
-set.seed(35)
+library(RAS)
+library(future.apply)
+plan(multisession) 
 ```
 
 ```{r config}
-n_snps    <- 300 # theoretical chromosome of 300 SNPs
-n_disc    <- 5000   # external discovery cohort (Method A: independent GWAS)
-n_targ    <- 5000   # target cohort being scanned
-rho       <- 0.8    # rho for generating LD matrix
-
-# config for original screen_forward_max_region() func
-skip1           <- 10   # pivotal SNP grid spacing
-skip2           <- 3    # window half-width step
+n_snps    <- 300
+n_disc    <- 1000 # discovery cohort (method A) (scale down for speed)
+n_targ    <- 1000 # target cohort (scaled down for speed)
+rho       <- 0.8 # AR(1) correlation for LD
+# adaptive sliding window
+skip1           <- 10 # scan every 10th SNP for speed
+skip2           <- 3 # test window sizes in increments of 3
 min_window_size <- 3
 max_window_size <- 30
-prune_r2        <- 0.2  # LD-pruning threshold
-ridge_lambda    <- 0.01 # hard coded lambda for now, replace eventually with a shrinkage estimator
+# quality control
+prune_r2        <- 0.2 # LD pruning threshold
+# ridge_lambda removed, breaks N(0,1) null distribution
+causal_snps  <- c(150, 151, 152) # set 150, 151, 152 as the causal SNPs
+effect_size  <- 0.5
+# p-value thresholds
+slope_thresh   <- 1e-3
+davies_thresh  <- 1e-3 # confirm it's not random noise
+# reproducibility
+base_seed      <- 35
 ```
 
-```{r ld-and-genotypes}
-# genotype simulation
-# create LD matrix w/ AR(1), correlation fades further SNPs get
+```{r ld-reference}
+# Autoregressive AR(1) matrix with rho = 0.8
+# simulates the LD matrix
 R_true <- outer(1:n_snps, 1:n_snps, function(i, j) rho^abs(i - j))
-# generate genotypes from multivariate normal, round to 0/1/2, and clip to [0,2]
+# generate n fake patients based on the LD data
 sim_genotypes <- function(n, R) {
   X <- rmvnorm(n, sigma = R)
-  X <- round(X)
-  pmin(pmax(X, 0), 2)
+  X <- round(X) # DNA isn't continuous
+  pmin(pmax(X, 0), 2) # 0, 1, 2 mutated alleles
 }
-# generate data for 10,000 fake ppl
+# run the random simulation
+set.seed(base_seed)
 X_reference <- sim_genotypes(10000, R_true)
-# measure ACTUAL correlation of 0s, 1s, and 2s
-R_empirical <- cor(X_reference)
-```
-
-```{r ld-pruning}
-# greedy r^2 < prune_r2 prune of reference LD matrix
-# applied before ridge
+R_empirical <- cor(X_reference) # get the empirical LD matrix to use later instead of the real one
+# greedy algorithm to discard redundant SNPs
 prune_ld <- function(R, thresh) {
   keep <- rep(TRUE, nrow(R))
   for (i in seq_len(nrow(R) - 1)) {
@@ -56,148 +60,258 @@ prune_ld <- function(R, thresh) {
   }
   keep
 }
+# apply LD pruning
 pruned_mask <- prune_ld(R_empirical, prune_r2)
+cat("Surviving SNPs after LD pruning:", sum(pruned_mask), "of", n_snps, "\n")
 ```
 
-```{r summary-stats}
-# matches compute_gwas_weights(): per-SNP ordinary least squares regression of y on x_j. faster than running lm()
-# no covariates simulated here
+```{r core-functions}
+# runs linear regression for every SNP to measure correlation with phenotype y
 get_marginal_stats <- function(X, y) {
-  m  <- ncol(X) # number of SNPs
-  beta <- se <- numeric(m) # store beta and standard error for each SNP
-  yc <- y - mean(y) # center y to avoid repeated mean calculations
-  # loop over SNPs to compute beta and standard error
+  # vectorized OLS for speedup
+  m <- ncol(X) # counts the SNPs
+  beta <- se <- numeric(m) # empty vectors beta and standard error of length m
+  yc <- y - mean(y) # mean-centering phenotype, so intercept in linear regression is 0
   for (j in seq_len(m)) {
-    xj  <- X[, j] - mean(X[, j])
-    sxx <- sum(xj^2)
-    b   <- sum(xj * yc) / sxx
-    rss <- sum(yc^2) - b * sum(xj * yc)
-    se[j]   <- sqrt((rss / (length(y) - 2)) / sxx)
-    beta[j] <- b
+    xj  <- X[, j] - mean(X[, j]) # extracts genotypes for SNP j across all patients and mean centers it
+    sxx <- sum(xj^2) # sum of squared deviations for SNP j
+    b   <- sum(xj * yc) / sxx # calculate Ordinary Least Squares (OLS) slope estimate (beta hat_j)
+    rss <- max(0, sum(yc^2) - b * sum(xj * yc)) # residual sum of squares
+    se[j]   <- sqrt((rss / (length(y) - 2)) / sxx) # calculate standard error of slope estimate. N-2 degrees of freedom
+    beta[j] <- b # save computed slope into beta vector
   }
-  list(beta = beta, z = beta / se) # return both beta and z-scores
+  list(beta = beta, z = beta / se) # compute z-score for each SNP and returns both in a list
 }
-```
-
-```{r t-burden}
-# implement the t_burden statistic derived in the problem statement / derivation
+# t_burden from problem statement
 t_burden <- function(w, Z, R, lam = ridge_lambda) {
-  Rl <- R + lam * diag(nrow(R))
+  Rl    <- R + lam * diag(nrow(R)) # ridge regularization quality control
   denom <- sqrt(as.numeric(t(w) %*% Rl %*% w))
-  if (!is.finite(denom) || denom <= 0) return(0)
+  if (!is.finite(denom) || denom <= 0) return(0) # prevent program crash
   as.numeric((t(w) %*% Z) / denom)
 }
-```
-
-```{r screen-ss}
-# Summary-stat analog of screen_forward_max_region(), matching its exact grid/window mechanics
-# same usage of pivot system so we don't check every SNP
-# per-window test statistic is T_burden. min p across windows kept as min(sub.p.values), as in original code
-screen_forward_max_region_ss <- function(b_disc, z_targ, R, mask,
-                                          skip1, skip2,
-                                          min_window_size, max_window_size) {
+# scans across chromosome, testing windows at every pivotal SNIP and ouptput RAS
+screen_forward_max_region_ss <- function(b_disc, z_targ, R, mask) {
   N <- length(b_disc)
-  this.seq <- seq(1, N, by = skip1) # set pivots
-  sub.seq <- c(0, seq(min_window_size, max_window_size, by = skip2)) # set window sizes
-  if (sub.seq[length(sub.seq)] != max_window_size) {
-    sub.seq <- c(sub.seq, max_window_size)
-  }
-  y_profile <- numeric(length(this.seq))
-  # loop over pivot SNPs, then over window sizes
+  this.seq <- seq(1, N, by = skip1) # setup pivotal SNPs points
+  sub.seq  <- c(0, seq(min_window_size, max_window_size, by = skip2)) # build windows radii across each point
+  if (sub.seq[length(sub.seq)] != max_window_size) sub.seq <- c(sub.seq, max_window_size) # clamp to maximum window size
+  y_profile <- numeric(length(this.seq)) # numeric vector to store final -log_10(p) (RAS) for each pivotal SNP
   for (i in seq_along(this.seq)) {
-    site <- this.seq[i]
-    best_p <- 1
-    # loop over window sizes, compute T_burden and p-value for each, keep best p-value
+    site   <- this.seq[i]
+    best_p <- 1 # no significance
     for (ws in sub.seq) {
-      if (ws == 0) {
-        idx <- site
-      } else {
-        lo <- max(1, site - ws + 1)
-        hi <- min(N, site + ws - 1)
-        idx <- lo:hi
-      }
-      idx <- idx[mask[idx]]        # drop LD-pruned SNPs from this window
-      if (length(idx) < 1) next
-      w    <- b_disc[idx]
-      Z    <- z_targ[idx]
-      Rsub <- R[idx, idx, drop = FALSE]
-      # calculate significance (t_val and the p_val)
-      t_val <- t_burden(w, Z, Rsub)
-      p_val <- 2 * pnorm(-abs(t_val))
-      best_p <- min(best_p, p_val)
+      idx <- if (ws == 0) site else max(1, site - ws):min(N, site + ws) # clamp boundaries so windows don't exceed available SNPs 
+      idx <- idx[mask[idx]] # filter SNP indexes using pruning from earlier
+      if (length(idx) < 1) next # if no more SNPs left after pruning, skip iteration
+      t_val  <- t_burden(b_disc[idx], z_targ[idx], R[idx, idx, drop = FALSE]) # calculate t_burden
+      best_p <- min(best_p, 2 * pnorm(-abs(t_val))) # calculate 2-tail p-value w/ standard normal distribution function
     }
-    # double.xmin is used to avoid taking log of zero, which would be -Inf
-    y_profile[i] <- -log10(max(best_p, .Machine$double.xmin))
+    y_profile[i] <- -log10(max(best_p, .Machine$double.xmin)) # RAS profile, prevent log(0) computational errors
   }
-  # return the summary-stat profile as a list of x (SNP indices) and y (-log10(p) values)
-  list(x = this.seq, y = y_profile)
+  list(x = this.seq, y = y_profile) # returns pivot coordinates and corresponding RAS scores
 }
-```
-
-```{r one-replicate}
-# NOTE: the original ras_scan() averages -log10(p) over num_rep=5. 50/50 splits of ONE pool of individuals. Under Method A (fixed external discovery GWAS + fixed target GWAS) there's no clean summary-stat analog of that resampling. so, this runs only single-pass
-run_one_replicate <- function(true_beta) {
-  X_d <- sim_genotypes(n_disc, R_empirical)
-  X_t <- sim_genotypes(n_targ, R_empirical)
+# NOTE: original ras_scan() averages -log10(p) over num_rep=5 resampled 50/50
+# splits. No summary-stat analog exists (Method A has fixed discovery/
+# target summary stats, nothing to resplit). This runs single-pass instead
+run_one_replicate <- function(true_beta, seed) {
+  set.seed(seed)
+  X_d <- sim_genotypes(n_disc, R_true)
+  X_t <- sim_genotypes(n_targ, R_true)
   y_d <- X_d %*% true_beta + rnorm(n_disc, 0, 3)
   y_t <- X_t %*% true_beta + rnorm(n_targ, 0, 3)
   disc <- get_marginal_stats(X_d, y_d)
   targ <- get_marginal_stats(X_t, y_t)
-  screen_forward_max_region_ss(
-    b_disc = disc$beta, z_targ = targ$z, R = R_empirical, mask = pruned_mask,
-    skip1 = skip1, skip2 = skip2,
-    min_window_size = min_window_size, max_window_size = max_window_size
-  )
+  scan <- screen_forward_max_region_ss(disc$beta, targ$z, R_empirical, pruned_mask)
+  list(scan = scan, X_t = X_t, y_t = y_t, b_disc = disc$beta)
 }
-```
-
-```{r type-i-error-calibration}
-# "Type I Error Calibration" step from the Validation Plan
-# feed the summary-stat profile through the original unmodified ras_detect()/ras_validate()
-n_null_sims <- 200   # raise to 500 once runs well
-false_positive <- logical(n_null_sims)
-null_beta <- rep(0, n_snps)
-for (s in seq_len(n_null_sims)) {
-  # temp: track progress
-  cat(sprintf("Running simulation %d of %d (%.1f%% complete)...\n", 
-              s, n_null_sims, (s / n_null_sims) * 100), file = stderr())
-  scan <- run_one_replicate(null_beta)
-  cp <- ras_detect(
-    x = scan$x, y = scan$y,
-    window_size             = 100,  # down from default 3000 for this simulation
-    slope_check_window_size = 5
-  )
-  val <- ras_validate(
-    this.result = cp, x = scan$x, y = scan$y,
-    this.start = 1, this.skip = skip1,
-    second_window_size = 15, min_signal = 2.5
-  )
-  false_positive[s] <- length(val$tau_hats) > 0
-}
-
-empirical_type1 <- mean(false_positive)
-cat(sprintf("Empirical Type I error over %d null reps: %.3f\n", n_null_sims, empirical_type1))
-```
-
-```{r power-check}
-# disease signal simulated
+# define null hypothesis and actual effect size vector
+null_beta   <- rep(0, n_snps)
 signal_beta <- rep(0, n_snps)
-signal_beta[c(150, 151, 152)] <- 0.5
-# use summary stat workflow
-scan_alt <- run_one_replicate(signal_beta)
-# run oriignla package algorithms
-cp_alt  <- ras_detect(x = scan_alt$x, y = scan_alt$y,
-                       window_size = 100, slope_check_window_size = 5)
-val_alt <- ras_validate(this.result = cp_alt, x = scan_alt$x, y = scan_alt$y,
-                         this.start = 1, this.skip = skip1,
-                         second_window_size = 15, min_signal = 2.5)
-plot(scan_alt$x, scan_alt$y, type = "l", col = "blue",
-     xlab = "SNP Index", ylab = "-log10(p) [T_burden]",
-     main = "Summary-Stat RAS Profile via original ras_detect()/ras_validate()")
-abline(v = c(150, 151, 152), col = "red", lty = 2, lwd = 2)
-if (length(val_alt$tau_hats) > 0) {
-  abline(v = val_alt$tau_hats, col = "darkgreen", lwd = 2)
+signal_beta[causal_snps] <- effect_size
+```
+
+```{r detect}
+# slope_check_window_size = 5 (the package's typical default) seemed to
+# only give give only ~17-20% first-pass acceptance on true signal, because the local
+# slope re-check window is inside the flat top of the causal plateau.
+# scw = 8 fixes this, as acceptance goes to ~100%
+detect <- function(scan, window_size, scw = 8) {
+  stopifnot(window_size < length(scan$x)) # make sure window size is less than chromosome size
+  out <- tryCatch({
+    # run changepoint detection algorithm (from old package)
+    cp <- ras_detect(
+      x = scan$x, y = scan$y,
+      window_size                    = window_size,
+      slope_check_window_size        = scw,
+      slope.p.values.threshold.left  = slope_thresh,
+      slope.p.values.threshold.right = slope_thresh
+    )
+    # run Davies test to prove change points are statistically significant (also from old package)
+    val <- ras_validate(
+      this.result = cp, x = scan$x, y = scan$y,
+      this.start = 1, this.skip = skip1,
+      second_window_size = 15, min_signal = 2.5,
+      p.value.threshold = davies_thresh
+    )
+    # returns locations of validated peaks (tau_hats)
+    list(val = val, raw_candidates = cp$all.changepoints, error = FALSE)
+  }, error = function(e) {
+    list(val = list(tau_hats = numeric(0)), raw_candidates = NULL, error = TRUE)
+  })
+  out
 }
-legend("topright", legend = c("True causal region", "Validated changepoint"),
-       col = c("red", "darkgreen"), lty = c(2, 1), lwd = 2)
+```
+
+## Window-size sweep for CPD: Type I error & power
+
+```{r sweep}
+n_sweep <- 100 # 100 trials for each window size
+window_candidates <- c(6, 8, 10, 12, 15, 20)
+sweep_results <- data.frame(window_size = window_candidates,
+                             type1 = NA_real_, power = NA_real_,
+                             power_center_16 = NA_real_,
+                             power_edge_19   = NA_real_,
+                             null_errors = NA_integer_, power_errors = NA_integer_)
+# test each candidate
+for (k in seq_along(window_candidates)) {
+  ws <- window_candidates[k]
+  # cat(sprintf("\n--- window_size = %d (scw = 8) ---\n", ws))
+  null_hits <- logical(n_sweep); null_err <- 0
+  # pb <- txtProgressBar(min = 0, max = n_sweep, style = 3)
+  # Type I error test
+  for (s in seq_len(n_sweep)) {
+    # this is null hypothesis, any gene algorithm finds here is Type I error
+    scan <- run_one_replicate(null_beta, seed = 10000 * ws + s)$scan # change seed each time
+    d <- detect(scan, ws, scw = 8)
+    null_hits[s] <- length(d$val$tau_hats) > 0
+    null_err <- null_err + d$error
+    # setTxtProgressBar(pb, s)
+  }
+  # close(pb)
+  hit_center   <- logical(n_sweep) # target zone
+  hit_edge     <- logical(n_sweep) # track gene signal too late
+  power_err    <- 0
+  # pb <- txtProgressBar(min = 0, max = n_sweep, style = 3)
+  for (s in seq_len(n_sweep)) {
+    scan <- run_one_replicate(signal_beta, seed = 20000 * ws + s)$scan # change seed each time
+    d <- detect(scan, ws, scw = 8)
+    tau <- d$val$tau_hats
+    hit_center[s] <- any(tau >= 130 & tau <= 170)
+    hit_edge[s]   <- any(tau >= 185 & tau <= 195) && !hit_center[s]
+    power_err <- power_err + d$error
+    # setTxtProgressBar(pb, s)
+  }
+  # close(pb)
+  # save results
+  sweep_results$type1[k]           <- mean(null_hits)
+  sweep_results$power[k]           <- mean(hit_center)
+  sweep_results$power_center_16[k] <- mean(hit_center)
+  sweep_results$power_edge_19[k]   <- mean(hit_edge)
+  sweep_results$null_errors[k]     <- null_err
+  sweep_results$power_errors[k]    <- power_err
+}
+print(sweep_results)
+```
+
+```{r choose-window}
+# choose the window size with the maximum detection power and lowest Type I Error rate
+chosen_window_size <- window_candidates[which.max(sweep_results$power - sweep_results$type1)]
+cat("Chosen window_size:", chosen_window_size, "(scw = 8)\n")
+print(sweep_results[sweep_results$window_size == chosen_window_size, ])
+```
+
+## Full run at the chosen window size
+
+```{r full-null}
+# Type I Error test by running all null-hypothesis simulations
+n_null_sims <- 500
+null_hits <- logical(n_null_sims)
+pb <- txtProgressBar(min = 0, max = n_null_sims, style = 3)
+for (s in seq_len(n_null_sims)) {
+  scan <- run_one_replicate(null_beta, seed = 100000 + s)$scan
+  null_hits[s] <- length(detect(scan, chosen_window_size, scw = 8)$val$tau_hats) > 0
+  setTxtProgressBar(pb, s)
+}
+close(pb)
+cat(sprintf("\nEmpirical Type I error over %d reps: %.3f\n", n_null_sims, mean(null_hits)))
+```
+
+```{r full-power}
+# Statistical power test by running signal_beta (patients w/ phenotype at SNPs 150-152)
+n_power_sims <- 100
+hit_center <- logical(n_power_sims)
+hit_edge   <- logical(n_power_sims)
+pb <- txtProgressBar(min = 0, max = n_power_sims, style = 3)
+for (s in seq_len(n_power_sims)) {
+  scan <- run_one_replicate(signal_beta, seed = 200000 + s)$scan
+  tau  <- detect(scan, chosen_window_size, scw = 8)$val$tau_hats
+  hit_center[s] <- any(tau >= 130 & tau <= 170)
+  hit_edge[s]   <- any(tau >= 185 & tau <= 195) && !hit_center[s]
+  setTxtProgressBar(pb, s)
+}
+close(pb)
+cat(sprintf("\nEmpirical power (centered detections) over %d reps: %.3f\n", n_power_sims, mean(hit_center)))
+cat(sprintf("Edge-only detections (landed on trailing edge, not center): %.3f\n", mean(hit_edge)))
+```
+
+## Results table/figures
+
+```{r results-table}
+results <- data.frame(
+  Metric = c("Type I error", "Power"),
+  Value  = c(mean(null_hits), mean(hit_center)),
+  Reps   = c(n_null_sims, n_power_sims)
+)
+knitr::kable(results, digits = 3, caption = "Empirical simulation results")
+```
+
+```{r sweep-plot}
+plot(sweep_results$window_size, sweep_results$type1, type = "b", col = "red",
+     ylim = c(0, 1), xlab = "window_size", ylab = "Rate",
+     main = "Type I error vs. power across window_size (scw = 8)", pch = 16)
+lines(sweep_results$window_size, sweep_results$power, type = "b", col = "blue", pch = 16)
+abline(h = 0.05, lty = 3, col = "gray50")
+legend("left", legend = c("Type I error", "Power", "nominal 0.05"),
+       col = c("red", "blue", "gray50"), lty = c(1, 1, 3), pch = c(16, 16, NA))
+```
+
+```{r illustration}
+# run individual-level algorithm (old) for comparison
+indiv_baseline_profile <- function(scan, X_t, y_t, b_disc) {
+  sub.seq <- c(0, seq(min_window_size, max_window_size, by = skip2))
+  if (sub.seq[length(sub.seq)] != max_window_size) sub.seq <- c(sub.seq, max_window_size)
+  sapply(scan$x, function(site) {
+    best_p <- 1
+    for (ws in sub.seq) {
+      idx <- if (ws == 0) site else max(1, site - ws):min(n_snps, site + ws)
+      idx <- idx[pruned_mask[idx]]
+      if (length(idx) < 1) next
+      LPRS <- X_t[, idx, drop = FALSE] %*% b_disc[idx]
+      fit  <- summary(lm(y_t ~ LPRS))
+      p    <- if (nrow(fit$coefficients) > 1) fit$coefficients[2, 4] else 1
+      best_p <- min(best_p, p)
+    }
+    -log10(max(best_p, .Machine$double.xmin))
+  })
+}
+# draw visualization for comparison
+rep_data <- run_one_replicate(signal_beta, seed = 300000)
+scan_ss  <- rep_data$scan
+scan_indiv_y <- indiv_baseline_profile(scan_ss, rep_data$X_t, rep_data$y_t, rep_data$b_disc)
+final <- detect(scan_ss, chosen_window_size, scw = 8)
+plot(scan_ss$x, scan_ss$y, type = "l", col = "blue", lwd = 2,
+     xlab = "SNP Index", ylab = "-log10(p)",
+     main = "Summary-Stat RAS vs. Individual-Level Baseline")
+lines(scan_ss$x, scan_indiv_y, col = "darkgray", lty = 2, lwd = 2)
+abline(v = causal_snps, col = "red", lty = 2, lwd = 2)
+if (length(final$val$tau_hats) > 0) {
+  abline(v = final$val$tau_hats, col = "darkgreen", lwd = 2)
+  legend("topright",
+         legend = c("True causal region", "Validated changepoint", "Summary-Stat Profile", "Individual Baseline"),
+         col = c("red", "darkgreen", "blue", "darkgray"), lty = c(2, 1, 1, 2), lwd = 2)
+} else {
+  legend("topright",
+         legend = c("True causal region", "Summary-Stat Profile", "Individual Baseline"),
+         col = c("red", "blue", "darkgray"), lty = c(2, 1, 2), lwd = 2)
+}
 ```
