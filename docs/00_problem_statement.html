@@ -378,7 +378,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-07-10
+<strong>Last updated:</strong> 2026-07-23
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -425,15 +425,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree5f12c34dc8771da4d467f00481d6608519bbdf52targetblank5f12c34a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree610501019ec5c28b9288250adf248372ac72bf2atargetblank6105010a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/5f12c34dc8771da4d467f00481d6608519bbdf52" target="_blank">5f12c34</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/610501019ec5c28b9288250adf248372ac72bf2a" target="_blank">6105010</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree5f12c34dc8771da4d467f00481d6608519bbdf52targetblank5f12c34a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree610501019ec5c28b9288250adf248372ac72bf2atargetblank6105010a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -443,7 +443,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/5f12c34dc8771da4d467f00481d6608519bbdf52" target="_blank">5f12c34</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/610501019ec5c28b9288250adf248372ac72bf2a" target="_blank">6105010</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -504,6 +504,74 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/610501019ec5c28b9288250adf248372ac72bf2a/analysis/00_problem_statement.Rmd" target="_blank">6105010</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+<td>
+wflow_publish("analysis/00_problem_statement.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/dc8e1bb2179e0a6576ff229943cb9655e4f21943/analysis/00_problem_statement.Rmd" target="_blank">dc8e1bb</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+<td>
+cleanup output and improve simulation clarity
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/cc74dfcc0857e5d33c3b9c9ebb432a2a1b19f26e/analysis/00_problem_statement.Rmd" target="_blank">cc74dfc</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-21
+</td>
+<td>
+7/21/2026, recent changes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/c9bf3c3e8ed36384df4e6aee1cad257b298ef646/docs/00_problem_statement.html" target="_blank">c9bf3c3</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-10
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -749,28 +817,18 @@ class="math inline">\(-log_{10}(p-value)\)</span>.</p>
 </div>
 <div id="quality-controlregularization" class="section level1">
 <h1>Quality Control/Regularization:</h1>
-<p>SNPs in a window are often so highly correlated that their LD matrix
-<span class="math inline">\(R\)</span> is almost singular. In these
-cases, the denominator variance (<span class="math inline">\(w^T R
-w\)</span>) can become unstable or approach zero, which would cause the
-test statistic to inflate unexpectedly.</p>
 <ol style="list-style-type: decimal">
-<li><strong>LD Pruning:</strong> Replicating the original design to
-prevent score inflation, apply LD pruning at <span
-class="math inline">\(r^2 &lt; 0.2\)</span> to the reference panel
-correlation structure before computing the denominator. This solves the
-problem of cases being very close to singular by omitting highly
-redundant variants.</li>
-<li><strong>Ridge Regularization:</strong> Apply Ridge Regularization to
-the pruned matrix: <span class="math display">\[R_{\lambda} = R +
-\lambda I\]</span> Where <span class="math inline">\(I\)</span> is the
-identity matrix and <span class="math inline">\(\lambda\)</span> is a
-small shrinkage tuning constant determined by a shrinkage estimator
-rather than a fixed value. This increases the denominator to <span
-class="math inline">\(w^T R_{\lambda} w = w^T R w + \lambda
-\|w\|^2\)</span>, also increasing null variance estimate so that the
-test becomes conservative (fewer false positives) at the cost of some
-power.</li>
+<li><strong>Quadratic Form Stability:</strong> Unlike methods that
+require matrix inversion, the denominator <span
+class="math inline">\(w^T R w\)</span> is a quadratic form. It is
+numerically stable even if the LD matrix <span
+class="math inline">\(R\)</span> is singular or near-singular.
+Therefore, no ridge regularization is required.</li>
+<li><strong>LD Pruning (Optional):</strong> While not required for
+numerical stability, LD pruning at <span class="math inline">\(r^2 &lt;
+0.2\)</span> can optionally be applied to prevent highly redundant
+variants from over-weighting the burden statistic, replicating the
+original RAS design.</li>
 </ol>
 </div>
 <div id="weight-source-decision-pending" class="section level1">
@@ -796,18 +854,87 @@ winner’s curse bias, inflating the burden statistic.</li>
 SuSiE-RSS) is a possible alternative, implementing it goes beyond the
 scope of replicating the original methodology</p>
 </div>
-<div id="validation-for-after" class="section level1">
-<h1>Validation: (FOR AFTER)</h1>
+<div id="validation" class="section level1">
+<h1>Validation:</h1>
 <ol style="list-style-type: decimal">
 <li><strong>Type I error calibration (required before trusting any
-output):</strong> null simulation of the full algorithm (pruning, ridge,
-and max-over-<span class="math inline">\(t\)</span> window selection),
+output):</strong> null simulation of the full algorithm (pruning and
+max-over-<span class="math inline">\(t\)</span> window selection),
 reporting empirical type I error, similar to Table 1 of the original
 paper.</li>
 <li><strong>Convergence validation:</strong> compare summary-stat RAS
 output against individual-data RAS on the same simulated data, varying
 <span class="math inline">\(N\)</span> and LD-panel quality</li>
 </ol>
+</div>
+<div id="validation-results" class="section level1">
+<h1>Validation Results</h1>
+<p>Setup: 300-SNP toy chromosome, AR(1) LD at <span
+class="math inline">\(\rho = 0.8\)</span>, true signal at 3 consecutive
+causal SNPs (150–152, effect size 0.5). Discovery and target cohorts of
+<span class="math inline">\(n = 1000\)</span> each (Method A), LD pruned
+at <span class="math inline">\(r^2 &lt; 0.2\)</span> (300 <span
+class="math inline">\(\to\)</span> 100 SNPs survived). The validated
+workflow is LD pruning + <code>T_burden</code> + the package’s own
+unmodified <code>ras_detect()</code> / <code>ras_validate()</code>
+changepoint detection.</p>
+<p>Tuning: At package default of 5, the local slope re-check window is
+located on the flat top of the signal’s plateau, so the slope looks weak
+even when the global changepoint test runs correctly. Increasing it to 8
+increased first-pass acceptance on true signal from ~17% to ~100%. With
+<code>scw</code> fixed, the outer <code>window_size</code> was swept
+6–20 at 100 reps per cell. Small windows are with low power because the
+test can’t see the full causal cluster. Power increases steeply through
+8 and 10, then plateaus around 0.93–0.97 from
+<code>window_size = 12</code> on, while Type I error stays around the
+nominal 0.05 line the whole way (never above 0.07). The sweep metric
+(power <span class="math inline">\(-\)</span> Type I) thus picks
+<code>window_size = 12</code>.</p>
+<p>Final parameters: <code>window_size = 12</code>,
+<code>slope_check_window_size = 8</code>,
+<code>slope.p.values.threshold.left/right = 1e-3</code>,
+<code>p.value.threshold = 1e-3</code> (the two thresholds taken from the
+package’s own <code>@examples</code> for a similarly-sized toy
+profile).</p>
+<p>Results at these parameters:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Result</th>
+<th>Reps</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Empirical Type I error</td>
+<td>0.038</td>
+<td>500</td>
+</tr>
+<tr class="even">
+<td>Empirical power</td>
+<td>0.935</td>
+<td>200</td>
+</tr>
+<tr class="odd">
+<td>Edge-anchoring (localized to plateau edge, not center)</td>
+<td>0.000</td>
+<td>200</td>
+</tr>
+</tbody>
+</table>
+<p>Interpretation: Type I error 0.038 sits at/below the nominal 0.05
+(95% CI roughly 0.02–0.06), similar to the original paper’s Table 1
+(their methods land 0.042–0.050, so this is a bit more conservative).
+Power 0.935 over 200 reps (95% CI roughly 0.90–0.97) is enough to read
+as a real point estimate – the summary-stat test has genuine power at
+this cohort size. Edge-anchoring at zero over 200 reps means that when
+the method is executed, it lands on the causal region, not the edge of
+the plateau. On the same simulated data the summary-stat profile
+overlaps the individual-level baseline almost exactly across the whole
+chromosome (see <code>01_simulation</code>), which demonstrates
+<code>T_burden</code> is a reasonable summary-stat analog of the
+original individual-level test.</p>
 </div>
 </div>
 </div>
