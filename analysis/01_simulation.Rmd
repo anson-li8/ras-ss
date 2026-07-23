@@ -7,17 +7,20 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(mvtnorm)
-library(RAS)
-library(future.apply)
+suppressPackageStartupMessages({
+  library(mvtnorm)
+  library(RAS)
+  library(future.apply)
+})
 plan(multisession) 
-options(future.rng.onMisuse = "ignore") # hide verbose
+options(future.rng.onMisuse = "ignore")
+start_time <- Sys.time()
 ```
 
 ```{r config}
 n_snps    <- 300
-n_disc    <- 1000 # discovery cohort (method A) (scale down for speed)
-n_targ    <- 1000 # target cohort (scaled down for speed)
+n_disc    <- 1000 # discovery cohort, method A (small for speed)
+n_targ    <- 1000 # target cohort (small for speed)
 rho       <- 0.8 # AR(1) correlation for LD
 # adaptive sliding window
 skip1           <- 10 # scan every 10th SNP for speed
@@ -27,11 +30,11 @@ max_window_size <- 30
 # quality control
 prune_r2        <- 0.2 # LD pruning threshold
 # ridge_lambda removed, breaks N(0,1) null distribution
-causal_snps  <- c(150, 151, 152) # set 150, 151, 152 as the causal SNPs
+causal_snps  <- c(150, 151, 152)
 effect_size  <- 0.5
 # p-value thresholds
 slope_thresh   <- 1e-3
-davies_thresh  <- 1e-3 # confirm it's not random noise
+davies_thresh  <- 1e-3
 # reproducibility
 base_seed      <- 35
 ```
@@ -48,9 +51,9 @@ sim_genotypes <- function(n, R) {
 }
 # run the random simulation
 set.seed(base_seed)
-X_reference <- sim_genotypes(10000, R_true)
-R_empirical <- cor(X_reference) # get the empirical LD matrix to use later instead of the real one
-# greedy algorithm to discard redundant SNPs
+X_ref <- sim_genotypes(10000, R_true)
+R_emp <- cor(X_ref) # get the empirical LD matrix to use later instead of the real one
+# greedy forward pruning, drop SNPs in high LD with a kept SNP
 prune_ld <- function(R, thresh) {
   keep <- rep(TRUE, nrow(R))
   for (i in seq_len(nrow(R) - 1)) {
@@ -61,16 +64,14 @@ prune_ld <- function(R, thresh) {
   }
   keep
 }
-# apply LD pruning
-pruned_mask <- prune_ld(R_empirical, prune_r2)
-cat("Surviving SNPs after LD pruning:", sum(pruned_mask), "of", n_snps, "\n")
+prune_filter <- prune_ld(R_emp, prune_r2)
+cat("Surviving SNPs after LD pruning:", sum(prune_filter), "of", n_snps, "\n")
 ```
 
 ```{r core-functions}
 # runs linear regression for every SNP to measure correlation with phenotype y
 get_marginal_stats <- function(X, y) {
   # Vectorized OLS for massive speedup
-  m <- ncol(X)
   yc <- y - mean(y)
   Xc <- sweep(X, 2, colMeans(X), "-")
   sxx <- colSums(Xc^2)
@@ -83,42 +84,39 @@ get_marginal_stats <- function(X, y) {
   z[!is.finite(z)] <- 0
   list(beta = beta, z = z)
 }
-# t_burden from problem statement
+# T_burden = w'Z / sqrt(w'Rw), from problem statement
 t_burden <- function(w, Z, R) {
   denom <- sqrt(as.numeric(t(w) %*% R %*% w))
   if (!is.finite(denom) || denom <= 0) return(0)
   as.numeric((t(w) %*% Z) / denom)
 }
-# scans across chromosome, testing windows at every pivotal SNIP and ouptput RAS
-screen_forward_max_region_ss <- function(b_disc, z_targ, R, mask) {
-  N <- length(b_disc)
-  this.seq <- seq(1, N, by = skip1)
-  sub.seq  <- c(0, seq(min_window_size, max_window_size, by = skip2))
-  if (sub.seq[length(sub.seq)] != max_window_size) sub.seq <- c(sub.seq, max_window_size)
-  y_profile <- sapply(this.seq, function(site) {
+# summary-stat RAS scan: for each pivotal SNP, find window with max -log10(p)
+scan_ss <- function(b_disc, z_targ, R, mask) {
+  n_snps <- length(b_disc)
+  sites <- seq(1, n_snps, by = skip1)
+  sub_windows  <- c(0, seq(min_window_size, max_window_size, by = skip2))
+  if (sub_windows[length(sub_windows)] != max_window_size) sub_windows <- c(sub_windows, max_window_size)
+  y_profile <- sapply(sites, function(s) {
     best_p <- 1
-    for (ws in sub.seq) {
-      idx <- if (ws == 0) site else max(1, site - ws):min(N, site + ws)
-      idx <- idx[mask[idx]]
-      if (length(idx) < 1) next
-      w_sub <- b_disc[idx]
-      z_sub <- z_targ[idx]
-      R_sub <- R[idx, idx, drop = FALSE]
+    for (ws in sub_windows) {
+      win_snps <- if (ws == 0) s else max(1, s - ws):min(n_snps, s + ws)
+      win_snps <- win_snps[mask[win_snps]]
+      if (length(win_snps) < 1) next
+      w_sub <- b_disc[win_snps]
+      z_sub <- z_targ[win_snps]
+      R_sub <- R[win_snps, win_snps, drop = FALSE]
       num <- sum(w_sub * z_sub)
       denom <- sqrt(as.numeric(w_sub %*% R_sub %*% w_sub))
       if (!is.finite(denom) || denom <= 0) next
-      
       t_val <- num / denom
       best_p <- min(best_p, 2 * pnorm(-abs(t_val)))
     }
     -log10(max(best_p, .Machine$double.xmin))
   })
-  list(x = this.seq, y = y_profile)
+  list(x = sites, y = y_profile)
 }
-# NOTE: original ras_scan() averages -log10(p) over num_rep=5 resampled 50/50
-# splits. No summary-stat analog exists (Method A has fixed discovery/
-# target summary stats, nothing to resplit). This runs single-pass instead
-run_one_replicate <- function(true_beta, seed) {
+# NOTE: no num_rep averaging here. method A has fixed disc/targ stats, nothing to resplit
+one_rep <- function(true_beta, seed) {
   set.seed(seed)
   X_d <- sim_genotypes(n_disc, R_true)
   X_t <- sim_genotypes(n_targ, R_true)
@@ -126,24 +124,27 @@ run_one_replicate <- function(true_beta, seed) {
   y_t <- X_t %*% true_beta + rnorm(n_targ, 0, 3)
   disc <- get_marginal_stats(X_d, y_d)
   targ <- get_marginal_stats(X_t, y_t)
-  scan <- screen_forward_max_region_ss(disc$beta, targ$z, R_empirical, pruned_mask)
+  scan <- scan_ss(disc$beta, targ$z, R_emp, prune_filter)
   list(scan = scan, X_t = X_t, y_t = y_t, b_disc = disc$beta)
 }
-# define null hypothesis and actual effect size vector
+# null = no effect, signal = effect at causal SNPs
 null_beta   <- rep(0, n_snps)
 signal_beta <- rep(0, n_snps)
 signal_beta[causal_snps] <- effect_size
 ```
 
 ```{r detect}
-# slope_check_window_size = 5 (the package's typical default) seemed to
-# only give give only ~17-20% first-pass acceptance on true signal, because the local
-# slope re-check window is inside the flat top of the causal plateau.
-# scw = 8 fixes this, as acceptance goes to ~100%
-detect <- function(scan, window_size, scw = 8) {
-  stopifnot(window_size < length(scan$x)) # make sure window size is less than chromosome size
-  out <- tryCatch({
-    # run changepoint detection algorithm (from old package)
+# scw=5 (package default) only gave ~17-20% first-pass acceptance on true signal
+# because slope re-check window sits inside the flat top of the plateau
+# scw=8 fixes this, acceptance goes to ~100%
+detect_peaks <- function(scan, window_size, scw = 8) {
+  stopifnot(window_size < length(scan$x))
+  tryCatch({
+    # first pass: changepoint detection
+    # use sink() to hide cat() verbose
+    null_con <- file(nullfile(), open = "wt")
+    sink(null_con, type = "output")
+    sink(null_con, type = "message")
     cp <- ras_detect(
       x = scan$x, y = scan$y,
       window_size                    = window_size,
@@ -151,110 +152,86 @@ detect <- function(scan, window_size, scw = 8) {
       slope.p.values.threshold.left  = slope_thresh,
       slope.p.values.threshold.right = slope_thresh
     )
-    # run Davies test to prove change points are statistically significant (also from old package)
-    val <- ras_validate(
+    # second pass: local Davies validation
+    val <- suppressWarnings(ras_validate(
       this.result = cp, x = scan$x, y = scan$y,
       this.start = 1, this.skip = skip1,
       second_window_size = 15, min_signal = 2.5,
       p.value.threshold = davies_thresh
-    )
-    # returns locations of validated peaks (tau_hats)
-    list(val = val, raw_candidates = cp$all.changepoints, error = FALSE)
+    ))
+    # stop redirecting output
+    sink(type = "message")
+    sink(type = "output")
+    close(null_con)
+    list(val = val, candidates = cp$all.changepoints, error = FALSE)
   }, error = function(e) {
-    list(val = list(tau_hats = numeric(0)), raw_candidates = NULL, error = TRUE)
+    # ensure sink is turned off even if an error occurs
+    try({ sink(type = "message"); sink(type = "output"); close(null_con) }, silent = TRUE)
+    list(val = list(tau_hats = numeric(0)), candidates = NULL, error = TRUE)
   })
-  out
 }
 ```
 
 ## Window-size sweep for CPD: Type I error & power
 
 ```{r sweep}
-n_sweep <- 20 # 20 trials for each window size
-window_candidates <- c(6, 8, 10, 12, 15, 20)
-sweep_results <- data.frame(window_size = window_candidates,
-                             type1 = NA_real_, power = NA_real_,
-                             power_center_16 = NA_real_,
-                             power_edge_19   = NA_real_,
-                             null_errors = NA_integer_, power_errors = NA_integer_)
+n_sweep <- 100
+ws_candidates <- c(6, 8, 10, 12, 15, 20)
+sweep_df <- data.frame(window_size = ws_candidates,
+                       type1 = NA_real_, power = NA_real_, edge = NA_real_)
 # test each candidate
-for (k in seq_along(window_candidates)) {
-  ws <- window_candidates[k]
-  # cat(sprintf("\n--- window_size = %d (scw = 8) ---\n", ws))
-  null_hits <- logical(n_sweep); null_err <- 0
-  # pb <- txtProgressBar(min = 0, max = n_sweep, style = 3)
-  # Type I error test
-  null_res <- future_lapply(seq_len(n_sweep), function(s) {
-    # this is null hypothesis, so any gene found here is Type I error
-    scan <- run_one_replicate(null_beta, seed = 10000 * ws + s)$scan
-    d <- detect(scan, ws, scw = 8)
-    c(hit = length(d$val$tau_hats) > 0, err = d$error)
-  })
-  null_hits <- sapply(null_res, function(x) x["hit"])
-  null_err <- sum(sapply(null_res, function(x) x["err"]))
-  # close(pb)
-  hit_center   <- logical(n_sweep) # target zone
-  hit_edge     <- logical(n_sweep) # track gene signal too late
-  power_err    <- 0
-  # pb <- txtProgressBar(min = 0, max = n_sweep, style = 3)
-  power_res <- future_lapply(seq_len(n_sweep), function(s) {
-    scan <- run_one_replicate(signal_beta, seed = 20000 * ws + s)$scan
-    d <- detect(scan, ws, scw = 8)
-    tau <- d$val$tau_hats
-    list(
-      center = any(tau >= 130 & tau <= 170),
-      edge = any(tau >= 185 & tau <= 195) && !any(tau >= 130 & tau <= 170),
-      err = d$error
-    )
-  })
-  hit_center <- sapply(power_res, function(x) x$center)
-  hit_edge <- sapply(power_res, function(x) x$edge)
-  power_err <- sum(sapply(power_res, function(x) x$err))
-  # close(pb)
-  # save results
-  sweep_results$type1[k]           <- mean(null_hits)
-  sweep_results$power[k]           <- mean(hit_center)
-  sweep_results$power_center_16[k] <- mean(hit_center)
-  sweep_results$power_edge_19[k]   <- mean(hit_edge)
-  sweep_results$null_errors[k]     <- null_err
-  sweep_results$power_errors[k]    <- power_err
+for (k in seq_along(ws_candidates)) {
+  ws <- ws_candidates[k]
+    # null reps: any detection = type I error
+  null_res <- suppressWarnings(future_lapply(seq_len(n_sweep), function(s) {
+    scan <- one_rep(null_beta, seed = 10000 * ws + s)$scan
+    length(detect_peaks(scan, ws, scw = 8)$val$tau_hats) > 0
+  }))
+  # power reps: land on causal region or just trailing edge
+  power_res <- suppressWarnings(future_lapply(seq_len(n_sweep), function(s) {
+    scan <- one_rep(signal_beta, seed = 20000 * ws + s)$scan
+    tau  <- detect_peaks(scan, ws, scw = 8)$val$tau_hats
+    c(center = any(tau >= 130 & tau <= 170),
+      edge = any(tau >= 185 & tau <= 195) && !any(tau >= 130 & tau <= 170))
+  }))
+  sweep_df$type1[k] <- mean(unlist(null_res))
+  sweep_df$power[k] <- mean(sapply(power_res, function(x) x["center"]))
+  sweep_df$edge[k]  <- mean(sapply(power_res, function(x) x["edge"]))
 }
-print(sweep_results)
+print(sweep_df)
 ```
 
 ```{r choose-window}
 # choose the window size with the maximum detection power and lowest Type I Error rate
-chosen_window_size <- window_candidates[which.max(sweep_results$power - sweep_results$type1)]
-cat("Chosen window_size:", chosen_window_size, "(scw = 8)\n")
-print(sweep_results[sweep_results$window_size == chosen_window_size, ])
+best_ws <- ws_candidates[which.max(sweep_df$power - sweep_df$type1)]
+cat("Chosen window_size:", best_ws, "(scw = 8)\n")
+print(sweep_df[sweep_df$window_size == best_ws, ])
 ```
 
 ## Full run at the chosen window size
 
 ```{r full-null}
-# Type I Error test by running all null-hypothesis simulations
-n_null_sims <- 100
-null_res <- future_lapply(seq_len(n_null_sims), function(s) {
-  scan <- run_one_replicate(null_beta, seed = 100000 + s)$scan
-  length(detect(scan, chosen_window_size, scw = 8)$val$tau_hats) > 0
-})
-null_hits <- unlist(null_res)
-cat(sprintf("\nEmpirical Type I error over %d reps: %.3f\n", n_null_sims, mean(null_hits)))
+n_null <- 500
+null_hits <- unlist(suppressWarnings(future_lapply(seq_len(n_null), function(s) {
+  scan <- one_rep(null_beta, seed = 100000 + s)$scan
+  length(detect_peaks(scan, best_ws, scw = 8)$val$tau_hats) > 0
+})))
+cat(sprintf("\nEmpirical Type I error over %d reps: %.3f\n", n_null, mean(null_hits)))
 ```
 
 ```{r full-power}
 # Statistical power test by running signal_beta (patients w/ phenotype at SNPs 150-152)
-n_power_sims <- 50
-power_res <- future_lapply(seq_len(n_power_sims), function(s) {
-  scan <- run_one_replicate(signal_beta, seed = 200000 + s)$scan
-  tau  <- detect(scan, chosen_window_size, scw = 8)$val$tau_hats
-  c(center = any(tau >= 130 & tau <= 170), 
+n_power <- 200
+power_res <- suppressWarnings(future_lapply(seq_len(n_power), function(s) {
+  scan <- one_rep(signal_beta, seed = 200000 + s)$scan
+  tau  <- detect_peaks(scan, best_ws, scw = 8)$val$tau_hats
+  c(center = any(tau >= 130 & tau <= 170),
     edge = any(tau >= 185 & tau <= 195) && !any(tau >= 130 & tau <= 170))
-})
+}))
 hit_center <- sapply(power_res, function(x) x["center"])
-hit_edge <- sapply(power_res, function(x) x["edge"])
-cat(sprintf("\nEmpirical power (centered detections) over %d reps: %.3f\n", n_power_sims, mean(hit_center)))
-cat(sprintf("Edge-only detections (landed on trailing edge, not center): %.3f\n", mean(hit_edge)))
+hit_edge   <- sapply(power_res, function(x) x["edge"])
+cat(sprintf("\nEmpirical power (centered detections) over %d reps: %.3f\n", n_power, mean(hit_center)))
+cat(sprintf("Edge-only detections (trailing edge, not center): %.3f\n", mean(hit_edge)))
 ```
 
 ## Results table/figures
@@ -263,34 +240,34 @@ cat(sprintf("Edge-only detections (landed on trailing edge, not center): %.3f\n"
 results <- data.frame(
   Metric = c("Type I error", "Power"),
   Value  = c(mean(null_hits), mean(hit_center)),
-  Reps   = c(n_null_sims, n_power_sims)
+  Reps   = c(n_null, n_power)
 )
 knitr::kable(results, digits = 3, caption = "Empirical simulation results")
 ```
 
 ```{r sweep-plot}
-plot(sweep_results$window_size, sweep_results$type1, type = "b", col = "red",
+plot(sweep_df$window_size, sweep_df$type1, type = "b", col = "red",
      ylim = c(0, 1), xlab = "window_size", ylab = "Rate",
      main = "Type I error vs. power across window_size (scw = 8)", pch = 16)
-lines(sweep_results$window_size, sweep_results$power, type = "b", col = "blue", pch = 16)
+lines(sweep_df$window_size, sweep_df$power, type = "b", col = "blue", pch = 16)
 abline(h = 0.05, lty = 3, col = "gray50")
 legend("left", legend = c("Type I error", "Power", "nominal 0.05"),
        col = c("red", "blue", "gray50"), lty = c(1, 1, 3), pch = c(16, 16, NA))
 ```
 
 ```{r illustration}
-# run individual-level algorithm (old) for comparison
-indiv_baseline_profile <- function(scan, X_t, y_t, b_disc) {
-  sub.seq <- c(0, seq(min_window_size, max_window_size, by = skip2))
-  if (sub.seq[length(sub.seq)] != max_window_size) sub.seq <- c(sub.seq, max_window_size)
-  sapply(scan$x, function(site) {
+# individual-level RAS for comparison (original method)
+indiv_scan <- function(scan, X_t, y_t, b_disc) {
+  sub_windows <- c(0, seq(min_window_size, max_window_size, by = skip2))
+  if (sub_windows[length(sub_windows)] != max_window_size) sub_windows <- c(sub_windows, max_window_size)
+  sapply(scan$x, function(s) {
     best_p <- 1
-    for (ws in sub.seq) {
-      idx <- if (ws == 0) site else max(1, site - ws):min(n_snps, site + ws)
-      idx <- idx[pruned_mask[idx]]
-      if (length(idx) < 1) next
-      LPRS <- X_t[, idx, drop = FALSE] %*% b_disc[idx]
-      fit  <- summary(lm(y_t ~ LPRS))
+    for (ws in sub_windows) {
+      win_snps <- if (ws == 0) s else max(1, s - ws):min(n_snps, s + ws)
+      win_snps <- win_snps[prune_filter[win_snps]]
+      if (length(win_snps) < 1) next
+      lprs <- X_t[, win_snps, drop = FALSE] %*% b_disc[win_snps]
+      fit  <- suppressWarnings(summary(lm(y_t ~ lprs)))
       p    <- if (nrow(fit$coefficients) > 1) fit$coefficients[2, 4] else 1
       best_p <- min(best_p, p)
     }
@@ -298,23 +275,26 @@ indiv_baseline_profile <- function(scan, X_t, y_t, b_disc) {
   })
 }
 # draw visualization for comparison
-rep_data <- run_one_replicate(signal_beta, seed = 300000)
-scan_ss  <- rep_data$scan
-scan_indiv_y <- indiv_baseline_profile(scan_ss, rep_data$X_t, rep_data$y_t, rep_data$b_disc)
-final <- detect(scan_ss, chosen_window_size, scw = 8)
-plot(scan_ss$x, scan_ss$y, type = "l", col = "blue", lwd = 2,
+rep_out <- one_rep(signal_beta, seed = 300000)
+ss_profile <- rep_out$scan
+indiv_y <- indiv_scan(ss_profile, rep_out$X_t, rep_out$y_t, rep_out$b_disc)
+final <- detect_peaks(ss_profile, best_ws, scw = 8)
+plot(ss_profile$x, ss_profile$y, type = "l", col = "blue", lwd = 2,
      xlab = "SNP Index", ylab = "-log10(p)",
      main = "Summary-Stat RAS vs. Individual-Level Baseline")
-lines(scan_ss$x, scan_indiv_y, col = "darkgray", lty = 2, lwd = 2)
+lines(ss_profile$x, indiv_y, col = "darkgray", lty = 2, lwd = 2)
 abline(v = causal_snps, col = "red", lty = 2, lwd = 2)
 if (length(final$val$tau_hats) > 0) {
   abline(v = final$val$tau_hats, col = "darkgreen", lwd = 2)
   legend("topright",
-         legend = c("True causal region", "Validated changepoint", "Summary-Stat Profile", "Individual Baseline"),
+         legend = c("True causal region", "Validated changepoint", "Summary-stat", "Individual-level"),
          col = c("red", "darkgreen", "blue", "darkgray"), lty = c(2, 1, 1, 2), lwd = 2)
 } else {
   legend("topright",
-         legend = c("True causal region", "Summary-Stat Profile", "Individual Baseline"),
+         legend = c("True causal region", "Summary-stat", "Individual-level"),
          col = c("red", "blue", "darkgray"), lty = c(2, 1, 2), lwd = 2)
 }
+end_time <- Sys.time()
+runtime_seconds <- as.numeric(difftime(end_time, start_time, units = "secs"))
+cat(paste0("**Total Knitting Time:** ", round(runtime_seconds, 2), " seconds"))
 ```
