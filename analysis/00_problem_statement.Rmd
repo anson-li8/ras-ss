@@ -59,4 +59,44 @@ While a joint-effect approach with LD reconstruction (e.g., SuSiE-RSS) is a poss
 
 # Validation Results
 
-pending
+Setup: 300-SNP toy chromosome, AR(1) LD at $\rho = 0.8$, true signal at 3
+consecutive causal SNPs (150--152, effect size 0.5). Discovery and target
+cohorts of $n = 1000$ each (Method A), LD pruned at $r^2 < 0.2$
+(300 $\to$ 100 SNPs survived). The validated workflow is LD pruning +
+`T_burden` + the package's own unmodified `ras_detect()` / `ras_validate()`
+changepoint detection.
+
+Tuning: At package default of 5, the local slope re-check window is located on the flat top of the
+signal's plateau, so the slope looks weak even when the global changepoint
+test runs correctly. Increasing it to 8 increased first-pass acceptance on true
+signal from ~17% to ~100%. With `scw` fixed, the outer `window_size` was
+swept 6--20 at 100 reps per cell. Small windows are with low power because the 
+test can't see the full causal cluster. Power increases steeply through 8 and 10, then plateaus around
+0.93--0.97 from `window_size = 12` on, while Type I error stays around the nominal
+0.05 line the whole way (never above 0.07). The sweep metric (power $-$ Type I) 
+thus picks `window_size = 12`.
+
+Final parameters: `window_size = 12`, `slope_check_window_size = 8`,
+`slope.p.values.threshold.left/right = 1e-3`, `p.value.threshold = 1e-3`
+(the two thresholds taken from the package's own `@examples` for a
+similarly-sized toy profile).
+
+Results at these parameters:
+
+| Metric | Result | Reps |
+| --- | --- | --- |
+| Empirical Type I error | 0.038 | 500 |
+| Empirical power | 0.935 | 200 |
+| Edge-anchoring (localized to plateau edge, not center) | 0.000 | 200 |
+
+Interpretation: Type I error 0.038 sits at/below the nominal 0.05
+(95% CI roughly 0.02--0.06), similar to the
+original paper's Table 1 (their methods land 0.042--0.050, so this is a bit more
+conservative). Power 0.935 over 200 reps (95% CI roughly 0.90--0.97) is enough to 
+read as a real point estimate -- the summary-stat test has genuine power at this cohort size. 
+Edge-anchoring at zero over 200 reps means that when the method is executed, 
+it lands on the causal region, not the edge of the plateau. On the same simulated data the
+summary-stat profile overlaps the individual-level baseline almost exactly
+across the whole chromosome (see `01_simulation`), which demonstrates
+`T_burden` is a reasonable summary-stat analog of the original
+individual-level test.
