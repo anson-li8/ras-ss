@@ -357,7 +357,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -368,8 +368,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -382,9 +382,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -407,21 +407,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -512,15 +509,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree56e4190bc64930b3df629ad402131f77d1026c1dtargetblank56e4190a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreedc8e1bb2179e0a6576ff229943cb9655e4f21943targetblankdc8e1bba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/56e4190bc64930b3df629ad402131f77d1026c1d" target="_blank">56e4190</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/dc8e1bb2179e0a6576ff229943cb9655e4f21943" target="_blank">dc8e1bb</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree56e4190bc64930b3df629ad402131f77d1026c1dtargetblank56e4190a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreedc8e1bb2179e0a6576ff229943cb9655e4f21943targetblankdc8e1bba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -530,7 +527,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/56e4190bc64930b3df629ad402131f77d1026c1d" target="_blank">56e4190</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/dc8e1bb2179e0a6576ff229943cb9655e4f21943" target="_blank">dc8e1bb</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -547,10 +544,6 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-
-Unstaged changes:
-    Modified:   analysis/00_problem_statement.Rmd
-    Modified:   analysis/01_simulation.Rmd
 
 </code></pre>
 <p>
@@ -595,6 +588,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/dc8e1bb2179e0a6576ff229943cb9655e4f21943/analysis/01_simulation.Rmd" target="_blank">dc8e1bb</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+<td>
+cleanup output and improve simulation clarity
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/dc8e1bb2179e0a6576ff229943cb9655e4f21943/docs/01_simulation.html" target="_blank">dc8e1bb</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+<td>
+cleanup output and improve simulation clarity
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -892,43 +919,23 @@ sweep_df &lt;- data.frame(window_size = ws_candidates,
 # test each candidate
 for (k in seq_along(ws_candidates)) {
   ws &lt;- ws_candidates[k]
-  # null reps: any detection = type I error
-  null_res &lt;- future_lapply(seq_len(n_sweep), function(s) {
-    options(warn = -1) # hide package build warnings in workers
+    # null reps: any detection = type I error
+  null_res &lt;- suppressWarnings(future_lapply(seq_len(n_sweep), function(s) {
     scan &lt;- one_rep(null_beta, seed = 10000 * ws + s)$scan
     length(detect_peaks(scan, ws, scw = 8)$val$tau_hats) &gt; 0
-  })
+  }))
   # power reps: land on causal region or just trailing edge
-  power_res &lt;- future_lapply(seq_len(n_sweep), function(s) {
-    options(warn = -1) # hide package build warnings in workers
+  power_res &lt;- suppressWarnings(future_lapply(seq_len(n_sweep), function(s) {
     scan &lt;- one_rep(signal_beta, seed = 20000 * ws + s)$scan
     tau  &lt;- detect_peaks(scan, ws, scw = 8)$val$tau_hats
     c(center = any(tau &gt;= 130 &amp; tau &lt;= 170),
       edge = any(tau &gt;= 185 &amp; tau &lt;= 195) &amp;&amp; !any(tau &gt;= 130 &amp; tau &lt;= 170))
-  })
+  }))
   sweep_df$type1[k] &lt;- mean(unlist(null_res))
   sweep_df$power[k] &lt;- mean(sapply(power_res, function(x) x[&quot;center&quot;]))
   sweep_df$edge[k]  &lt;- mean(sapply(power_res, function(x) x[&quot;edge&quot;]))
-}</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>Warning in summary.lm(model): essentially perfect fit: summary may be
-unreliable</code></pre>
-<pre class="r"><code>print(sweep_df)</code></pre>
+}
+print(sweep_df)</code></pre>
 <pre><code>  window_size type1 power edge
 1           6  0.02  0.08    0
 2           8  0.05  0.22    0
@@ -947,25 +954,21 @@ cat(&quot;Chosen window_size:&quot;, best_ws, &quot;(scw = 8)\n&quot;)</code></p
 <div id="full-run-at-the-chosen-window-size" class="section level2">
 <h2>Full run at the chosen window size</h2>
 <pre class="r"><code>n_null &lt;- 500
-null_hits &lt;- unlist(future_lapply(seq_len(n_null), function(s) {
-  options(warn = -1)
+null_hits &lt;- unlist(suppressWarnings(future_lapply(seq_len(n_null), function(s) {
   scan &lt;- one_rep(null_beta, seed = 100000 + s)$scan
   length(detect_peaks(scan, best_ws, scw = 8)$val$tau_hats) &gt; 0
-}))</code></pre>
-<pre><code>Warning in summary.lm(model): essentially perfect fit: summary may be
-unreliable</code></pre>
-<pre class="r"><code>cat(sprintf(&quot;\nEmpirical Type I error over %d reps: %.3f\n&quot;, n_null, mean(null_hits)))</code></pre>
+})))
+cat(sprintf(&quot;\nEmpirical Type I error over %d reps: %.3f\n&quot;, n_null, mean(null_hits)))</code></pre>
 <pre><code>
 Empirical Type I error over 500 reps: 0.038</code></pre>
 <pre class="r"><code># Statistical power test by running signal_beta (patients w/ phenotype at SNPs 150-152)
 n_power &lt;- 200
-power_res &lt;- future_lapply(seq_len(n_power), function(s) {
-  options(warn = -1)
+power_res &lt;- suppressWarnings(future_lapply(seq_len(n_power), function(s) {
   scan &lt;- one_rep(signal_beta, seed = 200000 + s)$scan
   tau  &lt;- detect_peaks(scan, best_ws, scw = 8)$val$tau_hats
   c(center = any(tau &gt;= 130 &amp; tau &lt;= 170),
     edge = any(tau &gt;= 185 &amp; tau &lt;= 195) &amp;&amp; !any(tau &gt;= 130 &amp; tau &lt;= 170))
-})
+}))
 hit_center &lt;- sapply(power_res, function(x) x[&quot;center&quot;])
 hit_edge   &lt;- sapply(power_res, function(x) x[&quot;edge&quot;])
 cat(sprintf(&quot;\nEmpirical power (centered detections) over %d reps: %.3f\n&quot;, n_power, mean(hit_center)))</code></pre>
@@ -1034,6 +1037,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/dc8e1bb2179e0a6576ff229943cb9655e4f21943/docs/figure/01_simulation.Rmd/sweep-plot-1.png" target="_blank">dc8e1bb</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/anson-li8/ras-ss/blob/21eec7ec22a0c41765f61062e0779669e58e7bcf/docs/figure/01_simulation.Rmd/sweep-plot-1.png" target="_blank">21eec7e</a>
@@ -1123,6 +1137,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/anson-li8/ras-ss/blob/dc8e1bb2179e0a6576ff229943cb9655e4f21943/docs/figure/01_simulation.Rmd/illustration-1.png" target="_blank">dc8e1bb</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/anson-li8/ras-ss/blob/21eec7ec22a0c41765f61062e0779669e58e7bcf/docs/figure/01_simulation.Rmd/illustration-1.png" target="_blank">21eec7e</a>
 </td>
 <td>
@@ -1150,7 +1175,7 @@ Anson Li
 <pre class="r"><code>end_time &lt;- Sys.time()
 runtime_seconds &lt;- as.numeric(difftime(end_time, start_time, units = &quot;secs&quot;))
 cat(paste0(&quot;**Total Knitting Time:** &quot;, round(runtime_seconds, 2), &quot; seconds&quot;))</code></pre>
-<pre><code>**Total Knitting Time:** 1663.86 seconds</code></pre>
+<pre><code>**Total Knitting Time:** 1944.97 seconds</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1182,22 +1207,22 @@ attached base packages:
 
 other attached packages:
 [1] future.apply_1.20.2 future_1.75.0       RAS_0.1.12         
-[4] mvtnorm_1.4-2      
+[4] mvtnorm_1.4-2       workflowr_1.7.2    
 
 loaded via a namespace (and not attached):
  [1] jsonlite_2.0.0    compiler_4.6.0    promises_1.5.0    Rcpp_1.1.2       
- [5] stringr_1.6.0     git2r_0.36.2      parallel_4.6.0    later_1.4.8      
- [9] jquerylib_0.1.4   globals_0.19.1    splines_4.6.0     yaml_2.3.12      
-[13] fastmap_1.2.0     lattice_0.22-9    R6_2.6.1          workflowr_1.7.2  
+ [5] stringr_1.6.0     git2r_0.36.2      parallel_4.6.0    callr_3.8.0      
+ [9] later_1.4.8       jquerylib_0.1.4   globals_0.19.1    splines_4.6.0    
+[13] yaml_2.3.12       fastmap_1.2.0     lattice_0.22-9    R6_2.6.1         
 [17] knitr_1.51        MASS_7.3-66       tibble_3.3.1      rprojroot_2.1.1  
 [21] bslib_0.11.0      pillar_1.11.1     rlang_1.3.0       cachem_1.1.0     
-[25] stringi_1.8.7     httpuv_1.6.17     xfun_0.60         fs_2.1.0         
-[29] sass_0.4.10       segmented_2.2-1   otel_0.2.0        cli_3.6.6        
-[33] magrittr_2.0.5    grid_4.6.0        digest_0.6.39     rstudioapi_0.19.0
-[37] nlme_3.1-170      lifecycle_1.0.5   vctrs_0.7.3       evaluate_1.0.5   
-[41] glue_1.8.1        listenv_1.0.0     whisker_0.4.1     codetools_0.2-20 
-[45] parallelly_1.48.0 rmarkdown_2.31    tools_4.6.0       pkgconfig_2.0.3  
-[49] htmltools_0.5.9  </code></pre>
+[25] stringi_1.8.7     httpuv_1.6.17     xfun_0.60         getPass_0.2-4    
+[29] fs_2.1.0          sass_0.4.10       segmented_2.2-1   otel_0.2.0       
+[33] cli_3.6.6         magrittr_2.0.5    grid_4.6.0        digest_0.6.39    
+[37] processx_3.9.0    rstudioapi_0.19.0 nlme_3.1-170      lifecycle_1.0.5  
+[41] vctrs_0.7.3       evaluate_1.0.5    glue_1.8.1        listenv_1.0.0    
+[45] whisker_0.4.1     codetools_0.2-20  parallelly_1.48.0 rmarkdown_2.31   
+[49] httr_1.4.8        tools_4.6.0       pkgconfig_2.0.3   htmltools_0.5.9  </code></pre>
 </div>
 </div>
 </div>
