@@ -378,7 +378,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-07-23
+<strong>Last updated:</strong> 2026-07-24
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -425,15 +425,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree610501019ec5c28b9288250adf248372ac72bf2atargetblank6105010a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree81437584308be7c694d8a4b66c1ff6f1efb5e456targetblank8143758a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/610501019ec5c28b9288250adf248372ac72bf2a" target="_blank">6105010</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/81437584308be7c694d8a4b66c1ff6f1efb5e456" target="_blank">8143758</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree610501019ec5c28b9288250adf248372ac72bf2atargetblank6105010a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree81437584308be7c694d8a4b66c1ff6f1efb5e456targetblank8143758a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -443,7 +443,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/610501019ec5c28b9288250adf248372ac72bf2a" target="_blank">6105010</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/81437584308be7c694d8a4b66c1ff6f1efb5e456" target="_blank">8143758</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -504,6 +504,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/81437584308be7c694d8a4b66c1ff6f1efb5e456/analysis/00_problem_statement.Rmd" target="_blank">8143758</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-24
+</td>
+<td>
+workflowr::wflow_publish("analysis/00_problem_statement.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/d2e40a615b5a89f6a1a904c9553e8c46bf49ca47/docs/00_problem_statement.html" target="_blank">d2e40a6</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -935,6 +969,16 @@ overlaps the individual-level baseline almost exactly across the whole
 chromosome (see <code>01_simulation</code>), which demonstrates
 <code>T_burden</code> is a reasonable summary-stat analog of the
 original individual-level test.</p>
+<p><strong>Open items, not yet addressed:</strong> - No summary-stat
+analog implemented yet for the original method’s
+<code>num_rep = 5</code> resampling average (Method A has no
+individual-level data to resplit). - Reference-panel LD is drawn from
+the same simulated population as the discovery/target cohorts here;
+ancestry-mismatch sensitivity (real reference panel vs. true cohort LD)
+has not yet been stress-tested. - Calibration performed on a single toy
+configuration (<span class="math inline">\(n=300\)</span>, <span
+class="math inline">\(\rho=0.8\)</span>); has not been re-verified at
+other chromosome sizes or LD structures.</p>
 </div>
 </div>
 </div>
