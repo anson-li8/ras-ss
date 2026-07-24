@@ -100,3 +100,14 @@ summary-stat profile overlaps the individual-level baseline almost exactly
 across the whole chromosome (see `01_simulation`), which demonstrates
 `T_burden` is a reasonable summary-stat analog of the original
 individual-level test.
+
+**Open items, not yet addressed:**
+- No summary-stat analog implemented yet for the original method's
+  `num_rep = 5` resampling average (Method A has no individual-level data
+  to resplit).
+- Reference-panel LD is drawn from the same simulated population as the
+  discovery/target cohorts here; ancestry-mismatch sensitivity (real
+  reference panel vs. true cohort LD) has not yet been stress-tested.
+- Calibration performed on a single toy configuration ($n=300$,
+  $\rho=0.8$); has not been re-verified at other chromosome sizes or LD
+  structures.
