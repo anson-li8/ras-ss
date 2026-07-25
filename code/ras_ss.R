@@ -76,51 +76,43 @@ scan_ss <- function(b_disc, z_targ, R, prune_filter) {
 
 # NOTE: no num_rep averaging here. method A has fixed disc/targ stats, nothing to resplit
 one_rep <- function(true_beta, seed) {
-  set.seed(seed)
-  X_d <- sim_genotypes(n_disc, R_true)
-  X_t <- sim_genotypes(n_targ, R_true)
-  y_d <- X_d %*% true_beta + rnorm(n_disc, 0, 3)
-  y_t <- X_t %*% true_beta + rnorm(n_targ, 0, 3)
-  disc <- get_marginal_stats(X_d, y_d)
-  targ <- get_marginal_stats(X_t, y_t)
-  scan <- scan_ss(disc$beta, targ$z, R_emp, prune_filter)
-  list(scan = scan, X_t = X_t, y_t = y_t, b_disc = disc$beta)
+  set.seed(seed) # reproducibility
+  X_d <- sim_genotypes(n_disc, R_true) # simulate discovery cohort genotypes - Method A discovery dataset
+  X_t <- sim_genotypes(n_targ, R_true) # simulate target cohort's genotypes - cohort we are testing
+  y_d <- X_d %*% true_beta + rnorm(n_disc, 0, 3) # build discovery cohort phenotype from true causal effect plus random noise
+  y_t <- X_t %*% true_beta + rnorm(n_targ, 0, 3) # build target cohort phenotype the same way
+  disc <- get_marginal_stats(X_d, y_d) # run GWAS on discovery cohort to give weight vector w, per Method A
+  targ <- get_marginal_stats(X_t, y_t) # run GWAS on target cohort to give Z-score vector Z we are testing
+  scan <- scan_ss(disc$beta, targ$z, R_emp, prune_filter) # run full ras-ss scan, discovery weights (w), target Z-scores (Z), pruned reference LD matrix (R)
+  list(scan = scan, X_t = X_t, y_t = y_t, b_disc = disc$beta) # return RAS time series, plus raw target data for individual-level comparison on exact same cohort
 }
 
 # scw=5 (package default) only gave ~17-20% first-pass acceptance on true signal
 # because slope re-check window sits inside the flat top of the plateau
 # scw=8 fixes this, acceptance goes to ~100%
 detect_peaks <- function(scan, window_size, scw = 8) {
-  stopifnot(window_size < length(scan$x))
+  stopifnot(window_size < length(scan$x)) # stop if CPD sliding scan window bigger than whole time series
   tryCatch({
     # first pass: changepoint detection
-    # use sink() to hide cat() verbose
-    null_con <- file(nullfile(), open = "wt")
-    sink(null_con, type = "output")
-    sink(null_con, type = "message")
-    cp <- ras_detect(
-      x = scan$x, y = scan$y,
-      window_size                    = window_size,
-      slope_check_window_size        = scw,
-      slope.p.values.threshold.left  = slope_thresh,
-      slope.p.values.threshold.right = slope_thresh
-    )
+    cp <- ras_detect( # actual, unmodified original package's changepoint detection, sliding checking window running Davies test at each position
     # second pass: local Davies validation
-    val <- suppressWarnings(ras_validate(
+      x = scan$x, y = scan$y,
+      window_size                    = window_size, # width of siding checking window, tuned to 12 from simulation 1
+      slope_check_window_size        = scw, # how many points on each side used to check left-rising / right-falling slope condition, set to 8 instead of package default of 5
+      slope.p.values.threshold.left  = slope_thresh, # how strict left-slope-rising check has to be before call it real peak
+      slope.p.values.threshold.right = slope_thresh # same as above, but for right-slope-falling
+    )
+    # second pass: Davies validation
+    val <- ras_validate( # reconfirming change point with tigther local Davies test and going to nearest local maximum, unmodified package function
       this.result = cp, x = scan$x, y = scan$y,
-      this.start = 1, this.skip = skip1,
-      second_window_size = 15, min_signal = 2.5,
-      p.value.threshold = davies_thresh
-    ))
-    # stop redirecting output
-    sink(type = "message")
-    sink(type = "output")
-    close(null_con)
-    list(val = val, candidates = cp$all.changepoints, error = FALSE)
+      this.start = 1, this.skip = skip1, # tells ras_validate how pivotal SNP grid was spaced, so it can convert positions back to real SNP coordinates
+      second_window_size = 15, # width of second-pass local check window
+      min_signal = 2.5, # RAS has to be at least this big for a changepoint to count as real signal, not just noise
+      p.value.threshold = davies_thresh # how strict the second-pass Davies test has to be
+    )
+    list(val = val, candidates = cp$all.changepoints, error = FALSE) # return validated change points, plus all raw canidates before validation
   }, error = function(e) {
-    # ensure sink is turned off even if an error occurs
-    try({ sink(type = "message"); sink(type = "output"); close(null_con) }, silent = TRUE)
-    list(val = list(tau_hats = numeric(0)), candidates = NULL, error = TRUE)
+    list(val = list(tau_hats = numeric(0)), candidates = NULL, error = TRUE) # something went wrong
   })
 }
 
@@ -135,7 +127,7 @@ indiv_scan <- function(scan, X_t, y_t, b_disc) {
       win_snps <- win_snps[prune_filter[win_snps]]
       if (length(win_snps) < 1) next
       lprs <- X_t[, win_snps, drop = FALSE] %*% b_disc[win_snps]
-      fit  <- suppressWarnings(summary(lm(y_t ~ lprs)))
+      fit  <- summary(lm(y_t ~ lprs))
       p    <- if (nrow(fit$coefficients) > 1) fit$coefficients[2, 4] else 1
       best_p <- min(best_p, p)
     }
@@ -155,14 +147,14 @@ native_run <- function(true_beta, seed) {
   n <- nrow(X_t)
   train <- sort(sample(n, n %/% 2)); hold <- setdiff(seq_len(n), train)
   nc <- file(nullfile(), open = "wt"); sink(nc, type = "output"); sink(nc, type = "message")
-  w   <- suppressWarnings(compute_gwas_weights(X_t, y_t[train], train,
-                                               data.frame(row.names = seq_len(n)), TRUE))[, 1]
+  w   <- compute_gwas_weights(X_t, y_t[train], train,
+                                               data.frame(row.names = seq_len(n)), TRUE)[, 1]
   pgs <- compute_pgs_matrix(X_t, hold, w)
-  pv  <- suppressWarnings(screen_forward_max_region(X_t, pgs,
-                                                    data.frame(phenotype2 = y_t[hold]), -1, is_continuous = TRUE,
-                                                    covariate_formula = "1", skip1 = skip1, skip2 = skip2,
-                                                    min_window_size = min_window_size, max_window_size = max_window_size,
-                                                    isSimulation = FALSE, isPlot = FALSE))
+  pv  <- screen_forward_max_region(X_t, pgs,
+          data.frame(phenotype2 = y_t[hold]), -1, is_continuous = TRUE,
+          covariate_formula = "1", skip1 = skip1, skip2 = skip2,
+          min_window_size = min_window_size, max_window_size = max_window_size,
+          isSimulation = FALSE, isPlot = FALSE)
   sink(type = "message"); sink(type = "output"); close(nc)
   x_grid <- seq(1, ncol(X_t), by = skip1)
   stopifnot(length(x_grid) == length(pv))     # grid must equal package profile
