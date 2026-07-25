@@ -5,13 +5,10 @@ output: html_document
 
 ```{r setup, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-suppressPackageStartupMessages({
-  library(mvtnorm)
-  library(RAS)
-  library(future.apply)
-})
+library(mvtnorm)
+library(RAS)
+library(future.apply)
 plan(multisession)
-options(future.rng.onMisuse = "ignore")
 start_time <- Sys.time()
 source("code/ras_ss.R")
 ```
@@ -44,7 +41,7 @@ signal_beta <- rep(0, n_snps)
 signal_beta[causal_snps] <- effect_size
 ```
 
-```{r three-arm, message=FALSE, warning=FALSE}
+```{r comparison, message=FALSE, warning=FALSE}
 # rows 1 & 2 share the same simulated data per rep (paired test);
 # row 3 runs the shipped package pipeline with its own internal 50/50 split.
 n_null  <- 500

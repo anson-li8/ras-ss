@@ -117,48 +117,71 @@ detect_peaks <- function(scan, window_size, scw = 8) {
 }
 
 # individual-level RAS for comparison (original method)
+# original LPRS-based calculation
 indiv_scan <- function(scan, X_t, y_t, b_disc) {
-  sub_windows <- c(0, seq(min_window_size, max_window_size, by = skip2))
-  if (sub_windows[length(sub_windows)] != max_window_size) sub_windows <- c(sub_windows, max_window_size)
-  sapply(scan$x, function(s) {
-    best_p <- 1
-    for (ws in sub_windows) {
-      win_snps <- if (ws == 0) s else max(1, s - ws):min(n_snps, s + ws)
-      win_snps <- win_snps[prune_filter[win_snps]]
-      if (length(win_snps) < 1) next
-      lprs <- X_t[, win_snps, drop = FALSE] %*% b_disc[win_snps]
-      fit  <- summary(lm(y_t ~ lprs))
-      p    <- if (nrow(fit$coefficients) > 1) fit$coefficients[2, 4] else 1
-      best_p <- min(best_p, p)
+  sub_windows <- c(0, seq(min_window_size, max_window_size, by = skip2)) # same candidate window size list as scan_ss
+  if (sub_windows[length(sub_windows)] != max_window_size) sub_windows <- c(sub_windows, max_window_size) # same as scan_ss
+  sapply(scan$x, function(s) { # for every pivotal SNP position, compute ORIGINAL individual-level RAS instead of summary-stat one
+    best_p <- 1 # same as before, start assuming least significant
+    for (ws in sub_windows) { # loop thru same adaptive window candidates
+      win_snps <- if (ws == 0) s else max(1, s - ws):min(n_snps, s + ws) #same window construction as scan_ss
+      win_snps <- win_snps[prune_filter[win_snps]] # same LD pruning mask
+      if (length(win_snps) < 1) next # same skip-if-empty
+      lprs <- X_t[, win_snps, drop = FALSE] %*% b_disc[win_snps] # actual LPRS formula that the original method used, individual-level genotype dosages used
+      fit  <- summary(lm(y_t ~ lprs)) # original method's second regression step, regressing real phenotypes against LPRS scores to get p-value
+      p    <- if (nrow(fit$coefficients) > 1) fit$coefficients[2, 4] else 1 # pull p-value for LPRS slope or default to not significant if no fit
+      best_p <- min(best_p, p) # same as before, keep smallest p-value across window sizes
     }
-    -log10(max(best_p, .Machine$double.xmin))
+    -log10(max(best_p, .Machine$double.xmin)) # same conversion to final RAS value
   })
 }
 
-# did the validated peak land on the causal cluster
+# did the validated peak land on the causal cluster (for power calculation)
 in_zone <- function(tau) any(tau >= 130 & tau <= 170)
 
-# the package's individual-level workflow, run as a user would:
-# internal 50/50 split, no LD pruning. returns the validated tau_hats.
+# the package's individual-level workflow, run only a single 50/50 split though
+# no LD pruning. returns the validated tau_hats.
 native_run <- function(true_beta, seed) {
-  set.seed(seed)
-  X_t <- sim_genotypes(n_targ, R_true)
-  y_t <- as.numeric(X_t %*% true_beta + rnorm(n_targ, 0, 3))
-  n <- nrow(X_t)
-  train <- sort(sample(n, n %/% 2)); hold <- setdiff(seq_len(n), train)
-  nc <- file(nullfile(), open = "wt"); sink(nc, type = "output"); sink(nc, type = "message")
+  set.seed(seed) # reproducibility
+  X_t <- sim_genotypes(n_targ, R_true) # simulate cohort's genotypes, no separate discovery cohort here, bc we are testing ORIGINAL algorithm which does the split
+  y_t <- as.numeric(X_t %*% true_beta + rnorm(n_targ, 0, 3)) # build cohort phenotype like before
+  n <- nrow(X_t) # total number of ppl in cohort
+  train <- sort(sample(n, n %/% 2)) # randomly pick half for training split (50/50)
+  hold <- setdiff(seq_len(n), train) # everyone not picked for training becomes testing split
   w   <- compute_gwas_weights(X_t, y_t[train], train,
-                                               data.frame(row.names = seq_len(n)), TRUE)[, 1]
-  pgs <- compute_pgs_matrix(X_t, hold, w)
-  pv  <- screen_forward_max_region(X_t, pgs,
+                                               data.frame(row.names = seq_len(n)), TRUE)[, 1] # calls unmodified package function that runs GWAS on training split to get weights
+  pgs <- compute_pgs_matrix(X_t, hold, w) # calls rela package function that builds LPRS matrix for testing split, original package func
+  pv  <- screen_forward_max_region(X_t, pgs, # call real package's own scanning function
           data.frame(phenotype2 = y_t[hold]), -1, is_continuous = TRUE,
           covariate_formula = "1", skip1 = skip1, skip2 = skip2,
           min_window_size = min_window_size, max_window_size = max_window_size,
           isSimulation = FALSE, isPlot = FALSE)
-  sink(type = "message"); sink(type = "output"); close(nc)
-  x_grid <- seq(1, ncol(X_t), by = skip1)
+  x_grid <- seq(1, ncol(X_t), by = skip1) # rebuild pivotal SNP positions to match what package's scan actually used
   stopifnot(length(x_grid) == length(pv))     # grid must equal package profile
-  suppressWarnings(
-    detect_peaks(list(x = x_grid, y = pv), best_ws, scw = 8)$val$tau_hats
+  detect_peaks(list(x = x_grid, y = pv), best_ws, scw = 8)$val$tau_hats # run original individual-level result through exact same CPD detection step used earlier for fair comparison
+}
+
+# most pure run based on original RAS function
+native_run_via_ras <- function(true_beta, seed) {
+  set.seed(seed)
+  X_t <- sim_genotypes(n_targ, R_true)
+  y_t <- as.numeric(X_t %*% true_beta + rnorm(n_targ, 0, 3))
+  covs <- data.frame(dummy_cov = rnorm(n_targ))   # harmless, uncorrelated, avoids empty-formula issue
+  result <- ras(
+    geno = X_t, phenotype = y_t,
+    covariates = covs, covariate_cols = "dummy_cov",
+    is_continuous = TRUE,
+    num_rep = 5,                       # true default averaging of 5 reps, current limitation of ras-ss
+    skip1 = skip1, skip2 = skip2,      # skip2 = 3, not the default 20
+    min_window_size = min_window_size, max_window_size = max_window_size,
+    cp_window_size = best_ws,          # 12
+    cp_slope_check_window = 8,
+    cp_slope_left = slope_thresh, cp_slope_right = slope_thresh,
+    second_window_size = 15,
+    second_p_threshold = davies_thresh,
+    min_signal = 2.5,
+    run_plots = FALSE,                 # don't generate PDFs for every replicate
+    save_dir = tempdir()
   )
+  result$detection$tau_hats
 }
