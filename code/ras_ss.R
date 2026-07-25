@@ -43,36 +43,35 @@ get_marginal_stats <- function(X, y) {
 }
 
 # T_burden = w'Z / sqrt(w'Rw), from problem statement
+# burden test statistic
 t_burden <- function(w, Z, R) {
-  denom <- sqrt(as.numeric(t(w) %*% R %*% w))
-  if (!is.finite(denom) || denom <= 0) return(0)
-  as.numeric((t(w) %*% Z) / denom)
+  denom <- sqrt(as.numeric(t(w) %*% R %*% w)) # quadratic form, sqrt(w'Rw), standard deviation, no need to invert R, so no ridge/regularization needed
+  if (!is.finite(denom) || denom <= 0) return(0) # safety check if denominator is somehow broken, just say no signal instead of crash
+  as.numeric((t(w) %*% Z) / denom) # actual T_burden, weights dot-multiplied w/ Z-scores in numerator, divided by std dev
 }
 
-# summary-stat RAS scan: for each pivotal SNP, find window with max -log10(p)
-scan_ss <- function(b_disc, z_targ, R, mask) {
-  n_snps <- length(b_disc)
-  sites <- seq(1, n_snps, by = skip1)
-  sub_windows  <- c(0, seq(min_window_size, max_window_size, by = skip2))
-  if (sub_windows[length(sub_windows)] != max_window_size) sub_windows <- c(sub_windows, max_window_size)
-  y_profile <- sapply(sites, function(s) {
-    best_p <- 1
-    for (ws in sub_windows) {
-      win_snps <- if (ws == 0) s else max(1, s - ws):min(n_snps, s + ws)
-      win_snps <- win_snps[mask[win_snps]]
-      if (length(win_snps) < 1) next
-      w_sub <- b_disc[win_snps]
-      z_sub <- z_targ[win_snps]
-      R_sub <- R[win_snps, win_snps, drop = FALSE]
-      num <- sum(w_sub * z_sub)
-      denom <- sqrt(as.numeric(w_sub %*% R_sub %*% w_sub))
-      if (!is.finite(denom) || denom <= 0) next
-      t_val <- num / denom
-      best_p <- min(best_p, 2 * pnorm(-abs(t_val)))
+# summary-stat RAS scan: for each pivotal SNP, find window with minimum p-value
+# ras-ss replacement for individual-level LPRS + regression step
+scan_ss <- function(b_disc, z_targ, R, prune_filter) {
+  n_snps <- length(b_disc) # how many total SNPs we are scanning across
+  sites <- seq(1, n_snps, by = skip1) # pivotal SNPS, picked at regular intervals instead of every single SNP, to save time
+  sub_windows  <- c(0, seq(min_window_size, max_window_size, by = skip2)) # build candidate window sizes for adaptive window, from 0 up to max
+  if (sub_windows[length(sub_windows)] != max_window_size) sub_windows <- c(sub_windows, max_window_size) # make sure biggest candidate window size always included even if step size goes past it
+  y_profile <- sapply(sites, function(s) { # for every pivotal SNP s, compute its RAS value, so we can get the time-series data
+    best_p <- 1 # start out assuming least significant p-value possible, we will find smallest one
+    for (ws in sub_windows) { # loop through every candidate window size for pivotal SNP, adaptive window search
+      win_snps <- if (ws == 0) s else max(1, s - ws):min(n_snps, s + ws) # adaptive window, pivotal SNP s plus ws SNPs on either side, clip so we don't exceed the chromosome
+      win_snps <- win_snps[prune_filter[win_snps]] # discard any SNPs that were removed by LD pruning earlier
+      if (length(win_snps) < 1) next # if pruning wiped out whole window, skip window size and try next candidate
+      w_sub <- b_disc[win_snps] # get discovery-cohort weights (w) for SNPs in this window
+      z_sub <- z_targ[win_snps] # get target-cohort Z-scores (Z) for SNPs in this window
+      R_sub <- R[win_snps, win_snps, drop = FALSE] # get LD correlation submatrix for SNPs in this window
+      t_val <- t_burden(w_sub, z_sub, R_sub) # calculate T-burden using our helper function
+      best_p <- min(best_p, 2 * pnorm(-abs(t_val))) # turn T_burden into two-tailed p-value and keep smallest one seen so far across window sizes
     }
-    -log10(max(best_p, .Machine$double.xmin))
+    -log10(max(best_p, .Machine$double.xmin)) # one every window size has been tried, take -log10 of best p-value found, this is RAS for this pivotal SNP, safe guard to prevent taking log of exactly 0
   })
-  list(x = sites, y = y_profile)
+  list(x = sites, y = y_profile) # return pivotal SNP positions and their RAS values, formatted like time-series data CPD algorithm expects
 }
 
 # NOTE: no num_rep averaging here. method A has fixed disc/targ stats, nothing to resplit
