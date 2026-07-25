@@ -1,0 +1,89 @@
+---
+title: "02_simulation"
+output: html_document
+---
+
+```{r setup, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+suppressPackageStartupMessages({
+  library(mvtnorm)
+  library(RAS)
+  library(future.apply)
+})
+plan(multisession)
+options(future.rng.onMisuse = "ignore")
+start_time <- Sys.time()
+source("code/ras_ss.R")
+```
+
+```{r config}
+# run config
+n_snps    <- 300
+n_disc    <- 1000 # discovery cohort, method A (small for speed)
+n_targ    <- 1000 # target cohort (small for speed)
+rho       <- 0.8 # AR(1) correlation for LD
+skip1           <- 10
+skip2           <- 3
+min_window_size <- 3
+max_window_size <- 30
+prune_r2        <- 0.2
+causal_snps  <- c(150, 151, 152)
+effect_size  <- 0.5
+slope_thresh   <- 1e-3
+davies_thresh  <- 1e-3
+base_seed      <- 35
+best_ws        <- 12 # chosen via the window-size sweep in 01_simulation
+R_true <- outer(1:n_snps, 1:n_snps, function(i, j) rho^abs(i - j))
+set.seed(base_seed)
+X_ref <- sim_genotypes(10000, R_true)
+R_emp <- cor(X_ref)
+prune_filter <- prune_ld(R_emp, prune_r2)
+cat("Surviving SNPs after LD pruning:", sum(prune_filter), "of", n_snps, "\n")
+null_beta   <- rep(0, n_snps)
+signal_beta <- rep(0, n_snps)
+signal_beta[causal_snps] <- effect_size
+```
+
+```{r three-arm, message=FALSE, warning=FALSE}
+# rows 1 & 2 share the same simulated data per rep (paired test);
+# row 3 runs the shipped package pipeline with its own internal 50/50 split.
+n_null  <- 500
+n_power <- 200
+paired_null <- future_lapply(seq_len(n_null), function(s) suppressWarnings({
+  r   <- one_rep(null_beta, seed = 100000 + s)
+  ind <- indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)
+  c(ss  = length(detect_peaks(r$scan, best_ws, scw = 8)$val$tau_hats) > 0,
+    ind = length(detect_peaks(list(x = r$scan$x, y = ind), best_ws, scw = 8)$val$tau_hats) > 0)
+}))
+paired_pow <- future_lapply(seq_len(n_power), function(s) suppressWarnings({
+  r   <- one_rep(signal_beta, seed = 200000 + s)
+  ind <- indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)
+  c(ss  = in_zone(detect_peaks(r$scan, best_ws, scw = 8)$val$tau_hats),
+    ind = in_zone(detect_peaks(list(x = r$scan$x, y = ind), best_ws, scw = 8)$val$tau_hats))
+}))
+ss_n <- sapply(paired_null, `[`, "ss"); ind_n <- sapply(paired_null, `[`, "ind")
+ss_p <- sapply(paired_pow,  `[`, "ss"); ind_p <- sapply(paired_pow,  `[`, "ind")
+nat_n <- unlist(future_lapply(seq_len(n_null),  function(s)
+            suppressWarnings(length(native_run(null_beta,   300000 + s)) > 0)))
+nat_p <- unlist(future_lapply(seq_len(n_power), function(s)
+            suppressWarnings(in_zone(native_run(signal_beta, 400000 + s)))))
+```
+
+```{r results}
+fmt <- function(k, n) {
+  b <- binom.test(sum(k), n)$conf.int
+  sprintf("%.3f (%.3f-%.3f)", mean(k), b[1], b[2])
+}
+knitr::kable(data.frame(
+  row   = c("ras-ss", "indiv (same data)", "indiv (original pkg, own 50/50 split)"),
+  type1 = c(fmt(ss_n, n_null),  fmt(ind_n, n_null),  fmt(nat_n, n_null)),
+  power = c(fmt(ss_p, n_power), fmt(ind_p, n_power), fmt(nat_p, n_power)),
+  reps  = paste0(n_null, " / ", n_power)
+), caption = "Method comparison -- point estimate (95% CI)")
+# ras-ss uses the same seeds as the published number,
+# so this must reproduce 0.038 / 0.935 exactly
+cat(sprintf("ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f (expect 0.935)\n",
+            mean(ss_n), mean(ss_p)))
+cat(sprintf("Total knitting time: %.1f minutes\n",
+            as.numeric(difftime(Sys.time(), start_time, units = "mins"))))
+```
