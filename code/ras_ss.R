@@ -136,9 +136,6 @@ indiv_scan <- function(scan, X_t, y_t, b_disc) {
   })
 }
 
-# did the validated peak land on the causal cluster (for power calculation)
-in_zone <- function(tau) any(tau >= 130 & tau <= 170)
-
 # the package's individual-level workflow, run only a single 50/50 split though
 # no LD pruning. returns the validated tau_hats.
 native_run <- function(true_beta, seed) {
