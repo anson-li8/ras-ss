@@ -7,15 +7,8 @@ editor_options:
   chunk_output_type: console
 ---
 
-What license are you using for your code? See [choosealicense.com][choose] for
-help deciding. It's a convention to save a file `LICENSE` in the root of your
-Git repo that contains the license text.
+**Code** in this repository (the `ras-ss` extension and the simulation code) is released under the **MIT License**. See the `LICENSE` / `LICENSE.md` files in the repo root.
 
-What license are you using for the written content on your site? It is
-traditional to choose a [Creative Commons][cc] license for this type of content.
+**Written content** on this site (the problem statement and these pages) is released under **CC BY 4.0**.
 
-[choose]: https://choosealicense.com/
-[cc]: https://creativecommons.org/choose/
-
-How should others cite your work? It's a convention to save a file `CITATION`
-in the root of your Git repo that contains the citation information.
+**Citing the method:** ras-ss extends Jiang & Zhang (2025), *Empowering genome-wide association studies via a visualizable test based on the regional association score*, PNAS 122(9) e2419721122. Please cite that paper for the underlying RAS method. A `CITATION` entry for ras-ss itself will be added once the work is citable as its own artifact.

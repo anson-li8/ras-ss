@@ -8,4 +8,11 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+**ras-ss** extends the Regional Association Score (RAS) method so it runs on GWAS **summary statistics** instead of individual-level data. This opens up opportunities to run analysis on the studies that only publish summary statistics like marginals and LD references, which is most of them. This site is the reproducible record of that work:
+
+- **[Problem Statement](00_problem_statement.html)** — what RAS does, why it needs individual-level data, and the derivation of the summary-statistic burden statistic (`T_burden`) that replaces it.
+- **[Simulation](01_simulation.html)** — the tuning run on a 300-SNP toy chromosome: the window-size sweep and the `slope_check_window_size` alteration that the detection step needed.
+- **[Validation](02_simulation.html)** — the three-run comparison (ras-ss vs. the individual-level method on matched data vs. the original `ras()` with `num_rep = 5`), with type I error, power, and peak-location diagnostics.
+- **[About](about.html)** — one-paragraph project overview, status, and citations.
+
+**Status:** validated by simulation. However, a real summary-statistic run is pending. The significant result is the consistency with the original. On identical simulated data, ras-ss agrees with the individual-level method on 199 of 200 signal replicates, at a type I error (0.038) that falls within the original paper's stated range.
