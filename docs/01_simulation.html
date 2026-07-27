@@ -559,15 +559,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree911a882e7a9053f43162f1923d7cab0bc7f1b221targetblank911a882a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreebc3aa54befb1b779c1ac196fc4a41f22acb7d404targetblankbc3aa54a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/911a882e7a9053f43162f1923d7cab0bc7f1b221" target="_blank">911a882</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/bc3aa54befb1b779c1ac196fc4a41f22acb7d404" target="_blank">bc3aa54</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree911a882e7a9053f43162f1923d7cab0bc7f1b221targetblank911a882a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreebc3aa54befb1b779c1ac196fc4a41f22acb7d404targetblankbc3aa54a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -577,7 +577,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/911a882e7a9053f43162f1923d7cab0bc7f1b221" target="_blank">911a882</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/bc3aa54befb1b779c1ac196fc4a41f22acb7d404" target="_blank">bc3aa54</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -596,9 +596,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
-
-Unstaged changes:
-    Modified:   analysis/00_problem_statement.Rmd
 
 </code></pre>
 <p>
@@ -643,6 +640,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/bc3aa54befb1b779c1ac196fc4a41f22acb7d404/analysis/01_simulation.Rmd" target="_blank">bc3aa54</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-27
+</td>
+<td>
+wflow_publish("analysis/01_simulation.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/01b38151bc9f327ec50529df6f7d0850be34585b/docs/01_simulation.html" target="_blank">01b3815</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -890,20 +921,6 @@ slope_thresh   &lt;- 1e-3
 davies_thresh  &lt;- 1e-3
 # reproducibility
 base_seed      &lt;- 35</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <pre class="r"><code># Autoregressive AR(1) matrix with rho = 0.8
 # simulates the LD matrix
 R_true &lt;- outer(1:n_snps, 1:n_snps, function(i, j) rho^abs(i - j))
@@ -931,20 +948,6 @@ prune_ld &lt;- function(R, thresh) {
 prune_filter &lt;- prune_ld(R_emp, prune_r2)
 cat(&quot;Surviving SNPs after LD pruning:&quot;, sum(prune_filter), &quot;of&quot;, n_snps, &quot;\n&quot;)</code></pre>
 <pre><code>Surviving SNPs after LD pruning: 100 of 300 </code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <pre class="r"><code># runs linear regression for every SNP to measure correlation with phenotype y
 get_marginal_stats &lt;- function(X, y) {
   # Vectorized OLS for massive speedup
@@ -1007,20 +1010,6 @@ one_rep &lt;- function(true_beta, seed) {
 null_beta   &lt;- rep(0, n_snps)
 signal_beta &lt;- rep(0, n_snps)
 signal_beta[causal_snps] &lt;- effect_size</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <pre class="r"><code># scw=5 (package default) only gave ~17-20% first-pass acceptance on true signal
 # because slope re-check window sits inside the flat top of the plateau
 # scw=8 fixes this, acceptance goes to ~100%
@@ -1057,20 +1046,6 @@ detect_peaks &lt;- function(scan, window_size, scw = 8) {
     list(val = list(tau_hats = numeric(0)), candidates = NULL, error = TRUE)
   })
 }</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <div id="window-size-sweep-for-cpd-type-i-error-power"
 class="section level2">
 <h2>Window-size sweep for CPD: Type I error &amp; power</h2>
@@ -1105,20 +1080,6 @@ print(sweep_df)</code></pre>
 4          12  0.05  0.97    0
 5          15  0.03  0.93    0
 6          20  0.07  0.92    0</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <pre class="r"><code># choose the window size with the maximum detection power and lowest Type I Error rate
 best_ws &lt;- ws_candidates[which.max(sweep_df$power - sweep_df$type1)]
 cat(&quot;Chosen window_size:&quot;, best_ws, &quot;(scw = 8)\n&quot;)</code></pre>
@@ -1126,20 +1087,6 @@ cat(&quot;Chosen window_size:&quot;, best_ws, &quot;(scw = 8)\n&quot;)</code></p
 <pre class="r"><code>print(sweep_df[sweep_df$window_size == best_ws, ])</code></pre>
 <pre><code>  window_size type1 power edge
 4          12  0.05  0.97    0</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 </div>
 <div id="full-run-at-the-chosen-window-size" class="section level2">
 <h2>Full run at the chosen window size</h2>
@@ -1151,20 +1098,6 @@ null_hits &lt;- unlist(suppressWarnings(future_lapply(seq_len(n_null), function(
 cat(sprintf(&quot;\nEmpirical Type I error over %d reps: %.3f\n&quot;, n_null, mean(null_hits)))</code></pre>
 <pre><code>
 Empirical Type I error over 500 reps: 0.038</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <pre class="r"><code># Statistical power test by running signal_beta (patients w/ phenotype at SNPs 150-152)
 n_power &lt;- 200
 power_res &lt;- suppressWarnings(future_lapply(seq_len(n_power), function(s) {
@@ -1180,20 +1113,6 @@ cat(sprintf(&quot;\nEmpirical power (centered detections) over %d reps: %.3f\n&q
 Empirical power (centered detections) over 200 reps: 0.935</code></pre>
 <pre class="r"><code>cat(sprintf(&quot;Edge-only detections (trailing edge, not center): %.3f\n&quot;, mean(hit_edge)))</code></pre>
 <pre><code>Edge-only detections (trailing edge, not center): 0.000</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 </div>
 <div id="results-tablefigures" class="section level2">
 <h2>Results table/figures</h2>
@@ -1225,20 +1144,6 @@ knitr::kable(results, digits = 3, caption = &quot;Empirical simulation results&q
 </tr>
 </tbody>
 </table>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
 <pre class="r"><code>plot(sweep_df$window_size, sweep_df$type1, type = &quot;b&quot;, col = &quot;red&quot;,
      ylim = c(0, 1), xlab = &quot;window_size&quot;, ylab = &quot;Rate&quot;,
      main = &quot;Type I error vs. power across window_size (scw = 8)&quot;, pch = 16)
@@ -1269,6 +1174,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/01b38151bc9f327ec50529df6f7d0850be34585b/docs/figure/01_simulation.Rmd/sweep-plot-1.png" target="_blank">01b3815</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-27
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/anson-li8/ras-ss/blob/dc8e1bb2179e0a6576ff229943cb9655e4f21943/docs/figure/01_simulation.Rmd/sweep-plot-1.png" target="_blank">dc8e1bb</a>
@@ -1305,20 +1221,6 @@ Anson Li
 </tbody>
 </table>
 </div>
-</div>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
 </div>
 <pre class="r"><code># individual-level RAS for comparison (original method)
 indiv_scan &lt;- function(scan, X_t, y_t, b_disc) {
@@ -1383,6 +1285,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/anson-li8/ras-ss/blob/01b38151bc9f327ec50529df6f7d0850be34585b/docs/figure/01_simulation.Rmd/illustration-1.png" target="_blank">01b3815</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-27
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/anson-li8/ras-ss/blob/dc8e1bb2179e0a6576ff229943cb9655e4f21943/docs/figure/01_simulation.Rmd/illustration-1.png" target="_blank">dc8e1bb</a>
 </td>
 <td>
@@ -1421,21 +1334,7 @@ Anson Li
 <pre class="r"><code>end_time &lt;- Sys.time()
 runtime_seconds &lt;- as.numeric(difftime(end_time, start_time, units = &quot;secs&quot;))
 cat(paste0(&quot;**Total Knitting Time:** &quot;, round(runtime_seconds, 2), &quot; seconds&quot;))</code></pre>
-<pre><code>**Total Knitting Time:** 39405.25 seconds</code></pre>
-<div class="alert alert-warning">
-<p>
-<strong>Warning:</strong> The above code chunk cached its results, but
-it won’t be re-run if previous chunks it depends on are updated. If you
-need to use caching, it is highly recommended to also set
-<code>knitr::opts_chunk$set(autodep = TRUE)</code> at the top of the
-file (in a chunk that is not cached). Alternatively, you can customize
-the option <code>dependson</code> for each individual chunk that is
-cached. Using either <code>autodep</code> or <code>dependson</code> will
-remove this warning. See the
-<a href="https://yihui.name/knitr/options/#cache"
->knitr cache options</a> for more details.
-</p>
-</div>
+<pre><code>**Total Knitting Time:** 2232.39 seconds</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1466,20 +1365,23 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] workflowr_1.7.2
+[1] future.apply_1.20.2 future_1.75.0       RAS_0.1.12         
+[4] mvtnorm_1.4-2       workflowr_1.7.2    
 
 loaded via a namespace (and not attached):
- [1] vctrs_0.7.3       httr_1.4.8        cli_3.6.6         knitr_1.51       
- [5] rlang_1.3.0       xfun_0.60         stringi_1.8.7     otel_0.2.0       
- [9] processx_3.9.0    promises_1.5.0    jsonlite_2.0.0    glue_1.8.1       
-[13] rprojroot_2.1.1   git2r_0.36.2      htmltools_0.5.9   httpuv_1.6.17    
-[17] sass_0.4.10       rmarkdown_2.31    jquerylib_0.1.4   tibble_3.3.1     
-[21] evaluate_1.0.5    fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5  
-[25] whisker_0.4.1     stringr_1.6.0     compiler_4.6.0    fs_2.1.0         
-[29] pkgconfig_2.0.3   Rcpp_1.1.2        rstudioapi_0.19.0 later_1.4.8      
-[33] digest_0.6.39     R6_2.6.1          pillar_1.11.1     callr_3.8.0      
-[37] magrittr_2.0.5    bslib_0.11.0      tools_4.6.0       cachem_1.1.0     
-[41] getPass_0.2-4    </code></pre>
+ [1] jsonlite_2.0.0    compiler_4.6.0    promises_1.5.0    Rcpp_1.1.2       
+ [5] stringr_1.6.0     git2r_0.36.2      parallel_4.6.0    callr_3.8.0      
+ [9] later_1.4.8       jquerylib_0.1.4   globals_0.19.1    splines_4.6.0    
+[13] yaml_2.3.12       fastmap_1.2.0     lattice_0.22-9    R6_2.6.1         
+[17] knitr_1.51        MASS_7.3-66       tibble_3.3.1      rprojroot_2.1.1  
+[21] bslib_0.11.0      pillar_1.11.1     rlang_1.3.0       cachem_1.1.0     
+[25] stringi_1.8.7     httpuv_1.6.17     xfun_0.60         getPass_0.2-4    
+[29] fs_2.1.0          sass_0.4.10       segmented_2.2-1   otel_0.2.0       
+[33] cli_3.6.6         magrittr_2.0.5    grid_4.6.0        digest_0.6.39    
+[37] processx_3.9.0    rstudioapi_0.19.0 nlme_3.1-170      lifecycle_1.0.5  
+[41] vctrs_0.7.3       evaluate_1.0.5    glue_1.8.1        listenv_1.0.0    
+[45] whisker_0.4.1     codetools_0.2-20  parallelly_1.48.0 rmarkdown_2.31   
+[49] httr_1.4.8        tools_4.6.0       pkgconfig_2.0.3   htmltools_0.5.9  </code></pre>
 </div>
 </div>
 </div>
