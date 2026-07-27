@@ -5,8 +5,9 @@ editor_options:
   chunk_output_type: inline
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(autodep = TRUE)
 suppressPackageStartupMessages({
   library(mvtnorm)
   library(RAS)
@@ -17,7 +18,7 @@ options(future.rng.onMisuse = "ignore")
 start_time <- Sys.time()
 ```
 
-```{r config}
+```{r config, cache=TRUE}
 n_snps    <- 300
 n_disc    <- 1000 # discovery cohort, method A (small for speed)
 n_targ    <- 1000 # target cohort (small for speed)
@@ -39,7 +40,7 @@ davies_thresh  <- 1e-3
 base_seed      <- 35
 ```
 
-```{r ld-reference}
+```{r ld-reference, cache=TRUE}
 # Autoregressive AR(1) matrix with rho = 0.8
 # simulates the LD matrix
 R_true <- outer(1:n_snps, 1:n_snps, function(i, j) rho^abs(i - j))
@@ -68,7 +69,7 @@ prune_filter <- prune_ld(R_emp, prune_r2)
 cat("Surviving SNPs after LD pruning:", sum(prune_filter), "of", n_snps, "\n")
 ```
 
-```{r core-functions}
+```{r core-functions, cache=TRUE}
 # runs linear regression for every SNP to measure correlation with phenotype y
 get_marginal_stats <- function(X, y) {
   # Vectorized OLS for massive speedup
@@ -133,7 +134,7 @@ signal_beta <- rep(0, n_snps)
 signal_beta[causal_snps] <- effect_size
 ```
 
-```{r detect}
+```{r detect, cache=TRUE}
 # scw=5 (package default) only gave ~17-20% first-pass acceptance on true signal
 # because slope re-check window sits inside the flat top of the plateau
 # scw=8 fixes this, acceptance goes to ~100%
@@ -174,7 +175,7 @@ detect_peaks <- function(scan, window_size, scw = 8) {
 
 ## Window-size sweep for CPD: Type I error & power
 
-```{r sweep}
+```{r sweep, cache=TRUE}
 n_sweep <- 100
 ws_candidates <- c(6, 8, 10, 12, 15, 20)
 sweep_df <- data.frame(window_size = ws_candidates,
@@ -201,7 +202,7 @@ for (k in seq_along(ws_candidates)) {
 print(sweep_df)
 ```
 
-```{r choose-window}
+```{r choose-window, cache=TRUE}
 # choose the window size with the maximum detection power and lowest Type I Error rate
 best_ws <- ws_candidates[which.max(sweep_df$power - sweep_df$type1)]
 cat("Chosen window_size:", best_ws, "(scw = 8)\n")
@@ -210,7 +211,7 @@ print(sweep_df[sweep_df$window_size == best_ws, ])
 
 ## Full run at the chosen window size
 
-```{r full-null}
+```{r full-null, cache=TRUE}
 n_null <- 500
 null_hits <- unlist(suppressWarnings(future_lapply(seq_len(n_null), function(s) {
   scan <- one_rep(null_beta, seed = 100000 + s)$scan
@@ -219,7 +220,7 @@ null_hits <- unlist(suppressWarnings(future_lapply(seq_len(n_null), function(s) 
 cat(sprintf("\nEmpirical Type I error over %d reps: %.3f\n", n_null, mean(null_hits)))
 ```
 
-```{r full-power}
+```{r full-power, cache=TRUE}
 # Statistical power test by running signal_beta (patients w/ phenotype at SNPs 150-152)
 n_power <- 200
 power_res <- suppressWarnings(future_lapply(seq_len(n_power), function(s) {
@@ -236,7 +237,7 @@ cat(sprintf("Edge-only detections (trailing edge, not center): %.3f\n", mean(hit
 
 ## Results table/figures
 
-```{r results-table}
+```{r results-table, cache=TRUE}
 results <- data.frame(
   Metric = c("Type I error", "Power"),
   Value  = c(mean(null_hits), mean(hit_center)),
@@ -245,7 +246,7 @@ results <- data.frame(
 knitr::kable(results, digits = 3, caption = "Empirical simulation results")
 ```
 
-```{r sweep-plot}
+```{r sweep-plot, cache=TRUE}
 plot(sweep_df$window_size, sweep_df$type1, type = "b", col = "red",
      ylim = c(0, 1), xlab = "window_size", ylab = "Rate",
      main = "Type I error vs. power across window_size (scw = 8)", pch = 16)
@@ -255,7 +256,7 @@ legend("left", legend = c("Type I error", "Power", "nominal 0.05"),
        col = c("red", "blue", "gray50"), lty = c(1, 1, 3), pch = c(16, 16, NA))
 ```
 
-```{r illustration}
+```{r illustration, cache=TRUE}
 # individual-level RAS for comparison (original method)
 indiv_scan <- function(scan, X_t, y_t, b_disc) {
   sub_windows <- c(0, seq(min_window_size, max_window_size, by = skip2))
