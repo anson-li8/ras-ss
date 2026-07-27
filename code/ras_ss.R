@@ -180,5 +180,7 @@ native_run_via_ras <- function(true_beta, seed) {
     run_plots = FALSE,                 # don't generate PDFs for every replicate
     save_dir = tempdir()
   )
-  result$detection$tau_hats
+  # return the AVERAGED SCAN, not ras()'s own detection
+  stopifnot(length(result$scan$x) == length(seq(1, ncol(X_t), by = skip1)))
+  result$scan
 }

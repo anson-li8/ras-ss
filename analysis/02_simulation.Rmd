@@ -5,6 +5,7 @@ output: html_document
 
 ```{r setup, warning=FALSE, results='hide'}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(autodep = TRUE)
 library(mvtnorm)
 library(RAS)
 library(future.apply)
@@ -13,7 +14,7 @@ start_time <- Sys.time()
 source("code/ras_ss.R")
 ```
 
-```{r config, results='hide'}
+```{r config, results='hide', cache=TRUE}
 # run config
 n_snps    <- 300
 n_disc    <- 1000 # discovery cohort, method A (small for speed)
@@ -43,20 +44,21 @@ signal_beta[causal_snps] <- effect_size
 in_zone <- function(tau) any(tau >= 130 & tau <= 170)
 ```
 
-```{r comparison, message=FALSE, warning=FALSE, results='hide'}
+```{r comparison, cache=TRUE, message=FALSE, warning=FALSE, results='hide'}
 # rows 1 & 2 share the same simulated data per rep (paired test);
-# row 3 runs the shipped package pipeline with its own internal 50/50 split.
-# row 4 runs the pure ras() function with num_rep = 5 (true published default)
+# row 3 runs the pure ras() function with num_rep = 5 (true published default)
 n_null  <- 500
 n_power <- 200
-n_pure  <- 100 # fewer reps because pure ras() does 5x internal resplits
 
+# rows 1 & 2: paired, same simulated data per rep
+t0 <- Sys.time()
 paired_null <- future_lapply(seq_len(n_null), function(s) suppressWarnings({
   r   <- one_rep(null_beta, seed = 100000 + s)
   ind <- indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)
   c(ss  = length(detect_peaks(r$scan, best_ws, scw = 8)$val$tau_hats) > 0,
     ind = length(detect_peaks(list(x = r$scan$x, y = ind), best_ws, scw = 8)$val$tau_hats) > 0)
 }))
+t_ss_indiv <- as.numeric(difftime(Sys.time(), t0, units = "secs")) / n_null
 
 # for signal reps, also save profiles / tau positions for diag
 paired_pow <- future_lapply(seq_len(n_power), function(s) suppressWarnings({
@@ -76,19 +78,16 @@ ss_n <- sapply(paired_null, `[`, "ss"); ind_n <- sapply(paired_null, `[`, "ind")
 ss_p <- sapply(paired_pow, function(x) x$ss_zone); 
 ind_p <- sapply(paired_pow, function(x) x$ind_zone)
 
-# run 3: piecewise package calls 50/50 split
-nat_n <- unlist(future_lapply(seq_len(n_null),  function(s)
-            suppressWarnings(length(native_run(null_beta,   300000 + s)) > 0)))
-nat_p_tau <- future_lapply(seq_len(n_power), function(s)
-            suppressWarnings(native_run(signal_beta, 400000 + s)))
-nat_p <- sapply(nat_p_tau, in_zone)
-
-# run 4: pure ras() with num_rep = 5 (closest to original)
-pure_n <- unlist(future_lapply(seq_len(n_pure),  function(s)
-            suppressWarnings(length(native_run_via_ras(null_beta,   500000 + s)) > 0)))
-pure_p_tau <- future_lapply(seq_len(n_pure), function(s)
-            suppressWarnings(native_run_via_ras(signal_beta, 600000 + s)))
+# run 3: pure ras() with num_rep = 5 (closest to original)
+t0 <- Sys.time()
+pure_n <- unlist(future_lapply(seq_len(n_null), function(s)
+            suppressWarnings(length(detect_peaks(native_run_via_ras(null_beta, 500000 + s),
+                                               best_ws, scw = 8)$val$tau_hats) > 0)))
+pure_p_tau <- future_lapply(seq_len(n_power), function(s)
+            suppressWarnings(detect_peaks(native_run_via_ras(signal_beta, 600000 + s),
+                                          best_ws, scw = 8)$val$tau_hats))
 pure_p <- sapply(pure_p_tau, in_zone)
+t_pure <- as.numeric(difftime(Sys.time(), t0, units = "secs")) / n_null
 ```
 
 ```{r results}
@@ -98,20 +97,16 @@ fmt <- function(k, n) {
   sprintf("%.3f (%.3f-%.3f)", mean(k), b[1], b[2])
 }
 knitr::kable(data.frame(
-  row   = c("ras-ss", 
-           "indiv (same data)", 
-           "indiv (original pkg, 50/50 split)", 
-           "indiv (pure ras(), num_rep=5)"),
-  type1 = c(fmt(ss_n, n_null),  fmt(ind_n, n_null),  fmt(nat_n, n_null),  fmt(pure_n, n_pure)),
-  power = c(fmt(ss_p, n_power), fmt(ind_p, n_power), fmt(nat_p, n_power), fmt(pure_p, n_pure)),
+  row   = c("ras-ss", "indiv (same data, paired)", "indiv (pure ras(), num_rep=5)"),
+  type1 = c(fmt(ss_n, n_null),  fmt(ind_n, n_null),  fmt(pure_n, n_null)),
+  power = c(fmt(ss_p, n_power), fmt(ind_p, n_power), fmt(pure_p, n_power)),
   reps  = c(paste0(n_null, " / ", n_power),
             paste0(n_null, " / ", n_power),
-            paste0(n_null, " / ", n_power),
-            paste0(n_pure, " / ", n_pure))
-), caption = "Method comparison -- point estimate (95% CI)")
+            paste0(n_null, " / ", n_power))
+), caption = "Method comparison -- point estimate (exact binomial 95% CI)")
 
-# ras-ss uses the same seeds as the published number,
-# so this must reproduce 0.038 / 0.935 exactly
+# ras-ss seeds are unchanged, so this must reproduce 0.038 / 0.935
+cat(sprintf("Avg time per rep: ras-ss+indiv = %.2fs, pure ras() = %.2fs\n", t_ss_indiv, t_pure))
 cat(sprintf("ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f (expect 0.935)\n",
             mean(ss_n), mean(ss_p)))
 cat(sprintf("Total knitting time: %.1f minutes\n",
@@ -119,35 +114,34 @@ cat(sprintf("Total knitting time: %.1f minutes\n",
 ```
 
 ```{r diagnostics, fig.width=9, fig.height=7}
-# Profile Comparison
-# Plot 4 shows reps where both methods succeeded. 
-# If curves overlap, the summary-stat math perfectly matches the individual-level scan.
-par(mfrow = c(2, 2), mar = c(4, 4, 2, 1))
-success_idx <- which(ss_p & ind_p)[1:4]
-for (i in success_idx) {
-  plot(paired_pow[[i]]$scan$x, paired_pow[[i]]$scan$y, type = "l", col = "blue", lwd = 2,
-       main = paste("Signal Rep", i), xlab = "Pivotal SNP", ylab = "-log10(p)", 
-       ylim = c(0, max(paired_pow[[i]]$scan$y, paired_pow[[i]]$ind_prof, na.rm = TRUE) + 1))
-  lines(paired_pow[[i]]$scan$x, paired_pow[[i]]$ind_prof, col = "red", lwd = 2)
-  abline(v = 151, col = "grey", lty = 2, lwd = 2)
-  legend("topright", c("ras-ss", "indiv (paired)"), col = c("blue", "red"), lwd = 2, bty = "n")
+# plot 1: detection outcome per run
+outcome <- function(tau_list) {
+  miss <- sapply(tau_list, function(t) length(t) == 0)
+  inz  <- sapply(tau_list, in_zone)
+  c(missed = mean(miss), in_zone = mean(inz), off_target = mean(!miss & !inz))
 }
+o <- rbind(`ras-ss`        = outcome(lapply(paired_pow, function(x) x$ss_tau)),
+           `indiv paired`  = outcome(lapply(paired_pow, function(x) x$ind_tau)),
+           `pure ras()`    = outcome(pure_p_tau))
+barplot(t(o), col = c("grey70", "steelblue", "tomato"), border = NA,
+        ylab = "proportion of signal reps", main = "Detection outcome by run",
+        ylim = c(0, 1))
+legend("topright", fill = c("grey70", "steelblue", "tomato"), border = NA,
+       legend = c("missed", "in causal zone", "detected but off-target"), bty = "n")
 
-# do they hit the exact same causal SNP?
-# extract all validated tau_hats from the signal runs
+# plot 2: where the validated peak landed, all three runs
 ss_taus   <- unlist(lapply(paired_pow, function(x) x$ss_tau))
 ind_taus  <- unlist(lapply(paired_pow, function(x) x$ind_tau))
-nat_taus  <- unlist(nat_p_tau)
 pure_taus <- unlist(pure_p_tau)
-
-par(mfrow = c(1, 1), mar = c(4, 4, 2, 1))
-# simple density plot to show clustering around the true causal SNPs (150,151,152)
-plot(density(ss_taus, na.rm = TRUE, from = 100, to = 200), col = "blue", lwd = 3, 
-     main = "Validated Peak Locations (Signal Reps)", xlab = "SNP Position", xlim = c(100, 200))
-lines(density(ind_taus, na.rm = TRUE, from = 100, to = 200), col = "red", lwd = 3)
-lines(density(nat_taus, na.rm = TRUE, from = 100, to = 200), col = "darkgreen", lwd = 3)
-lines(density(pure_taus, na.rm = TRUE, from = 100, to = 200), col = "purple", lwd = 3)
-abline(v = 151, col = "black", lty = 2, lwd = 2)
-legend("topright", c("ras-ss", "indiv (paired)", "native 50/50", "pure ras()"), 
-       col = c("blue", "red", "darkgreen", "purple"), lwd = 3, bty = "n")
+bw_use <- 2   # shared
+d_ss   <- density(ss_taus,   bw = bw_use, from = 100, to = 200)
+d_ind  <- density(ind_taus,  bw = bw_use, from = 100, to = 200)
+d_pure <- density(pure_taus, bw = bw_use, from = 100, to = 200)
+plot(d_ss, col = "blue", lwd = 3, ylim = c(0, max(d_ss$y, d_ind$y, d_pure$y)),
+     main = "Validated Peak Locations", xlab = "SNP Position")
+lines(d_ind,  col = "red",    lwd = 3)
+lines(d_pure, col = "purple", lwd = 3)
+abline(v = 151, lty = 2, lwd = 2)
+legend("topright", c("ras-ss", "indiv (paired)", "pure ras() (num_rep=5)"),
+       col = c("blue", "red", "purple"), lwd = 3, bty = "n")
 ```
