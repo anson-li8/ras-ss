@@ -559,15 +559,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreeac949ab2f0980e964a6d6bc48b3d2d0af1703f52targetblankac949aba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreef69a56277adadf6721c63da17dbdd2e96eb0da3ftargetblankf69a562a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/ac949ab2f0980e964a6d6bc48b3d2d0af1703f52" target="_blank">ac949ab</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/f69a56277adadf6721c63da17dbdd2e96eb0da3f" target="_blank">f69a562</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreeac949ab2f0980e964a6d6bc48b3d2d0af1703f52targetblankac949aba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreef69a56277adadf6721c63da17dbdd2e96eb0da3ftargetblankf69a562a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -577,7 +577,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/ac949ab2f0980e964a6d6bc48b3d2d0af1703f52" target="_blank">ac949ab</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/f69a56277adadf6721c63da17dbdd2e96eb0da3f" target="_blank">f69a562</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -640,6 +640,41 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/f69a56277adadf6721c63da17dbdd2e96eb0da3f/analysis/01_simulation.Rmd" target="_blank">f69a562</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+<td>
+Add notes about knitr caching causing times that don’t represent full
+runtimes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/67aab7b63ce8174cd292ecb9bfa36f6ddfc889e1/docs/01_simulation.html" target="_blank">67aab7b</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1210,6 +1245,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/anson-li8/ras-ss/blob/67aab7b63ce8174cd292ecb9bfa36f6ddfc889e1/docs/figure/01_simulation.Rmd/sweep-plot-1.png" target="_blank">67aab7b</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/anson-li8/ras-ss/blob/01b38151bc9f327ec50529df6f7d0850be34585b/docs/figure/01_simulation.Rmd/sweep-plot-1.png" target="_blank">01b3815</a>
 </td>
 <td>
@@ -1319,6 +1365,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/anson-li8/ras-ss/blob/67aab7b63ce8174cd292ecb9bfa36f6ddfc889e1/docs/figure/01_simulation.Rmd/illustration-1.png" target="_blank">67aab7b</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/anson-li8/ras-ss/blob/01b38151bc9f327ec50529df6f7d0850be34585b/docs/figure/01_simulation.Rmd/illustration-1.png" target="_blank">01b3815</a>
 </td>
 <td>
@@ -1368,7 +1425,8 @@ Anson Li
 <pre class="r"><code>end_time &lt;- Sys.time()
 runtime_seconds &lt;- as.numeric(difftime(end_time, start_time, units = &quot;secs&quot;))
 cat(paste0(&quot;**Total Knitting Time:** &quot;, round(runtime_seconds, 2), &quot; seconds&quot;))</code></pre>
-<pre><code>**Total Knitting Time:** 6.33 seconds</code></pre>
+<pre><code>**Total Knitting Time:** 4.33 seconds</code></pre>
+<pre class="r"><code># NOTE: time with knitr caching</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
