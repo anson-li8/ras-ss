@@ -109,6 +109,7 @@ knitr::kable(data.frame(
 cat(sprintf("Avg time per rep: ras-ss+indiv = %.2fs, pure ras() = %.2fs\n", t_ss_indiv, t_pure))
 cat(sprintf("ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f (expect 0.935)\n",
             mean(ss_n), mean(ss_p)))
+# NOTE: time with knitr caching
 cat(sprintf("Total knitting time: %.1f minutes\n",
             as.numeric(difftime(Sys.time(), start_time, units = "mins"))))
 ```

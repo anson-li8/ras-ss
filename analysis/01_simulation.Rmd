@@ -298,4 +298,5 @@ if (length(final$val$tau_hats) > 0) {
 end_time <- Sys.time()
 runtime_seconds <- as.numeric(difftime(end_time, start_time, units = "secs"))
 cat(paste0("**Total Knitting Time:** ", round(runtime_seconds, 2), " seconds"))
+# NOTE: time with knitr caching
 ```
