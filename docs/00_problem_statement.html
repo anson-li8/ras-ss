@@ -366,7 +366,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -377,8 +377,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -387,13 +387,13 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-07-27
+<strong>Last updated:</strong> 2026-07-29
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -416,33 +416,36 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreedc11641d0f0da62fc136794a1baa8ba5e6228aeftargetblankdc11641a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree175f014c457240b13133c691bcdf1a831cf3750ctargetblank175f014a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/dc11641d0f0da62fc136794a1baa8ba5e6228aef" target="_blank">dc11641</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/175f014c457240b13133c691bcdf1a831cf3750c" target="_blank">175f014</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreedc11641d0f0da62fc136794a1baa8ba5e6228aeftargetblankdc11641a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree175f014c457240b13133c691bcdf1a831cf3750ctargetblank175f014a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -452,7 +455,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/dc11641d0f0da62fc136794a1baa8ba5e6228aef" target="_blank">dc11641</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/175f014c457240b13133c691bcdf1a831cf3750c" target="_blank">175f014</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -471,6 +474,9 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
+
+Unstaged changes:
+    Modified:   analysis/00_problem_statement.Rmd
 
 </code></pre>
 <p>
@@ -515,6 +521,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/a38e4559268bf47b0256633f9abd92a0895a3a43/docs/00_problem_statement.html" target="_blank">a38e455</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1040,13 +1063,13 @@ runs the package’s shipped <code>ras()</code> with its published default
 <code>num_rep = 5</code>, exactly as a user would.</p>
 <p>Reading the table by rows:</p>
 <ul>
-<li><strong>Rows 1 vs 2 demonstrates consistency</strong> On identical
+<li><strong>Rows 1 vs 2 demonstrates consistency:</strong> On identical
 inputs the summary-stat statistic reproduced the same individual-level
 results on all but <strong>1 of 200</strong> signal reps (187 vs 188
 localized to causal center) and all but <strong>1 of 500</strong> null
 reps (19 vs 18 false positives). That difference on each metric is the
 measured sacrifice of the summary-statistic substitution.</li>
-<li><strong>Rows 2 vs 3 shows the resampling-average benefit</strong>
+<li><strong>Rows 2 vs 3 shows the resampling-average benefit:</strong>
 The 6-point power gap (0.940 → 1.000) is between two
 <em>individual-level</em> methods, so it isn’t a summary-statistic
 problem. Row 2 has the individual genotypes and phenotypes considered in
@@ -1067,14 +1090,14 @@ reference LD is estimated from 10,000 individuals, so the 6 points
 measured here are due to the unrecoverable target-resplit component. On
 real data with a smaller reference panel the analog may recover more.
 This is listed under Open items as the planned next experiment.</li>
-<li><strong>Type I error.</strong> ras-ss at 0.038 is within the
+<li><strong>Type I error:</strong> ras-ss at 0.038 is within the
 original paper’s own Table 1 range (0.042–0.050), so it is the
 well-calibrated row. Pure <code>ras()</code> at 0.010 is actually
 <em>over-conservative</em> (below nominal 0.05 and below the paper’s
 range). Its lower false-positive rate also gives it perfect power, on
 the null side. All three rows are at or below the acceptable 0.05.</li>
 <li><strong>Peak location (the density plot in
-<code>02_simulation</code>).</strong> All three runs center on the true
+<code>02_simulation</code>):</strong> All three runs center on the true
 causal center (151). The single-pass runs (1 and 2) show small
 side-bumps at neighboring points where a noisier single-pass profile
 brought the validated peak one step off, a visual representation of the
@@ -1093,24 +1116,24 @@ matched data with matched weights it sacrifices nothing to the
 individual-level method (rows 1 vs 2). The gap from the original RAS is
 entirely the resampling average, which is an inevitable loss in this
 summary-stat only environment.</p>
-<p><strong>Open items, not yet addressed:</strong> - No summary-stat
-analog implemented yet for the original method’s
-<code>num_rep = 5</code> resampling average (Method A has no
-individual-level data to resplit). - Reference-panel LD is drawn from
-the same simulated population as the discovery/target cohorts here;
-ancestry-mismatch sensitivity (real reference panel vs. true cohort LD)
-has not yet been stress-tested. - Calibration performed on a single toy
-configuration (<span class="math inline">\(n=300\)</span>, <span
+<p><strong>Open items, not yet addressed:</strong></p>
+<ul>
+<li>Reference-panel LD is drawn from the same simulated population as
+the discovery/target cohorts here; ancestry-mismatch sensitivity (real
+reference panel vs. true cohort LD) has not yet been stress-tested.</li>
+<li>Calibration performed on a single toy configuration (<span
+class="math inline">\(n=300\)</span>, <span
 class="math inline">\(\rho=0.8\)</span>); has not been re-verified at
-other chromosome sizes or LD structures. - <strong>Summary-stat
-resampling analog of <code>num_rep</code>.</strong> The three-run
-validation (<code>02_simulation</code>) measures the cost of being
-single-pass at ~6 power points vs. the 5-averaged original, all of it
-due to the resampling average. A reference-panel resampling analog is
+other chromosome sizes or LD structures.</li>
+<li>Summary-stat resampling analog of <code>num_rep</code>: The
+three-run validation (<code>02_simulation</code>) measures the cost of
+being single-pass at ~6 power points vs. the 5-averaged original, all of
+it due to the resampling average. A reference-panel resampling analog is
 the planned way to recover the LD-noise portion of that gap on real data
 (negligible on this toy, where reference is large). Unfortunately, the
 target-resplit portion is unrecoverable from summary statistics without
-significant change of the method.</p>
+significant change of the method.</li>
+</ul>
 </div>
 </div>
 </div>
