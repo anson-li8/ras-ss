@@ -366,7 +366,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -377,8 +377,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -391,9 +391,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 1
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -416,36 +416,33 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree175f014c457240b13133c691bcdf1a831cf3750ctargetblank175f014a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree51545a04b6112bee61953da2c255e25fca834823targetblank51545a0a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/175f014c457240b13133c691bcdf1a831cf3750c" target="_blank">175f014</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/51545a04b6112bee61953da2c255e25fca834823" target="_blank">51545a0</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree175f014c457240b13133c691bcdf1a831cf3750ctargetblank175f014a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree51545a04b6112bee61953da2c255e25fca834823targetblank51545a0a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -455,7 +452,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/175f014c457240b13133c691bcdf1a831cf3750c" target="_blank">175f014</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/51545a04b6112bee61953da2c255e25fca834823" target="_blank">51545a0</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -474,9 +471,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
-
-Unstaged changes:
-    Modified:   analysis/00_problem_statement.Rmd
 
 </code></pre>
 <p>
@@ -521,6 +515,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/51545a04b6112bee61953da2c255e25fca834823/analysis/00_problem_statement.Rmd" target="_blank">51545a0</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+<td>
+Fix formatting issues and figures not appearing in 01_simulation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/51545a04b6112bee61953da2c255e25fca834823/docs/00_problem_statement.html" target="_blank">51545a0</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+<td>
+Fix formatting issues and figures not appearing in 01_simulation
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -950,8 +978,8 @@ variants from over-weighting the burden statistic, replicating the
 original RAS design.</li>
 </ol>
 </div>
-<div id="weight-source-decision-pending" class="section level1">
-<h1>Weight Source Decision: (PENDING)</h1>
+<div id="weight-source-decision" class="section level1">
+<h1>Weight Source Decision:</h1>
 <p>In the original individual algorithm, a 50/50 data-splitting protocol
 provides an independent training set to fit weights and a testing set to
 evaluate them, eliminating overfitting. Since summary-statistic
@@ -967,7 +995,9 @@ because it avoids overfitting winner’s curse bias.</li>
 dataset is available, deriving <span class="math inline">\(w\)</span>
 from the same marginal effects we are testing (<span
 class="math inline">\(w = \hat{\beta}\)</span>) introduces severe
-winner’s curse bias, inflating the burden statistic.</li>
+winner’s curse bias, inflating the burden statistic. More practical for
+rarer diseases/phenotypes which don’t have much data available
+publicly.</li>
 </ul>
 <p>While a joint-effect approach with LD reconstruction (e.g.,
 SuSiE-RSS) is a possible alternative, implementing it goes beyond the
@@ -976,14 +1006,16 @@ scope of replicating the original methodology</p>
 <div id="validation" class="section level1">
 <h1>Validation:</h1>
 <ol style="list-style-type: decimal">
-<li><strong>Type I error calibration (required before trusting any
-output):</strong> null simulation of the full algorithm (pruning and
-max-over-<span class="math inline">\(t\)</span> window selection),
-reporting empirical type I error, similar to Table 1 of the original
-paper.</li>
+<li><strong>Type I error test:</strong> null simulation of the full
+algorithm (pruning and max-over-<span class="math inline">\(t\)</span>
+window selection), reporting empirical type I error, similar to Table 1
+of the original paper.</li>
+<li><strong>Power test:</strong> power simulation of full algorithm,
+reporting statistical power for comparison</li>
 <li><strong>Convergence validation:</strong> compare summary-stat RAS
-output against individual-data RAS on the same simulated data, varying
-<span class="math inline">\(N\)</span> and LD-panel quality</li>
+output against individual-data RAS on the same simulated data (completed
+below), varying <span class="math inline">\(N\)</span> and LD-panel
+quality (yet to be done)</li>
 </ol>
 </div>
 <div id="validation-results" class="section level1">
@@ -992,11 +1024,10 @@ output against individual-data RAS on the same simulated data, varying
 class="math inline">\(\rho = 0.8\)</span>, true signal at 3 consecutive
 causal SNPs (150–152, effect size 0.5). Discovery and target cohorts of
 <span class="math inline">\(n = 1000\)</span> each (Method A), LD pruned
-at <span class="math inline">\(r^2 &lt; 0.2\)</span> (300 <span
-class="math inline">\(\to\)</span> 100 SNPs survived). The validated
-workflow is LD pruning + <code>T_burden</code> + the package’s own
-unmodified <code>ras_detect()</code> / <code>ras_validate()</code>
-changepoint detection.</p>
+at <span class="math inline">\(r^2 &lt; 0.2\)</span> (300 -&gt; 100 SNPs
+survived). The validated workflow is LD pruning + <code>T_burden</code>
++ the package’s own unmodified <code>ras_detect()</code> /
+<code>ras_validate()</code> changepoint detection.</p>
 <p>Tuning: At package default of 5, the local slope re-check window is
 located on the flat top of the signal’s plateau, so the slope looks weak
 even when the global changepoint test runs correctly. Increasing it to 8
