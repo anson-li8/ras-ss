@@ -366,7 +366,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -377,8 +377,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -387,13 +387,13 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-07-27
+<strong>Last updated:</strong> 2026-07-29
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -487,16 +487,27 @@ versions is critical for reproducibility.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
 </p>
 </div>
-<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div id="strongCachestrongdetected" class="panel-collapse collapse">
 <div class="panel-body">
-<p>Nice! There were no cached chunks for this analysis, so you can be
-confident that you successfully produced the results during this
-run.</p>
+The following chunks had caches available:
+<ul>
+<li>
+comparison
+</li>
+<li>
+config
+</li>
+</ul>
+<p>To ensure reproducibility of the results, delete the cache directory
+<code>02_simulation_cache</code> and re-run the analysis. To have
+workflowr automatically delete the cache directory prior to building the
+file, set <code>delete_cache = TRUE</code> when running
+<code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
 </div>
 </div>
 </div>
@@ -518,15 +529,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreea38e4559268bf47b0256633f9abd92a0895a3a43targetblanka38e455a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree06eab4c08ecf51a6cb8626cd443c366597eefba2targetblank06eab4ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/anson-li8/ras-ss/tree/a38e4559268bf47b0256633f9abd92a0895a3a43" target="_blank">a38e455</a>
+<a href="https://github.com/anson-li8/ras-ss/tree/06eab4c08ecf51a6cb8626cd443c366597eefba2" target="_blank">06eab4c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstreea38e4559268bf47b0256633f9abd92a0895a3a43targetblanka38e455a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8rassstree06eab4c08ecf51a6cb8626cd443c366597eefba2targetblank06eab4ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -536,7 +547,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/anson-li8/ras-ss/tree/a38e4559268bf47b0256633f9abd92a0895a3a43" target="_blank">a38e455</a>.
+<a href="https://github.com/anson-li8/ras-ss/tree/06eab4c08ecf51a6cb8626cd443c366597eefba2" target="_blank">06eab4c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -554,6 +565,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/01_simulation_cache/
+    Ignored:    analysis/02_simulation_cache/
 
 </code></pre>
 <p>
@@ -598,6 +610,41 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/anson-li8/ras-ss/blob/f69a56277adadf6721c63da17dbdd2e96eb0da3f/analysis/02_simulation.Rmd" target="_blank">f69a562</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+<td>
+Add notes about knitr caching causing times that don’t represent full
+runtimes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/anson-li8/ras-ss/51545a04b6112bee61953da2c255e25fca834823/docs/02_simulation.html" target="_blank">51545a0</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-07-29
+</td>
+<td>
+Fix formatting issues and figures not appearing in 01_simulation
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -896,9 +943,10 @@ cat(sprintf(&quot;Avg time per rep: ras-ss+indiv = %.2fs, pure ras() = %.2fs\n&q
 <pre class="r"><code>cat(sprintf(&quot;ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f (expect 0.935)\n&quot;,
             mean(ss_n), mean(ss_p)))</code></pre>
 <pre><code>ras-ss repro check: type1 = 0.038 (expect 0.038), power = 0.935 (expect 0.935)</code></pre>
-<pre class="r"><code>cat(sprintf(&quot;Total knitting time: %.1f minutes\n&quot;,
+<pre class="r"><code># NOTE: time with knitr caching
+cat(sprintf(&quot;Total knitting time: %.1f minutes\n&quot;,
             as.numeric(difftime(Sys.time(), start_time, units = &quot;mins&quot;))))</code></pre>
-<pre><code>Total knitting time: 52.1 minutes</code></pre>
+<pre><code>Total knitting time: 0.0 minutes</code></pre>
 <pre class="r"><code># plot 1: detection outcome per run
 outcome &lt;- function(tau_list) {
   miss &lt;- sapply(tau_list, function(t) length(t) == 0)
