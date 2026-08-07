@@ -90,6 +90,25 @@ pure_p <- sapply(pure_p_tau, in_zone)
 t_pure <- as.numeric(difftime(Sys.time(), t0, units = "secs")) / n_null
 ```
 
+```{r timing, cache=TRUE}
+# per-rep runtime, single core, same reps for all three (fair algorithmic cost)
+nb <- 10
+bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"]))
+t_ras_ss <- bench(function(s) {
+  r <- one_rep(signal_beta, 900000 + s)
+  invisible(detect_peaks(r$scan, best_ws, scw = 8))
+})
+t_ind <- bench(function(s) {
+  r <- one_rep(signal_beta, 910000 + s)
+  invisible(detect_peaks(list(x = r$scan$x,
+                              y = indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)),
+                         best_ws, scw = 8))
+})
+t_pure_b <- bench(function(s) {
+  invisible(detect_peaks(native_run_via_ras(signal_beta, 920000 + s), best_ws, scw = 8))
+})
+```
+
 ```{r results}
 # format for table
 fmt <- function(k, n) {
@@ -100,13 +119,14 @@ knitr::kable(data.frame(
   row   = c("ras-ss", "indiv (same data, paired)", "indiv (pure ras(), num_rep=5)"),
   type1 = c(fmt(ss_n, n_null),  fmt(ind_n, n_null),  fmt(pure_n, n_null)),
   power = c(fmt(ss_p, n_power), fmt(ind_p, n_power), fmt(pure_p, n_power)),
+  time  = sprintf("%.2f s/rep", c(t_ras_ss, t_ind, t_pure_b)),
   reps  = c(paste0(n_null, " / ", n_power),
             paste0(n_null, " / ", n_power),
             paste0(n_null, " / ", n_power))
-), caption = "Method comparison -- point estimate (exact binomial 95% CI)")
+), caption = "Method comparison -- point estimate (exact binomial 95% CI), single-core sec/rep")
 
 # ras-ss seeds are unchanged, so this must reproduce 0.038 / 0.935
-cat(sprintf("Avg time per rep: ras-ss+indiv = %.2fs, pure ras() = %.2fs\n", t_ss_indiv, t_pure))
+# cat(sprintf("Avg time per rep: ras-ss+indiv = %.2fs, pure ras() = %.2fs\n", t_ss_indiv, t_pure))
 cat(sprintf("ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f (expect 0.935)\n",
             mean(ss_n), mean(ss_p)))
 # NOTE: time with knitr caching
@@ -115,6 +135,28 @@ cat(sprintf("Total knitting time: %.1f minutes\n",
 ```
 
 ```{r diagnostics, fig.width=9, fig.height=7}
+# plot 0: the three-run comparison, w/ exact binomial 95% CI error bars
+t1_counts <- c(sum(ss_n), sum(ind_n), sum(pure_n))
+pw_counts <- c(sum(ss_p), sum(ind_p), sum(pure_p))
+t1_ci <- sapply(t1_counts, function(k) binom.test(k, n_null)$conf.int)
+pw_ci <- sapply(pw_counts, function(k) binom.test(k, n_power)$conf.int)
+heights <- cbind(`type I error` = t1_counts / n_null,
+                 power          = pw_counts / n_power)
+rownames(heights) <- c("ras-ss", "indiv (paired)", "pure ras()")
+lo_mat <- cbind(`type I error` = t1_ci[1, ], power = pw_ci[1, ])
+hi_mat <- cbind(`type I error` = t1_ci[2, ], power = pw_ci[2, ])
+bp <- barplot(heights, beside = TRUE, col = c("blue", "red", "purple"),
+              ylim = c(0, 1.08), ylab = "rate",
+              main = "Type I error and power by method (exact binomial 95% CI)")
+for (i in 1:3) for (j in 1:2) {
+  segments(bp[i, j], lo_mat[i, j], bp[i, j], hi_mat[i, j], lwd = 2)
+  segments(bp[i, j] - 0.12, lo_mat[i, j], bp[i, j] + 0.12, lo_mat[i, j], lwd = 2)
+  segments(bp[i, j] - 0.12, hi_mat[i, j], bp[i, j] + 0.12, hi_mat[i, j], lwd = 2)
+}
+abline(h = 0.05, lty = 3, col = "gray50")
+legend("topright", fill = c("blue", "red", "purple"), border = NA, bty = "n",
+       legend = c("ras-ss", "indiv (paired)", "pure ras() (num_rep=5)"))
+
 # plot 1: detection outcome per run
 outcome <- function(tau_list) {
   miss <- sapply(tau_list, function(t) length(t) == 0)
