@@ -51,14 +51,12 @@ n_null  <- 500
 n_power <- 200
 
 # rows 1 & 2: paired, same simulated data per rep
-t0 <- Sys.time()
 paired_null <- future_lapply(seq_len(n_null), function(s) suppressWarnings({
   r   <- one_rep(null_beta, seed = 100000 + s)
   ind <- indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)
   c(ss  = length(detect_peaks(r$scan, best_ws, scw = 8)$val$tau_hats) > 0,
     ind = length(detect_peaks(list(x = r$scan$x, y = ind), best_ws, scw = 8)$val$tau_hats) > 0)
 }))
-t_ss_indiv <- as.numeric(difftime(Sys.time(), t0, units = "secs")) / n_null
 
 # for signal reps, also save profiles / tau positions for diag
 paired_pow <- future_lapply(seq_len(n_power), function(s) suppressWarnings({
@@ -79,7 +77,6 @@ ss_p <- sapply(paired_pow, function(x) x$ss_zone);
 ind_p <- sapply(paired_pow, function(x) x$ind_zone)
 
 # run 3: pure ras() with num_rep = 5 (closest to original)
-t0 <- Sys.time()
 pure_n <- unlist(future_lapply(seq_len(n_null), function(s)
             suppressWarnings(length(detect_peaks(native_run_via_ras(null_beta, 500000 + s),
                                                best_ws, scw = 8)$val$tau_hats) > 0)))
@@ -87,10 +84,9 @@ pure_p_tau <- future_lapply(seq_len(n_power), function(s)
             suppressWarnings(detect_peaks(native_run_via_ras(signal_beta, 600000 + s),
                                           best_ws, scw = 8)$val$tau_hats))
 pure_p <- sapply(pure_p_tau, in_zone)
-t_pure <- as.numeric(difftime(Sys.time(), t0, units = "secs")) / n_null
 ```
 
-```{r timing, cache=TRUE}
+```{r timing, cache=TRUE, message=FALSE, warning=FALSE, results='hide'}
 # per-rep runtime, single core, same reps for all three (fair algorithmic cost)
 nb <- 10
 bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"]))
@@ -126,7 +122,6 @@ knitr::kable(data.frame(
 ), caption = "Method comparison -- point estimate (exact binomial 95% CI), single-core sec/rep")
 
 # ras-ss seeds are unchanged, so this must reproduce 0.038 / 0.935
-# cat(sprintf("Avg time per rep: ras-ss+indiv = %.2fs, pure ras() = %.2fs\n", t_ss_indiv, t_pure))
 cat(sprintf("ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f (expect 0.935)\n",
             mean(ss_n), mean(ss_p)))
 # NOTE: time with knitr caching
