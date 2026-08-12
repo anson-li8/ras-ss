@@ -96,7 +96,7 @@ detect_peaks <- function(scan, window_size, scw = 8) {
     # first pass: changepoint detection
     cp <- ras_detect( # actual, unmodified original package's changepoint detection, sliding checking window running Davies test at each position
     # second pass: local Davies validation
-      x = scan$x, y = scan$y,
+      x = seq_along(scan$x), y = scan$y,
       window_size                    = window_size, # width of siding checking window, tuned to 12 from simulation 1
       slope_check_window_size        = scw, # how many points on each side used to check left-rising / right-falling slope condition, set to 8 instead of package default of 5
       slope.p.values.threshold.left  = slope_thresh, # how strict left-slope-rising check has to be before call it real peak
@@ -104,7 +104,7 @@ detect_peaks <- function(scan, window_size, scw = 8) {
     )
     # second pass: Davies validation
     val <- ras_validate( # reconfirming change point with tigther local Davies test and going to nearest local maximum, unmodified package function
-      this.result = cp, x = scan$x, y = scan$y,
+      this.result = cp, x = seq_along(scan$x), y = scan$y,
       this.start = 1, this.skip = skip1, # tells ras_validate how pivotal SNP grid was spaced, so it can convert positions back to real SNP coordinates
       second_window_size = 15, # width of second-pass local check window
       min_signal = 2.5, # RAS has to be at least this big for a changepoint to count as real signal, not just noise
