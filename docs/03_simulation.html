@@ -532,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstreea7769420beb51d1c0245b3f5682bed089a733b7atargetblanka776942a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree6d83792f967585a6b3da43d0a43126d2503ef939targetblank6d83792a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/a7769420beb51d1c0245b3f5682bed089a733b7a" target="_blank">a776942</a>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/6d83792f967585a6b3da43d0a43126d2503ef939" target="_blank">6d83792</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstreea7769420beb51d1c0245b3f5682bed089a733b7atargetblanka776942a"
+id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree6d83792f967585a6b3da43d0a43126d2503ef939targetblank6d83792a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/a7769420beb51d1c0245b3f5682bed089a733b7a" target="_blank">a776942</a>.
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/6d83792f967585a6b3da43d0a43126d2503ef939" target="_blank">6d83792</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -617,6 +617,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/6d83792f967585a6b3da43d0a43126d2503ef939/analysis/03_simulation.Rmd" target="_blank">6d83792</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+<td>
+check following the all M regions metric original paper used
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/6d83792f967585a6b3da43d0a43126d2503ef939/docs/03_simulation.html" target="_blank">6d83792</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+<td>
+check following the all M regions metric original paper used
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -3998,13 +4032,20 @@ cheaper than 5-averaged pure)</caption>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># Fig 2: power (all M regions) vs q, clean lines (CIs live in the tables)
+<pre class="r"><code># per-region detection rate (the informative metric on synthetic saturated peaks)
+res$ss_pow &lt;- 1 - res$ss_fn / res$M
+res$in_pow &lt;- 1 - res$in_fn / res$M
+res$pu_pow &lt;- 1 - res$pu_fn / res$M
+agg &lt;- aggregate(cbind(ss_pow, in_pow, pu_pow, ss_power, in_power, pu_power,
+                       ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
+
+# Fig 2: power (fraction of M regions detected) vs q
 par(mfrow=c(2,2), mar=c(4,4,2,1))
 for (tr in traits) for (M in M_vals) {
   a &lt;- agg[agg$trait==tr &amp; agg$M==M,]
-  plot(a$q, a$ss_power, type=&quot;b&quot;, col=&quot;blue&quot;, ylim=c(0,1), xlab=&quot;causal rate q&quot;,
-       ylab=&quot;power (all M regions)&quot;, main=sprintf(&quot;%s, M=%d&quot;, tr, M))
-  lines(a$q, a$in_power, type=&quot;b&quot;, col=&quot;red&quot;); lines(a$q, a$pu_power, type=&quot;b&quot;, col=&quot;purple&quot;)
+  plot(a$q, a$ss_pow, type=&quot;b&quot;, col=&quot;blue&quot;, ylim=c(0,1), xlab=&quot;causal rate q&quot;,
+       ylab=&quot;power (fraction of M regions)&quot;, main=sprintf(&quot;%s, M=%d&quot;, tr, M))
+  lines(a$q, a$in_pow, type=&quot;b&quot;, col=&quot;red&quot;); lines(a$q, a$pu_pow, type=&quot;b&quot;, col=&quot;purple&quot;)
 }
 legend(&quot;bottomright&quot;, legend=c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;), col=c(&quot;blue&quot;,&quot;red&quot;,&quot;purple&quot;), lty=1, bty=&quot;n&quot;)</code></pre>
 <p><img src="figure/03_simulation.Rmd/results-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
@@ -4032,6 +4073,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/6d83792f967585a6b3da43d0a43126d2503ef939/docs/figure/03_simulation.Rmd/results-1.png" target="_blank">6d83792</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/a7769420beb51d1c0245b3f5682bed089a733b7a/docs/figure/03_simulation.Rmd/results-1.png" target="_blank">a776942</a>
 </td>
 <td>
@@ -4045,12 +4097,12 @@ Anson Li
 </table>
 </div>
 </div>
-<pre class="r"><code># Faithfulness as an equivalence scatter: points ON the diagonal = agreement
+<pre class="r"><code># Faithfulness scatter on the same per-region metric (points on diagonal = agreement)
 par(mfrow=c(1,2), mar=c(4,4,2,1))
-plot(agg$in_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;blue&quot;,
+plot(agg$in_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;blue&quot;,
      xlab=&quot;individual-level power&quot;, ylab=&quot;ras-ss power&quot;, main=&quot;ras-ss vs individual-level&quot;)
 abline(0,1, lty=2)
-plot(agg$pu_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;purple&quot;,
+plot(agg$pu_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;purple&quot;,
      xlab=&quot;pure ras() power&quot;, ylab=&quot;ras-ss power&quot;, main=&quot;ras-ss vs gold standard&quot;)
 abline(0,1, lty=2)</code></pre>
 <p><img src="figure/03_simulation.Rmd/results-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
@@ -4078,6 +4130,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/6d83792f967585a6b3da43d0a43126d2503ef939/docs/figure/03_simulation.Rmd/results-2.png" target="_blank">6d83792</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/a7769420beb51d1c0245b3f5682bed089a733b7a/docs/figure/03_simulation.Rmd/results-2.png" target="_blank">a776942</a>
 </td>
 <td>
@@ -4091,7 +4154,7 @@ Anson Li
 </table>
 </div>
 </div>
-<pre class="r"><code># FPR-A as a compact table (all ~0; a flat figure adds nothing)
+<pre class="r"><code># FPR-A as a compact table
 fpr_tab &lt;- aggregate(cbind(ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 names(fpr_tab)[4:6] &lt;- c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;)
 fpr_tab[,4:6] &lt;- round(fpr_tab[,4:6], 2)

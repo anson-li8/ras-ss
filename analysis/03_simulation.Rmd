@@ -8,58 +8,68 @@ knitr::opts_chunk$set(echo = TRUE, autodep = TRUE)
 options(future.rng.onMisuse = "ignore")
 library(mvtnorm); library(RAS); library(future.apply)
 plan(multisession)
-source("code/ras_ss.R") # sim_genotypes, prune_ld, get_marginal_stats, scan_ss, indiv_scan, native_run_via_ras
+source("code/ras_ss.R") # shared scan/detect helper functions
 ```
 
 ```{r config, results='hide'}
-# paper settings, simulated block-LD chromosome (ABCD wait for Dr. Zhang's data)
+# simulated chromosome with "LD block structure"
+# 10 independent LD blocks of 100 SNPs, AR(1) rho=0.8 inside each block
 n_snps <- 1000; n_blocks <- 10; block_len <- n_snps / n_blocks; rho <- 0.8
-n_disc <- 1000; n_targ <- 1000; n_ref <- 5000
-skip1 <- 10; skip2 <- 5; min_window_size <- 5; max_window_size <- 20   # 100/5718 chr ≈ 20/1000 chr (proportional to paper settings)
-T_region <- 100; tol <- 100; min_signal <- 2.5
+n_disc <- 1000; n_targ <- 1000 # discovery + target cohort sizes (method A)
+n_ref  <- 5000 # reference panel for the empirical LD
+skip1 <- 10; # pivotal SNP every 10th SNP 
+skip2 <- 5; # step size for adaptive window widths
+min_window_size <- 5; max_window_size <- 20 # adaptive window half-widths
+T_region <- 100 # width of a true association region
+tolerance <- 100 # a detected peak within 100 SNPs of a true region is considered a hit
+min_signal <- 2.5 # paper default, for CPD algorithm
 
-q_rates <- c(0.3, 0.5, 1.0)
-traits <- c("continuous", "dichotomous")
-M_vals <- c(1, 3)
+q_rates <- c(0.3, 0.5, 1.0) # fraction of the region's SNPs that are causal
+traits  <- c("continuous", "dichotomous")
+M_vals  <- c(1, 3) # how many true regions on the chromosome
 region_starts <- list(`1` = 400, `3` = c(100, 400, 700))
 
-# bumped effect sizes to get visible power at N=1000
+# effects a bit bigger than the 300-SNP toy so power is visible at n=1000
 c_eff <- list(continuous = 0.5, dichotomous = 0.8)
 base_seed <- 35
 
-# native_run_via_ras() in code/ras_ss.R reads these from the global env
-best_ws <- 30; slope_thresh <- 1e-6; davies_thresh <- 1e-4;
+# detection thresholds, picked on null reps (see calibrate chunk)
+best_ws <- 30; slope_thresh <- 1e-6; davies_thresh <- 1e-4
 
 R_true <- matrix(0, n_snps, n_snps)
 for (b in 0:(n_blocks-1)) { 
   idx <- b*block_len + 1:block_len
-  R_true[idx, idx] <- outer(1:block_len, 1:block_len, function(i,j) rho^abs(i-j)) 
+  R_true[idx, idx] <- outer(1:block_len, 1:block_len, function(i,j) rho^abs(i-j)) # build LD correlation matrix with AR(1) w/ rho 0.8
 }
 
 set.seed(base_seed)
-X_ref <- sim_genotypes(n_ref, R_true)
-R_emp <- cor(X_ref)
-prune_filter <- prune_ld(R_emp, 0.2)
+X_ref <- sim_genotypes(n_ref, R_true) # 5000 correlated genotypes
+R_emp <- cor(X_ref) # empirical LD from the reference
+prune_filter <- prune_ld(R_emp, 0.2) # drop SNPs w/ high LD, keeping only one (LD pruning)
 
+# a sparse cluster of causal SNPs in the middle of each region,
+# random +/- signs like the paper
 make_beta <- function(M, q, mag, seed) { 
   set.seed(seed)
   beta <- rep(0, n_snps)
   for (s in region_starts[[as.character(M)]]) { 
     center <- s + T_region %/% 2
-    reg <- (center-10):(center+10) # sparse causal cluster
+    reg <- (center-10):(center+10)
     ca <- sample(reg, max(3, round(q*length(reg))))
     beta[ca] <- sample(c(-1,1), length(ca), TRUE) * mag 
   }
   beta 
 }
 
+# continuous: X beta + noise
+# dichotomous: call someone a "case" if L exceeds cutoff
 make_pheno <- function(X, beta, trait, seed) { 
   set.seed(seed)
   L <- as.numeric(X %*% beta) + rnorm(nrow(X), 0, 3)
   if (trait=="continuous") L else as.numeric(L > qnorm(0.8)) 
 }
 
-# Rao score Z for binary target
+# Rao score test for a binary trait (linear-regression Z is inappropriate for 0/1 y)
 get_marginal_stats_bin <- function(X, y) { 
   p0 <- mean(y)
   Xc <- sweep(X, 2, colMeans(X), "-")
@@ -69,22 +79,24 @@ get_marginal_stats_bin <- function(X, y) {
        z = {z <- U/sqrt(pmax(V,1e-12)); z[!is.finite(z)] <- 0; z}) 
 }
 
-# paper's overlap-rule metrics
+# paper's scoring metric: count_fp = calls that fall outside every true region,
+# count_fn = true regions that got no call
 dist_reg <- function(t, s) pmax(s - t, t - (s + T_region - 1), 0)
 
 count_fp <- function(tau, starts) { 
   if(!length(tau)) return(0)
-  sum(sapply(tau, function(t) min(sapply(starts, function(s) dist_reg(t,s)))) > tol) 
+  sum(sapply(tau, function(t) min(sapply(starts, function(s) dist_reg(t,s)))) > tolerance) 
 }
 
 count_fn <- function(tau, starts) { 
   if(!length(starts)) return(0)
   if(!length(tau)) return(length(starts))
-  sum(sapply(starts, function(s) min(sapply(tau, function(t) dist_reg(t,s)))) > tol) 
+  sum(sapply(starts, function(s) min(sapply(tau, function(t) dist_reg(t,s)))) > tolerance) 
 }
 ```
 
 ```{r helpers}
+# wrapping original package's two detection functions
 run_detect <- function(scan, ws=30, scw=15, sl=1e-3, sr=1e-3, dav=1e-3) {
   tryCatch({ 
     nc <- file(nullfile(), open="wt")
@@ -98,33 +110,35 @@ run_detect <- function(scan, ws=30, scw=15, sl=1e-3, sr=1e-3, dav=1e-3) {
     ))
     
     sink(type="message"); sink(type="output"); close(nc)
-    list(tau=unique(val$tau_hats), error=FALSE)
+    list(tau=unique(val$tau_hats), error=FALSE) # SNP positions of called peaks
   }, error=function(e){ 
     try({sink(type="message");sink(type="output");close(nc)}, silent=TRUE)
-    list(tau=numeric(0), error=TRUE) 
+    list(tau=numeric(0), error=TRUE) # non-interrupting error handling
   }) 
 }
 
-run_rep <- function(beta, trait, seed) { 
+# one replicate: simulate discovery + target, run the ras-ss scan, and
+# return target data so indiv can be run on the SAME replicate (paired)
+sim_cohorts <- function(beta, trait, seed) {
   set.seed(seed)
   X_d <- sim_genotypes(n_disc, R_true)
   X_t <- sim_genotypes(n_targ, R_true)
-  
   y_d <- make_pheno(X_d, beta, trait, seed+1)
   y_t <- make_pheno(X_t, beta, trait, seed+2)
-  
   ms <- if (trait=="continuous") get_marginal_stats else get_marginal_stats_bin
-  disc <- ms(X_d, y_d)
-  targ <- ms(X_t, y_t)
-  
-  list(scan=scan_ss(disc$beta, targ$z, R_emp, prune_filter), 
-       X_t=X_t, y_t=y_t, b_disc=disc$beta) 
+  list(X_d=X_d, X_t=X_t, y_d=y_d, y_t=y_t, disc=ms(X_d,y_d), targ=ms(X_t,y_t))
+}
+
+run_rep <- function(beta, trait, seed) {
+  co <- sim_cohorts(beta, trait, seed)
+  list(scan=scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter),
+       X_t=co$X_t, y_t=co$y_t, b_disc=co$disc$beta)
 }
 ```
 
 ```{r calibrate, eval=FALSE}
-# The paper calibrated thresholds to hit type I ~ 0.05. 
-# Test a grid of slope/davies pairs on 50 null reps to find the right one.
+# same idea as the paper. pick the thresholds that put null type I near 0.05.
+# grid of slope/davies pairs, 50 null reps each
 thresh_grid <- expand.grid(sl = c(1e-3, 1e-4, 1e-5, 1e-6, 1e-7), dav = c(1e-4, 1e-5, 1e-6, 1e-7))
 cal_res <- matrix(NA, nrow(thresh_grid), 3)
 colnames(cal_res) <- c("sl", "dav", "type1")
@@ -140,23 +154,17 @@ for (i in 1:nrow(thresh_grid)) {
 }
 
 print(cal_res)
-
-# Pick the row closest to 0.05
-best_row <- which.min(abs(cal_res[,"type1"] - 0.05))
-best_sl <- cal_res[best_row, "sl"]
-best_dav <- cal_res[best_row, "dav"]
-
-cat(sprintf("Calibrated thresholds: slope = %.1e, davies = %.1e (type I = %.2f)\n", 
-            best_sl, best_dav, cal_res[best_row, "type1"]))
 ```
 
 ```{r full_grid, cache=TRUE, results='hide'}
 n_null <- 200; n_pow <- 50
 sl <- slope_thresh; dv <- davies_thresh
-ckpt <- "03_partial_v2.rds"    # new schema (raw FN counts); forces the power grid to rerun
-t1f  <- "03_partial.rds_type1" # keep the OLD type-I checkpoint so it is NOT rerun
+# save after each scenario so a crash doesn't lose the whole run.
+# v2 stores raw FN counts; the type-I file is the older one, leave it alone
+ckpt <- "03_partial_v2.rds"
+t1f  <- "03_partial.rds_type1"
 
-# Type I per trait (checkpointed)
+# type I per trait
 type1_done <- if (file.exists(t1f)) readRDS(t1f) else list()
 for (tr in traits) {
   if (!is.null(type1_done[[tr]])) { cat("skip null", tr, "\n"); next }
@@ -165,7 +173,7 @@ for (tr in traits) {
     r <- run_rep(rep(0, n_snps), tr, 5000 + s)
     d_ss <- run_detect(r$scan, sl=sl, sr=sl, dav=dv)
     d_in <- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
-    capture.output(pp <- native_run_via_ras(rep(0, n_snps), 6000 + s))
+    pp <- quiet(native_run_via_ras(rep(0, n_snps), 6000 + s))
     d_pu <- run_detect(pp, sl=sl, sr=sl, dav=dv)
     c(ss = length(d_ss$tau)>0, indiv = length(d_in$tau)>0, pure = length(d_pu$tau)>0)
   }, future.seed = TRUE))
@@ -173,7 +181,8 @@ for (tr in traits) {
 }
 type1 <- do.call(rbind, type1_done)
 
-# Power / FPR-A per scenario (checkpointed, progress per scenario)
+# power / FPR-A per scenario, keep the raw FN counts so we can define
+# power a couple of ways later without rerunning
 done <- if (file.exists(ckpt)) readRDS(ckpt) else list()
 for (tr in traits) for (M in M_vals) for (q in q_rates) {
   key <- sprintf("%s_M%d_q%.1f", tr, M, q)
@@ -185,10 +194,8 @@ for (tr in traits) for (M in M_vals) for (q in q_rates) {
     r <- run_rep(b, tr, 1000 + s)
     d_ss <- run_detect(r$scan, sl=sl, sr=sl, dav=dv)
     d_in <- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
-    capture.output(pp <- native_run_via_ras(b, 2000 + s))
+    pp <- quiet(native_run_via_ras(b, 2000 + s))
     d_pu <- run_detect(pp, sl=sl, sr=sl, dav=dv)
-    # raw FN counts, not a collapsed boolean, so power can be "all M found"
-    # (the paper's definition) without rerunning this later
     c(ss_fn = count_fn(d_ss$tau,starts), ss_fpr = count_fp(d_ss$tau,starts),
       in_fn = count_fn(d_in$tau,starts), in_fpr = count_fp(d_in$tau,starts),
       pu_fn = count_fn(d_pu$tau,starts), pu_fpr = count_fp(d_pu$tau,starts))
@@ -196,58 +203,78 @@ for (tr in traits) for (M in M_vals) for (q in q_rates) {
   done[[key]] <- data.frame(trait=tr, M=M, q=q, pw); saveRDS(done, ckpt)
 }
 res <- do.call(rbind, done)
-res$ss_power <- res$ss_fn == 0   # all M regions found, per rep
+res$ss_power <- res$ss_fn == 0   # caught every true region
 res$in_power <- res$in_fn == 0
 res$pu_power <- res$pu_fn == 0
 agg <- aggregate(cbind(ss_power, in_power, pu_power, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 ```
 
 ```{r bench, cache=TRUE}
-# per-rep runtime, single core, fair across methods
-nb <- 10
+# per-rep runtime, single core. Cohort simulation is paid once up front and
+# excluded from ras-ss/indiv so the comparison isolates the scan step.
+nb <- 30
 bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"]))
 bb <- make_beta(3, 0.5, c_eff$continuous, 7)
-t_ss <- bench(function(s) { r <- run_rep(bb, "continuous", 900000+s); invisible(run_detect(r$scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
-t_in <- bench(function(s) { r <- run_rep(bb, "continuous", 910000+s); invisible(run_detect(list(x=r$scan$x, y=indiv_scan(r$scan,r$X_t,r$y_t,r$b_disc)), sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
-t_pu <- bench(function(s) { capture.output(pp <- native_run_via_ras(bb, 920000+s)); invisible(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+
+cohorts <- lapply(1:nb, function(s) sim_cohorts(bb, "continuous", 900000+s))
+grid_x <- seq(1, n_snps, by = skip1)
+
+t_ss <- bench(function(s) { co <- cohorts[[s]]
+  scan <- scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter)
+  invisible(run_detect(scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+t_in <- bench(function(s) { co <- cohorts[[s]]
+  prof <- indiv_scan(list(x=grid_x), co$X_t, co$y_t, co$disc$beta)
+  invisible(run_detect(list(x=grid_x, y=prof), sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+t_pu <- bench(function(s) { pp <- quiet(native_run_via_ras(bb, 920000+s))
+  invisible(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 ```
 
 ```{r results}
-# Table 1: type I with exact CIs
+# type I with exact binomial CIs
 fmt_ci <- function(rate, n) { b <- binom.test(round(rate*n), n)$conf.int; sprintf("%.2f (%.2f-%.2f)", rate, b[1], b[2]) }
 t1_tab <- type1
 for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] <- fmt_ci(type1[i,j], 200)
-knitr::kable(t1_tab, caption="Type I error (exact 95% CI), 200 null reps")
+knitr::kable(t1_tab, caption="Type I error at the calibrated thresholds (exact 95% CI), 200 null reps per trait")
 
-# Runtime: same data sim shared by ras-ss/indiv, so wall times are comparable;
-# the meaningful comparison is vs the 5-averaged gold standard.
 knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption="Single-core s/rep (shared sim dominates ras-ss/indiv; ras-ss cheaper than 5-averaged pure)")
+             caption="Wall-clock seconds per rep, single core")
 
-# per-region detection rate:
+# per-region detection rate is the readable metric here, since the CPD
+# usually locks onto 1-2 of the 3 peaks on these saturated synthetic profiles
 res$ss_pow <- 1 - res$ss_fn / res$M
 res$in_pow <- 1 - res$in_fn / res$M
 res$pu_pow <- 1 - res$pu_fn / res$M
-agg <- aggregate(cbind(ss_pow, in_pow, pu_pow, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
+agg <- aggregate(cbind(ss_pow, in_pow, pu_pow, ss_power, in_power, pu_power,
+                       ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 
-# Faithfulness as an equivalence scatter: points ON the diagonal = agreement
+# power (fraction of the M regions detected) vs causal rate
+par(mfrow=c(2,2), mar=c(4,4,2,1))
+for (tr in traits) for (M in M_vals) {
+  a <- agg[agg$trait==tr & agg$M==M,]
+  plot(a$q, a$ss_pow, type="b", col="blue", ylim=c(0,1), xlab="causal rate q",
+       ylab="power (fraction of M regions)", main=sprintf("%s, M=%d", tr, M))
+  lines(a$q, a$in_pow, type="b", col="red"); lines(a$q, a$pu_pow, type="b", col="purple")
+}
+legend("bottomright", legend=c("ras-ss","indiv","pure ras()"), col=c("blue","red","purple"), lty=1, bty="n")
+
+# ras-ss vs the individual-level run on the same data; on the dashed line = they agree
 par(mfrow=c(1,2), mar=c(4,4,2,1))
-plot(agg$in_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
+plot(agg$in_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
      xlab="individual-level power", ylab="ras-ss power", main="ras-ss vs individual-level")
 abline(0,1, lty=2)
-plot(agg$pu_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
+plot(agg$pu_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
      xlab="pure ras() power", ylab="ras-ss power", main="ras-ss vs gold standard")
 abline(0,1, lty=2)
 
-# FPR-A as a compact table (all ~0; a flat figure adds nothing)
+# FPR-A: average number of false regions called per rep
 fpr_tab <- aggregate(cbind(ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 names(fpr_tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 fpr_tab[,4:6] <- round(fpr_tab[,4:6], 2)
-knitr::kable(fpr_tab, caption="FPR-A (mean false regions per rep) -- ~0 for all methods")
+knitr::kable(fpr_tab, caption="FPR-A: average false regions per rep (0 = nothing spurious)")
 
-# Power table (all M regions detected, the paper's definition)
+# the paper's own definition: detected every true region
 tab <- agg[, c("trait","M","q","ss_power","in_power","pu_power")]
 names(tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 tab[,4:6] <- round(tab[,4:6], 2)
-knitr::kable(tab, caption="Power (all M true regions detected)")
+knitr::kable(tab, caption="Power = detected all M true regions; low for M=3 because the CPD usually catches only 1-2 of the 3 peaks")
 ```

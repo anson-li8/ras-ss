@@ -5,6 +5,15 @@
 # davies_thresh, best_ws) from the global environment AT CALL TIME, so define
 # those in the analysis Rmd before calling any of these.
 
+# capture.output() only catches stdout, the RAS package's gc/malloc_trim
+# noise goes out via message()
+quiet <- function(expr) {
+  nc <- file(nullfile(), open = "wt")
+  sink(nc, type = "output"); sink(nc, type = "message")
+  on.exit({ sink(type = "message"); sink(type = "output"); close(nc) })
+  force(expr)
+}
+
 # generate n fake patients whose genotypes are correlated based on the LD data
 sim_genotypes <- function(n, R) {
   X <- rmvnorm(n, sigma = R) # draw n ppl from multivariate normal w/ covariance R, applys LD correlations to generate accurate simulated SNPs
