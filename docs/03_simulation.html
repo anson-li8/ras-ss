@@ -425,10 +425,10 @@ changes </a>
 <div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
 <code>wflow_publish</code> to commit the R Markdown file and build the
 HTML.</p>
 </div>
@@ -532,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree4e4ce9cdf48479db3c467698181c186760ca340etargetblank4e4ce9ca">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstreea7769420beb51d1c0245b3f5682bed089a733b7atargetblanka776942a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/4e4ce9cdf48479db3c467698181c186760ca340e" target="_blank">4e4ce9c</a>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/a7769420beb51d1c0245b3f5682bed089a733b7a" target="_blank">a776942</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree4e4ce9cdf48479db3c467698181c186760ca340etargetblank4e4ce9ca"
+id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstreea7769420beb51d1c0245b3f5682bed089a733b7atargetblanka776942a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/4e4ce9cdf48479db3c467698181c186760ca340e" target="_blank">4e4ce9c</a>.
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/a7769420beb51d1c0245b3f5682bed089a733b7a" target="_blank">a776942</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -571,13 +571,8 @@ Ignored files:
     Ignored:    analysis/02_simulation_cache/
     Ignored:    analysis/03_simulation_cache/
 
-Untracked files:
-    Untracked:  03_partial.rds
-    Untracked:  03_partial.rds_type1
-    Untracked:  analysis/03_simulation.Rmd
-
 Unstaged changes:
-    Modified:   code/ras_ss.R
+    Modified:   analysis/03_simulation.Rmd
 
 </code></pre>
 <p>
@@ -593,9 +588,72 @@ have uncommitted changes.
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/03_simulation.Rmd</code>) and
+HTML (<code>docs/03_simulation.html</code>) files. If you’ve configured
+a remote Git repository (see <code>?wflow_git_remote</code>), click on
+the hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/a7769420beb51d1c0245b3f5682bed089a733b7a/analysis/03_simulation.Rmd" target="_blank">a776942</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+<td>
+first working commit of simulation 3 for paper settings matching
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/a7769420beb51d1c0245b3f5682bed089a733b7a/docs/03_simulation.html" target="_blank">a776942</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+<td>
+first working commit of simulation 3 for paper settings matching
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -657,10 +715,10 @@ make_pheno &lt;- function(X, beta, trait, seed) {
 get_marginal_stats_bin &lt;- function(X, y) { 
   p0 &lt;- mean(y)
   Xc &lt;- sweep(X, 2, colMeans(X), &quot;-&quot;)
-  U &lt;- as.numeric(crossprod(Xc, y - p0))
-  V &lt;- p0 * (1 - p0) * colSums(Xc^2)
-  list(beta = U / pmax(V, 1e-12), 
-       z = {z &lt;- U / sqrt(pmax(V, 1e-12)); z[!is.finite(z)] &lt;- 0; z}) 
+  U &lt;- as.numeric(crossprod(Xc, y-p0))
+  V &lt;- p0*(1-p0)*colSums(Xc^2)
+  list(beta = U/pmax(V,1e-12), 
+       z = {z &lt;- U/sqrt(pmax(V,1e-12)); z[!is.finite(z)] &lt;- 0; z}) 
 }
 
 # paper&#39;s overlap-rule metrics
@@ -691,7 +749,7 @@ count_fn &lt;- function(tau, starts) {
     sink(type=&quot;message&quot;); sink(type=&quot;output&quot;); close(nc)
     list(tau=unique(val$tau_hats), error=FALSE)
   }, error=function(e){ 
-    try({sink(type=&quot;message&quot;); sink(type=&quot;output&quot;); close(nc)}, silent=TRUE)
+    try({sink(type=&quot;message&quot;);sink(type=&quot;output&quot;);close(nc)}, silent=TRUE)
     list(tau=numeric(0), error=TRUE) 
   }) 
 }
@@ -738,10 +796,10 @@ cat(sprintf(&quot;Calibrated thresholds: slope = %.1e, davies = %.1e (type I = %
             best_sl, best_dav, cal_res[best_row, &quot;type1&quot;]))</code></pre>
 <pre class="r"><code>n_null &lt;- 200; n_pow &lt;- 50
 sl &lt;- slope_thresh; dv &lt;- davies_thresh
-ckpt &lt;- &quot;03_partial.rds&quot;
+ckpt &lt;- &quot;03_partial_v2.rds&quot;    # new schema (raw FN counts); forces the power grid to rerun
+t1f  &lt;- &quot;03_partial.rds_type1&quot; # keep the OLD type-I checkpoint so it is NOT rerun
 
 # Type I per trait (checkpointed)
-t1f &lt;- paste0(ckpt, &quot;_type1&quot;)
 type1_done &lt;- if (file.exists(t1f)) readRDS(t1f) else list()
 for (tr in traits) {
   if (!is.null(type1_done[[tr]])) { cat(&quot;skip null&quot;, tr, &quot;\n&quot;); next }
@@ -755,6 +813,30 @@ for (tr in traits) {
     c(ss = length(d_ss$tau)&gt;0, indiv = length(d_in$tau)&gt;0, pure = length(d_pu$tau)&gt;0)
   }, future.seed = TRUE))
   type1_done[[tr]] &lt;- colMeans(hits); saveRDS(type1_done, t1f)
+}
+type1 &lt;- do.call(rbind, type1_done)
+
+# Power / FPR-A per scenario (checkpointed, progress per scenario)
+done &lt;- if (file.exists(ckpt)) readRDS(ckpt) else list()
+for (tr in traits) for (M in M_vals) for (q in q_rates) {
+  key &lt;- sprintf(&quot;%s_M%d_q%.1f&quot;, tr, M, q)
+  if (key %in% names(done)) { cat(&quot;skip&quot;, key, &quot;\n&quot;); next }
+  cat(&quot;power&quot;, key, &quot;\n&quot;)
+  starts &lt;- region_starts[[as.character(M)]]
+  pw &lt;- do.call(rbind, future_lapply(seq_len(n_pow), function(s) {
+    b &lt;- make_beta(M, q, c_eff[[tr]], s)
+    r &lt;- run_rep(b, tr, 1000 + s)
+    d_ss &lt;- run_detect(r$scan, sl=sl, sr=sl, dav=dv)
+    d_in &lt;- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
+    capture.output(pp &lt;- native_run_via_ras(b, 2000 + s))
+    d_pu &lt;- run_detect(pp, sl=sl, sr=sl, dav=dv)
+    # raw FN counts, not a collapsed boolean, so power can be &quot;all M found&quot;
+    # (the paper&#39;s definition) without rerunning this later
+    c(ss_fn = count_fn(d_ss$tau,starts), ss_fpr = count_fp(d_ss$tau,starts),
+      in_fn = count_fn(d_in$tau,starts), in_fpr = count_fp(d_in$tau,starts),
+      pu_fn = count_fn(d_pu$tau,starts), pu_fpr = count_fp(d_pu$tau,starts))
+  }, future.seed = TRUE))
+  done[[key]] &lt;- data.frame(trait=tr, M=M, q=q, pw); saveRDS(done, ckpt)
 }</code></pre>
 <pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1</code></pre>
 <pre><code>Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
@@ -792,68 +874,10 @@ gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
+gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
+<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
+Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
+<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
@@ -914,73 +938,10 @@ gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
+gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
+<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
+Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
+<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
@@ -1041,73 +1002,10 @@ gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
+gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
+<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
+Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
+<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
@@ -1168,1848 +1066,10 @@ gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
 <pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
 Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
 <pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
-Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
-Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
-<pre><code>Warning: package &#39;future&#39; was built under R version 4.6.1
-Warning: package &#39;mvtnorm&#39; was built under R version 4.6.1</code></pre>
-<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
-<pre class="r"><code>type1 &lt;- do.call(rbind, type1_done)
-
-# Power / FPR-A per scenario (checkpointed, progress per scenario)
-done &lt;- if (file.exists(ckpt)) readRDS(ckpt) else list()
-for (tr in traits) for (M in M_vals) for (q in q_rates) {
-  key &lt;- sprintf(&quot;%s_M%d_q%.1f&quot;, tr, M, q)
-  if (key %in% names(done)) { cat(&quot;skip&quot;, key, &quot;\n&quot;); next }
-  cat(&quot;power&quot;, key, &quot;\n&quot;)
-  starts &lt;- region_starts[[as.character(M)]]
-  pw &lt;- do.call(rbind, future_lapply(seq_len(n_pow), function(s) {
-    b &lt;- make_beta(M, q, c_eff[[tr]], s)
-    r &lt;- run_rep(b, tr, 1000 + s)
-    d_ss &lt;- run_detect(r$scan, sl=sl, sr=sl, dav=dv)
-    d_in &lt;- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
-    capture.output(pp &lt;- native_run_via_ras(b, 2000 + s))
-    d_pu &lt;- run_detect(pp, sl=sl, sr=sl, dav=dv)
-    c(ss_any = count_fn(d_ss$tau,starts)&lt;M, ss_fpr = count_fp(d_ss$tau,starts),
-      in_any = count_fn(d_in$tau,starts)&lt;M, in_fpr = count_fp(d_in$tau,starts),
-      pu_any = count_fn(d_pu$tau,starts)&lt;M, pu_fpr = count_fp(d_pu$tau,starts))
-  }, future.seed = TRUE))
-  done[[key]] &lt;- data.frame(trait=tr, M=M, q=q, pw); saveRDS(done, ckpt)
-}</code></pre>
-<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
@@ -5819,7 +3879,10 @@ gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
 <pre class="r"><code>res &lt;- do.call(rbind, done)
-agg &lt;- aggregate(. ~ trait + M + q, data=res, mean)</code></pre>
+res$ss_power &lt;- res$ss_fn == 0   # all M regions found, per rep
+res$in_power &lt;- res$in_fn == 0
+res$pu_power &lt;- res$pu_fn == 0
+agg &lt;- aggregate(cbind(ss_power, in_power, pu_power, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)</code></pre>
 <pre class="r"><code># per-rep runtime, single core, fair across methods
 nb &lt;- 10
 bench &lt;- function(f) mean(sapply(1:nb, function(s) system.time(f(s))[&quot;elapsed&quot;]))
@@ -5877,14 +3940,13 @@ gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA
 gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
-<pre class="r"><code># Table 1: type I with exact CIs (shows 0.05 is inside every interval)
+<pre class="r"><code># Table 1: type I with exact CIs
 fmt_ci &lt;- function(rate, n) { b &lt;- binom.test(round(rate*n), n)$conf.int; sprintf(&quot;%.2f (%.2f-%.2f)&quot;, rate, b[1], b[2]) }
 t1_tab &lt;- type1
 for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] &lt;- fmt_ci(type1[i,j], 200)
-knitr::kable(t1_tab, caption=&quot;Type I error (exact 95% CI), 200 null reps -- all intervals include 0.05&quot;)</code></pre>
+knitr::kable(t1_tab, caption=&quot;Type I error (exact 95% CI), 200 null reps&quot;)</code></pre>
 <table>
-<caption>Type I error (exact 95% CI), 200 null reps – all intervals
-include 0.05</caption>
+<caption>Type I error (exact 95% CI), 200 null reps</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -5911,10 +3973,10 @@ include 0.05</caption>
 <pre class="r"><code># Runtime: same data sim shared by ras-ss/indiv, so wall times are comparable;
 # the meaningful comparison is vs the 5-averaged gold standard.
 knitr::kable(data.frame(method=c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption=&quot;Single-core s/rep (shared sim dominates ras-ss/indiv; ras-ss ~1.5x cheaper than 5-averaged pure)&quot;)</code></pre>
+             caption=&quot;Single-core s/rep (shared sim dominates ras-ss/indiv; ras-ss cheaper than 5-averaged pure)&quot;)</code></pre>
 <table>
 <caption>Single-core s/rep (shared sim dominates ras-ss/indiv; ras-ss
-~1.5x cheaper than 5-averaged pure)</caption>
+cheaper than 5-averaged pure)</caption>
 <thead>
 <tr class="header">
 <th align="left">method</th>
@@ -5924,37 +3986,111 @@ knitr::kable(data.frame(method=c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure
 <tbody>
 <tr class="odd">
 <td align="left">ras-ss</td>
-<td align="right">13.5</td>
+<td align="right">11.9</td>
 </tr>
 <tr class="even">
 <td align="left">indiv</td>
-<td align="right">12.0</td>
+<td align="right">11.5</td>
 </tr>
 <tr class="odd">
 <td align="left">pure ras()</td>
-<td align="right">21.5</td>
+<td align="right">21.2</td>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># Fig 2: clean power lines (CIs live in the tables, not on the lines)
+<pre class="r"><code># Fig 2: power (all M regions) vs q, clean lines (CIs live in the tables)
 par(mfrow=c(2,2), mar=c(4,4,2,1))
 for (tr in traits) for (M in M_vals) {
   a &lt;- agg[agg$trait==tr &amp; agg$M==M,]
-  plot(a$q, a$ss_any, type=&quot;b&quot;, col=&quot;blue&quot;, ylim=c(0,1), xlab=&quot;causal rate q&quot;,
-       ylab=&quot;power (&gt;=1 region)&quot;, main=sprintf(&quot;%s, M=%d&quot;, tr, M))
-  lines(a$q, a$in_any, type=&quot;b&quot;, col=&quot;red&quot;); lines(a$q, a$pu_any, type=&quot;b&quot;, col=&quot;purple&quot;)
+  plot(a$q, a$ss_power, type=&quot;b&quot;, col=&quot;blue&quot;, ylim=c(0,1), xlab=&quot;causal rate q&quot;,
+       ylab=&quot;power (all M regions)&quot;, main=sprintf(&quot;%s, M=%d&quot;, tr, M))
+  lines(a$q, a$in_power, type=&quot;b&quot;, col=&quot;red&quot;); lines(a$q, a$pu_power, type=&quot;b&quot;, col=&quot;purple&quot;)
 }
 legend(&quot;bottomright&quot;, legend=c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;), col=c(&quot;blue&quot;,&quot;red&quot;,&quot;purple&quot;), lty=1, bty=&quot;n&quot;)</code></pre>
 <p><img src="figure/03_simulation.Rmd/results-1.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-results-1">
+Past versions of results-1.png
+</button>
+</p>
+<div id="fig-results-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/a7769420beb51d1c0245b3f5682bed089a733b7a/docs/figure/03_simulation.Rmd/results-1.png" target="_blank">a776942</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Faithfulness as an equivalence scatter: points ON the diagonal = agreement
 par(mfrow=c(1,2), mar=c(4,4,2,1))
-plot(agg$in_any, agg$ss_any, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;blue&quot;,
+plot(agg$in_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;blue&quot;,
      xlab=&quot;individual-level power&quot;, ylab=&quot;ras-ss power&quot;, main=&quot;ras-ss vs individual-level&quot;)
 abline(0,1, lty=2)
-plot(agg$pu_any, agg$ss_any, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;purple&quot;,
+plot(agg$pu_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col=&quot;purple&quot;,
      xlab=&quot;pure ras() power&quot;, ylab=&quot;ras-ss power&quot;, main=&quot;ras-ss vs gold standard&quot;)
 abline(0,1, lty=2)</code></pre>
 <p><img src="figure/03_simulation.Rmd/results-2.png" alt="" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-results-2">
+Past versions of results-2.png
+</button>
+</p>
+<div id="fig-results-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/a7769420beb51d1c0245b3f5682bed089a733b7a/docs/figure/03_simulation.Rmd/results-2.png" target="_blank">a776942</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-12
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># FPR-A as a compact table (all ~0; a flat figure adds nothing)
 fpr_tab &lt;- aggregate(cbind(ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 names(fpr_tab)[4:6] &lt;- c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;)
@@ -6072,13 +4208,13 @@ methods</caption>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code># Power table with CIs-free clean numbers
-tab &lt;- agg[, c(&quot;trait&quot;,&quot;M&quot;,&quot;q&quot;,&quot;ss_any&quot;,&quot;in_any&quot;,&quot;pu_any&quot;)]
+<pre class="r"><code># Power table (all M regions detected, the paper&#39;s definition)
+tab &lt;- agg[, c(&quot;trait&quot;,&quot;M&quot;,&quot;q&quot;,&quot;ss_power&quot;,&quot;in_power&quot;,&quot;pu_power&quot;)]
 names(tab)[4:6] &lt;- c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;)
 tab[,4:6] &lt;- round(tab[,4:6], 2)
-knitr::kable(tab, caption=&quot;Power (&gt;=1 true region detected)&quot;)</code></pre>
+knitr::kable(tab, caption=&quot;Power (all M true regions detected)&quot;)</code></pre>
 <table>
-<caption>Power (&gt;=1 true region detected)</caption>
+<caption>Power (all M true regions detected)</caption>
 <thead>
 <tr class="header">
 <th align="left">trait</th>
@@ -6110,17 +4246,17 @@ knitr::kable(tab, caption=&quot;Power (&gt;=1 true region detected)&quot;)</code
 <td align="left">continuous</td>
 <td align="right">3</td>
 <td align="right">0.3</td>
-<td align="right">0.94</td>
-<td align="right">0.94</td>
-<td align="right">0.86</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="even">
 <td align="left">dichotomous</td>
 <td align="right">3</td>
 <td align="right">0.3</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="odd">
 <td align="left">continuous</td>
@@ -6142,17 +4278,17 @@ knitr::kable(tab, caption=&quot;Power (&gt;=1 true region detected)&quot;)</code
 <td align="left">continuous</td>
 <td align="right">3</td>
 <td align="right">0.5</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">0.94</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="even">
 <td align="left">dichotomous</td>
 <td align="right">3</td>
 <td align="right">0.5</td>
-<td align="right">0.96</td>
-<td align="right">0.98</td>
-<td align="right">1.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="odd">
 <td align="left">continuous</td>
@@ -6174,17 +4310,17 @@ knitr::kable(tab, caption=&quot;Power (&gt;=1 true region detected)&quot;)</code
 <td align="left">continuous</td>
 <td align="right">3</td>
 <td align="right">1.0</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
 </tr>
 <tr class="even">
 <td align="left">dichotomous</td>
 <td align="right">3</td>
 <td align="right">1.0</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
-<td align="right">1.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
+<td align="right">0.00</td>
 </tr>
 </tbody>
 </table>
@@ -6231,9 +4367,10 @@ loaded via a namespace (and not attached):
 [25] stringi_1.8.7     httpuv_1.6.17     xfun_0.60         fs_2.1.0         
 [29] sass_0.4.10       segmented_2.2-1   otel_0.2.0        cli_3.6.6        
 [33] magrittr_2.0.5    grid_4.6.0        digest_0.6.39     rstudioapi_0.19.0
-[37] lifecycle_1.0.5   nlme_3.1-170      vctrs_0.7.3       evaluate_1.0.5   
-[41] glue_1.8.1        listenv_1.0.0     codetools_0.2-20  parallelly_1.48.0
-[45] rmarkdown_2.31    tools_4.6.0       pkgconfig_2.0.3   htmltools_0.5.9  </code></pre>
+[37] nlme_3.1-170      lifecycle_1.0.5   vctrs_0.7.3       evaluate_1.0.5   
+[41] glue_1.8.1        listenv_1.0.0     whisker_0.4.1     codetools_0.2-20 
+[45] parallelly_1.48.0 rmarkdown_2.31    tools_4.6.0       pkgconfig_2.0.3  
+[49] htmltools_0.5.9  </code></pre>
 </div>
 </div>
 </div>

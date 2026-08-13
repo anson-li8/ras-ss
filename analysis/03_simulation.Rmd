@@ -63,10 +63,10 @@ make_pheno <- function(X, beta, trait, seed) {
 get_marginal_stats_bin <- function(X, y) { 
   p0 <- mean(y)
   Xc <- sweep(X, 2, colMeans(X), "-")
-  U <- as.numeric(crossprod(Xc, y - p0))
-  V <- p0 * (1 - p0) * colSums(Xc^2)
-  list(beta = U / pmax(V, 1e-12), 
-       z = {z <- U / sqrt(pmax(V, 1e-12)); z[!is.finite(z)] <- 0; z}) 
+  U <- as.numeric(crossprod(Xc, y-p0))
+  V <- p0*(1-p0)*colSums(Xc^2)
+  list(beta = U/pmax(V,1e-12), 
+       z = {z <- U/sqrt(pmax(V,1e-12)); z[!is.finite(z)] <- 0; z}) 
 }
 
 # paper's overlap-rule metrics
@@ -100,7 +100,7 @@ run_detect <- function(scan, ws=30, scw=15, sl=1e-3, sr=1e-3, dav=1e-3) {
     sink(type="message"); sink(type="output"); close(nc)
     list(tau=unique(val$tau_hats), error=FALSE)
   }, error=function(e){ 
-    try({sink(type="message"); sink(type="output"); close(nc)}, silent=TRUE)
+    try({sink(type="message");sink(type="output");close(nc)}, silent=TRUE)
     list(tau=numeric(0), error=TRUE) 
   }) 
 }
@@ -153,10 +153,10 @@ cat(sprintf("Calibrated thresholds: slope = %.1e, davies = %.1e (type I = %.2f)\
 ```{r full_grid, cache=TRUE, results='hide'}
 n_null <- 200; n_pow <- 50
 sl <- slope_thresh; dv <- davies_thresh
-ckpt <- "03_partial.rds"
+ckpt <- "03_partial_v2.rds"    # new schema (raw FN counts); forces the power grid to rerun
+t1f  <- "03_partial.rds_type1" # keep the OLD type-I checkpoint so it is NOT rerun
 
 # Type I per trait (checkpointed)
-t1f <- paste0(ckpt, "_type1")
 type1_done <- if (file.exists(t1f)) readRDS(t1f) else list()
 for (tr in traits) {
   if (!is.null(type1_done[[tr]])) { cat("skip null", tr, "\n"); next }
@@ -187,17 +187,22 @@ for (tr in traits) for (M in M_vals) for (q in q_rates) {
     d_in <- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
     capture.output(pp <- native_run_via_ras(b, 2000 + s))
     d_pu <- run_detect(pp, sl=sl, sr=sl, dav=dv)
-    c(ss_any = count_fn(d_ss$tau,starts)<M, ss_fpr = count_fp(d_ss$tau,starts),
-      in_any = count_fn(d_in$tau,starts)<M, in_fpr = count_fp(d_in$tau,starts),
-      pu_any = count_fn(d_pu$tau,starts)<M, pu_fpr = count_fp(d_pu$tau,starts))
+    # raw FN counts, not a collapsed boolean, so power can be "all M found"
+    # (the paper's definition) without rerunning this later
+    c(ss_fn = count_fn(d_ss$tau,starts), ss_fpr = count_fp(d_ss$tau,starts),
+      in_fn = count_fn(d_in$tau,starts), in_fpr = count_fp(d_in$tau,starts),
+      pu_fn = count_fn(d_pu$tau,starts), pu_fpr = count_fp(d_pu$tau,starts))
   }, future.seed = TRUE))
   done[[key]] <- data.frame(trait=tr, M=M, q=q, pw); saveRDS(done, ckpt)
 }
 res <- do.call(rbind, done)
-agg <- aggregate(. ~ trait + M + q, data=res, mean)
+res$ss_power <- res$ss_fn == 0   # all M regions found, per rep
+res$in_power <- res$in_fn == 0
+res$pu_power <- res$pu_fn == 0
+agg <- aggregate(cbind(ss_power, in_power, pu_power, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 ```
 
-```{r bench, cache=TRUE, results='hide'}
+```{r bench, cache=TRUE}
 # per-rep runtime, single core, fair across methods
 nb <- 10
 bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"]))
@@ -208,33 +213,29 @@ t_pu <- bench(function(s) { capture.output(pp <- native_run_via_ras(bb, 920000+s
 ```
 
 ```{r results}
-# Table 1: type I with exact CIs (shows 0.05 is inside every interval)
+# Table 1: type I with exact CIs
 fmt_ci <- function(rate, n) { b <- binom.test(round(rate*n), n)$conf.int; sprintf("%.2f (%.2f-%.2f)", rate, b[1], b[2]) }
 t1_tab <- type1
 for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] <- fmt_ci(type1[i,j], 200)
-knitr::kable(t1_tab, caption="Type I error (exact 95% CI), 200 null reps -- all intervals include 0.05")
+knitr::kable(t1_tab, caption="Type I error (exact 95% CI), 200 null reps")
 
 # Runtime: same data sim shared by ras-ss/indiv, so wall times are comparable;
 # the meaningful comparison is vs the 5-averaged gold standard.
 knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption="Single-core s/rep (shared sim dominates ras-ss/indiv; ras-ss ~1.5x cheaper than 5-averaged pure)")
+             caption="Single-core s/rep (shared sim dominates ras-ss/indiv; ras-ss cheaper than 5-averaged pure)")
 
-# Fig 2: clean power lines (CIs live in the tables, not on the lines)
-par(mfrow=c(2,2), mar=c(4,4,2,1))
-for (tr in traits) for (M in M_vals) {
-  a <- agg[agg$trait==tr & agg$M==M,]
-  plot(a$q, a$ss_any, type="b", col="blue", ylim=c(0,1), xlab="causal rate q",
-       ylab="power (>=1 region)", main=sprintf("%s, M=%d", tr, M))
-  lines(a$q, a$in_any, type="b", col="red"); lines(a$q, a$pu_any, type="b", col="purple")
-}
-legend("bottomright", legend=c("ras-ss","indiv","pure ras()"), col=c("blue","red","purple"), lty=1, bty="n")
+# per-region detection rate:
+res$ss_pow <- 1 - res$ss_fn / res$M
+res$in_pow <- 1 - res$in_fn / res$M
+res$pu_pow <- 1 - res$pu_fn / res$M
+agg <- aggregate(cbind(ss_pow, in_pow, pu_pow, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 
 # Faithfulness as an equivalence scatter: points ON the diagonal = agreement
 par(mfrow=c(1,2), mar=c(4,4,2,1))
-plot(agg$in_any, agg$ss_any, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
+plot(agg$in_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
      xlab="individual-level power", ylab="ras-ss power", main="ras-ss vs individual-level")
 abline(0,1, lty=2)
-plot(agg$pu_any, agg$ss_any, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
+plot(agg$pu_power, agg$ss_power, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
      xlab="pure ras() power", ylab="ras-ss power", main="ras-ss vs gold standard")
 abline(0,1, lty=2)
 
@@ -244,9 +245,9 @@ names(fpr_tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 fpr_tab[,4:6] <- round(fpr_tab[,4:6], 2)
 knitr::kable(fpr_tab, caption="FPR-A (mean false regions per rep) -- ~0 for all methods")
 
-# Power table with CIs-free clean numbers
-tab <- agg[, c("trait","M","q","ss_any","in_any","pu_any")]
+# Power table (all M regions detected, the paper's definition)
+tab <- agg[, c("trait","M","q","ss_power","in_power","pu_power")]
 names(tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 tab[,4:6] <- round(tab[,4:6], 2)
-knitr::kable(tab, caption="Power (>=1 true region detected)")
+knitr::kable(tab, caption="Power (all M true regions detected)")
 ```
