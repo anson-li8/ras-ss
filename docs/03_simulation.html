@@ -366,7 +366,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -377,8 +377,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -391,9 +391,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 2
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -416,21 +416,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -490,27 +487,16 @@ versions is critical for reproducibility.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongdetected">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
 </p>
 </div>
-<div id="strongCachestrongdetected" class="panel-collapse collapse">
+<div id="strongCachestrongnone" class="panel-collapse collapse">
 <div class="panel-body">
-The following chunks had caches available:
-<ul>
-<li>
-bench
-</li>
-<li>
-full_grid
-</li>
-</ul>
-<p>To ensure reproducibility of the results, delete the cache directory
-<code>03_simulation_cache</code> and re-run the analysis. To have
-workflowr automatically delete the cache directory prior to building the
-file, set <code>delete_cache = TRUE</code> when running
-<code>wflow_build()</code> or <code>wflow_publish()</code>.</p>
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
 </div>
 </div>
 </div>
@@ -532,15 +518,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree7da34996c6a3c9d82b2c4c8a70fea55784643928targetblank7da3499a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree66961d684f9f455ca1d37b7558c7773ebd3286eftargetblank66961d6a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/7da34996c6a3c9d82b2c4c8a70fea55784643928" target="_blank">7da3499</a>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/66961d684f9f455ca1d37b7558c7773ebd3286ef" target="_blank">66961d6</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree7da34996c6a3c9d82b2c4c8a70fea55784643928targetblank7da3499a"
+id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree66961d684f9f455ca1d37b7558c7773ebd3286eftargetblank66961d6a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +536,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/7da34996c6a3c9d82b2c4c8a70fea55784643928" target="_blank">7da3499</a>.
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/66961d684f9f455ca1d37b7558c7773ebd3286ef" target="_blank">66961d6</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -569,10 +555,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
-    Ignored:    analysis/03_simulation_cache/
-
-Unstaged changes:
-    Modified:   analysis/03_simulation.Rmd
 
 </code></pre>
 <p>
@@ -617,6 +599,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/66961d684f9f455ca1d37b7558c7773ebd3286ef/analysis/03_simulation.Rmd" target="_blank">66961d6</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+hide verbose
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/b5340305814e9cf8cf97c37b4c556f00b72fb3da/docs/03_simulation.html" target="_blank">b534030</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+successful run
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/f29d24c32a556a1a4e109973b254f81b41dbb8ba/analysis/03_simulation.Rmd" target="_blank">f29d24c</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+clarified rest of simulation code
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -937,162 +970,12 @@ grid_x &lt;- seq(1, n_snps, by = skip1) # pivotal SNP positions, needed to wrap 
 # three measurements with same pre-simulated cohorts, so it is fair comparison
 t_ss &lt;- bench(function(s) { co &lt;- cohorts[[s]]
   scan &lt;- scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter)
-  invisible(run_detect(scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+  quiet(run_detect(scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 t_in &lt;- bench(function(s) { co &lt;- cohorts[[s]]
   prof &lt;- indiv_scan(list(x=grid_x), co$X_t, co$y_t, co$disc$beta)
-  invisible(run_detect(list(x=grid_x, y=prof), sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+  quiet(run_detect(list(x=grid_x, y=prof), sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 t_pu &lt;- bench(function(s) { pp &lt;- quiet(native_run_via_ras(bb, 920000+s))
-  invisible(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })</code></pre>
-<pre><code>gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA
-gc(full = TRUE) complete; malloc_trim returned: NA</code></pre>
+  quiet(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })</code></pre>
 <pre class="r"><code># type I with exact binomial CIs
 fmt_ci &lt;- function(rate, n) { b &lt;- binom.test(round(rate*n), n)$conf.int; sprintf(&quot;%.2f (%.2f-%.2f)&quot;, rate, b[1], b[2]) }
 t1_tab &lt;- type1
@@ -1137,15 +1020,15 @@ reps per trait</caption>
 <tbody>
 <tr class="odd">
 <td align="left">ras-ss</td>
-<td align="right">7.6</td>
+<td align="right">6.8</td>
 </tr>
 <tr class="even">
 <td align="left">indiv</td>
-<td align="right">9.1</td>
+<td align="right">7.7</td>
 </tr>
 <tr class="odd">
 <td align="left">pure ras()</td>
-<td align="right">28.3</td>
+<td align="right">30.0</td>
 </tr>
 </tbody>
 </table>
@@ -1559,22 +1442,22 @@ attached base packages:
 
 other attached packages:
 [1] future.apply_1.20.2 future_1.75.0       RAS_0.1.12         
-[4] mvtnorm_1.4-2      
+[4] mvtnorm_1.4-2       workflowr_1.7.2    
 
 loaded via a namespace (and not attached):
  [1] jsonlite_2.0.0    compiler_4.6.0    promises_1.5.0    Rcpp_1.1.2       
- [5] stringr_1.6.0     git2r_0.36.2      parallel_4.6.0    later_1.4.8      
- [9] jquerylib_0.1.4   globals_0.19.1    splines_4.6.0     yaml_2.3.12      
-[13] fastmap_1.2.0     lattice_0.22-9    R6_2.6.1          workflowr_1.7.2  
+ [5] stringr_1.6.0     git2r_0.36.2      parallel_4.6.0    callr_3.8.0      
+ [9] later_1.4.8       jquerylib_0.1.4   globals_0.19.1    splines_4.6.0    
+[13] yaml_2.3.12       fastmap_1.2.0     lattice_0.22-9    R6_2.6.1         
 [17] knitr_1.51        MASS_7.3-66       tibble_3.3.1      rprojroot_2.1.1  
 [21] bslib_0.11.0      pillar_1.11.1     rlang_1.3.0       cachem_1.1.0     
-[25] stringi_1.8.7     httpuv_1.6.17     xfun_0.60         fs_2.1.0         
-[29] sass_0.4.10       segmented_2.2-1   otel_0.2.0        cli_3.6.6        
-[33] magrittr_2.0.5    grid_4.6.0        digest_0.6.39     rstudioapi_0.19.0
-[37] nlme_3.1-170      lifecycle_1.0.5   vctrs_0.7.3       evaluate_1.0.5   
-[41] glue_1.8.1        listenv_1.0.0     whisker_0.4.1     codetools_0.2-20 
-[45] parallelly_1.48.0 rmarkdown_2.31    tools_4.6.0       pkgconfig_2.0.3  
-[49] htmltools_0.5.9  </code></pre>
+[25] stringi_1.8.7     httpuv_1.6.17     xfun_0.60         getPass_0.2-4    
+[29] fs_2.1.0          sass_0.4.10       segmented_2.2-1   otel_0.2.0       
+[33] cli_3.6.6         magrittr_2.0.5    grid_4.6.0        digest_0.6.39    
+[37] processx_3.9.0    rstudioapi_0.19.0 nlme_3.1-170      lifecycle_1.0.5  
+[41] vctrs_0.7.3       evaluate_1.0.5    glue_1.8.1        listenv_1.0.0    
+[45] whisker_0.4.1     codetools_0.2-20  parallelly_1.48.0 rmarkdown_2.31   
+[49] httr_1.4.8        tools_4.6.0       pkgconfig_2.0.3   htmltools_0.5.9  </code></pre>
 </div>
 </div>
 </div>
