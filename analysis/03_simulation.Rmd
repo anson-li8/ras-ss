@@ -271,7 +271,7 @@ plot(agg$in_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
      xlab="individual-level power", ylab="ras-ss power", main="ras-ss vs individual-level")
 abline(0,1, lty=2)
 plot(agg$pu_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
-     xlab="pure ras() power", ylab="ras-ss power", main="ras-ss vs gold standard")
+     xlab="pure ras() power", ylab="ras-ss power", main="ras-ss vs pure RAS run")
 abline(0,1, lty=2)
 
 # FPR, average number of false regions called per rep
@@ -284,5 +284,5 @@ knitr::kable(fpr_tab, caption="FPR-A: average false regions per rep (0 = nothing
 tab <- agg[, c("trait","M","q","ss_power","in_power","pu_power")]
 names(tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 tab[,4:6] <- round(tab[,4:6], 2)
-knitr::kable(tab, caption="Power = detected all M true regions; low for M=3 because the CPD usually catches only 1-2 of the 3 peaks")
+knitr::kable(tab, caption="Power = detected ALL M true regions; low for M=3 because the CPD usually catches only 1-2 of the 3 peaks")
 ```
