@@ -1,7 +1,9 @@
 ---
-title: "02_simulation"
+title: "Validation (300-SNP toy)"
 output: html_document
 ---
+
+*Paired-data validation on the 300-SNP toy. The main paper-style study is [Paper Replication](03_simulation.html).*
 
 ```{r setup, warning=FALSE, results='hide'}
 knitr::opts_chunk$set(echo = TRUE)

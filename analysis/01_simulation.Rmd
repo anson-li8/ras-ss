@@ -1,9 +1,11 @@
 ---
-title: "01_simulation"
+title: "Pilot Study (300-SNP toy)"
 output: html_document
 editor_options:
   chunk_output_type: inline
 ---
+
+*Pilot/tuning run. The main paper-style study is [Paper Replication](03_simulation.html).*
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)

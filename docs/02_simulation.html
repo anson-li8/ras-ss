@@ -11,7 +11,7 @@
 
 
 
-<title>02_simulation</title>
+<title>Validation (300-SNP toy)</title>
 
 <script src="site_libs/header-attrs-2.31/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -335,10 +335,13 @@ div.tocify {
   <a href="00_problem_statement.html">Problem Statement</a>
 </li>
 <li>
-  <a href="01_simulation.html">Simulation</a>
+  <a href="01_simulation.html">Pilot Study</a>
 </li>
 <li>
   <a href="02_simulation.html">Validation</a>
+</li>
+<li>
+  <a href="03_simulation.html">Paper Replication</a>
 </li>
 <li>
   <a href="about.html">About</a>
@@ -358,7 +361,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">02_simulation</h1>
+<h1 class="title toc-ignore">Validation (300-SNP toy)</h1>
 
 </div>
 
@@ -387,13 +390,13 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-08-07
+<strong>Last updated:</strong> 2026-08-13
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 2
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -416,18 +419,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -532,15 +538,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstreea38591cdf19cd45dbfe7c1b4825efd9ed5f0a091targetblanka38591ca">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree8b54f1e4df3ff92be9f425dcf7daef220399cd5atargetblank8b54f1ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/a38591cdf19cd45dbfe7c1b4825efd9ed5f0a091" target="_blank">a38591c</a>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/8b54f1e4df3ff92be9f425dcf7daef220399cd5a" target="_blank">8b54f1e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstreea38591cdf19cd45dbfe7c1b4825efd9ed5f0a091targetblanka38591ca"
+id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree8b54f1e4df3ff92be9f425dcf7daef220399cd5atargetblank8b54f1ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -550,7 +556,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/a38591cdf19cd45dbfe7c1b4825efd9ed5f0a091" target="_blank">a38591c</a>.
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/8b54f1e4df3ff92be9f425dcf7daef220399cd5a" target="_blank">8b54f1e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -569,6 +575,17 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
+    Ignored:    analysis/03_simulation_cache/
+
+Unstaged changes:
+    Modified:   README.md
+    Modified:   analysis/00_problem_statement.Rmd
+    Modified:   analysis/01_simulation.Rmd
+    Modified:   analysis/02_simulation.Rmd
+    Modified:   analysis/03_simulation.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -613,6 +630,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/4e4ce9cdf48479db3c467698181c186760ca340e/docs/02_simulation.html" target="_blank">4e4ce9c</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -878,6 +912,8 @@ simulation
 </div>
 </div>
 </div>
+<p><em>Paired-data validation on the 300-SNP toy. The main paper-style
+study is <a href="03_simulation.html">Paper Replication</a>.</em></p>
 <pre class="r"><code>knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(autodep = TRUE)
 library(mvtnorm)
@@ -1033,7 +1069,7 @@ cat(sprintf(&quot;ras-ss repro check: type1 = %.3f (expect 0.038), power = %.3f 
 <pre class="r"><code># NOTE: time with knitr caching
 cat(sprintf(&quot;Total knitting time: %.1f minutes\n&quot;,
             as.numeric(difftime(Sys.time(), start_time, units = &quot;mins&quot;))))</code></pre>
-<pre><code>Total knitting time: 57.6 minutes</code></pre>
+<pre><code>Total knitting time: 0.0 minutes</code></pre>
 <pre class="r"><code># plot 0: the three-run comparison, w/ exact binomial 95% CI error bars
 t1_counts &lt;- c(sum(ss_n), sum(ind_n), sum(pure_n))
 pw_counts &lt;- c(sum(ss_p), sum(ind_p), sum(pure_p))

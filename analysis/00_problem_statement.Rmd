@@ -93,5 +93,5 @@ Takeaway: ras-ss is not a replacement for the original method when individual-le
 **Open items, not yet addressed:**
 
 - Reference-panel LD is drawn from the same simulated population as the discovery/target cohorts here; ancestry-mismatch sensitivity (real reference panel vs. true cohort LD) has not yet been stress-tested.
-- Calibration performed on a single toy configuration ($n=300$, $\rho=0.8$); has not been re-verified at other chromosome sizes or LD structures.
+- Calibration performed on a single toy configuration ($n=300$, $\rho=0.8$); has not been re-verified at other chromosome sizes or LD structures. (Done in simulation 3)
 - Summary-stat resampling analog of `num_rep`: The three-run validation (`02_simulation`) measures the cost of being single-pass at ~6 power points vs. the 5-averaged original, all of it due to the resampling average. A reference-panel resampling analog is the planned way to recover the LD-noise portion of that gap on real data (negligible on this toy, where reference is large). Unfortunately, the target-resplit portion is unrecoverable from summary statistics without significant change of the method.

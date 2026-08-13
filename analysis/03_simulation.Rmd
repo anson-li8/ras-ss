@@ -1,7 +1,9 @@
 ---
-title: "03_simulation"
+title: "Paper Replication (1000-SNP)"
 output: html_document
 ---
+
+*The main simulation study, replicating the design of Jiang & Zhang (2025) on a simulated 1,000-SNP chromosome. Pilot and validation on the 300-SNP toy: [Pilot Study](01_simulation.html), [Validation](02_simulation.html).*
 
 # Setup and Config
 

@@ -10,9 +10,9 @@ editor_options:
 
 **ras-ss** extends the Regional Association Score (RAS) method so it runs on GWAS **summary statistics** instead of individual-level data. This opens up opportunities to run analysis on the studies that only publish summary statistics like marginals and LD references, which is most of them. This site is the reproducible record of that work:
 
-- **[Problem Statement](00_problem_statement.html)** — what RAS does, why it needs individual-level data, and the derivation of the summary-statistic burden statistic (`T_burden`) that replaces it.
-- **[Simulation](01_simulation.html)** — the tuning run on a 300-SNP toy chromosome: the window-size sweep and the `slope_check_window_size` alteration that the detection step needed.
-- **[Validation](02_simulation.html)** — the three-run comparison (ras-ss vs. the individual-level method on matched data vs. the original `ras()` with `num_rep = 5`), with type I error, power, and peak-location diagnostics.
+- **[Pilot Study](01_simulation.html)** — the 300-SNP tuning run: the window-size sweep and the `slope_check_window_size` detection fix.
+- **[Validation](02_simulation.html)** — the three-run comparison on the 300-SNP toy (ras-ss vs. the individual-level method on paired data vs. the original `ras()` with `num_rep = 5`), with type I error, power, and peak-location diagnostics.
+- **[Paper Replication](03_simulation.html)** — the main study: the paper's simulation design (continuous/dichotomous × M = 1/3 × q) on a 1,000-SNP chromosome, with type I, power, FPR-A, and runtime.
 - **[About](about.html)** — one-paragraph project overview, status, and citations.
 
-**Status:** validated by simulation. However, a real summary-statistic run is pending. The significant result is the consistency with the original. On identical simulated data, ras-ss agrees with the individual-level method on 199 of 200 signal replicates, at a type I error (0.038) that falls within the original paper's stated range.
+**Status:** Simulation-validated at two scales. A real summary-statistic run is pending. On the 1,000-SNP paper replication, ras-ss controls type I error (0.06–0.07; CIs cover 0.05), is close to the individual-level method on power, calls ~0 false regions, and runs faster than the 5-averaged original. On the 300-SNP validation, ras-ss agrees with the individual-level method on 199 of 200 signal reps at a type I error (0.038), within the original paper's range.

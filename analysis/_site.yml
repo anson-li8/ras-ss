@@ -7,10 +7,12 @@ navbar:
       href: index.html
     - text: Problem Statement
       href: 00_problem_statement.html
-    - text: Simulation
+    - text: Pilot Study
       href: 01_simulation.html
     - text: Validation
       href: 02_simulation.html
+    - text: Paper Replication
+      href: 03_simulation.html
     - text: About
       href: about.html
     - text: License
