@@ -3,6 +3,8 @@ title: "03_simulation"
 output: html_document
 ---
 
+# Setup and Config
+
 ```{r setup, results='hide', warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE, autodep = TRUE)
 options(future.rng.onMisuse = "ignore")
@@ -156,6 +158,8 @@ for (i in 1:nrow(thresh_grid)) {
 print(cal_res)
 ```
 
+# Simulation
+
 ```{r full_grid, cache=TRUE, results='hide'}
 n_null <- 200; n_pow <- 50
 sl <- slope_thresh; dv <- davies_thresh # calibrated detection thresholds
@@ -217,6 +221,8 @@ res$pu_power <- res$pu_fn == 0
 agg <- aggregate(cbind(ss_power, in_power, pu_power, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 ```
 
+# Benchmark
+
 ```{r bench, cache=TRUE, message=FALSE}
 # per-rep runtime, single core. cohort simulation once and excluded from ras-ss/indiv so the comparison isolates the scan step
 nb <- 30
@@ -237,15 +243,69 @@ t_pu <- bench(function(s) { pp <- quiet(native_run_via_ras(bb, 920000+s))
   quiet(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 ```
 
+```{r bench-results}
+knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
+             caption="Runtime seconds per rep, single core")
+```
+
+# Paper-style visualizations
+
+```{r fig_rel_power, fig.cap="Fig 2. Power of the individual-level runs relative to ras-ss (dashed line = same as ras-ss). Point shapes are the three causal rates; bars are each method's 95% CI divided by ras-ss's power. Per-region power is plotted because 'all M regions' is ~0 on these synthetic peaks, so a ratio on it is undefined. Points on the line = ras-ss agrees with the individual-level method."}
+set.seed(1)
+res$ss_pow <- as.numeric(1 - res$ss_fn / res$M)
+res$in_pow <- as.numeric(1 - res$in_fn / res$M)
+res$pu_pow <- as.numeric(1 - res$pu_fn / res$M)
+
+ci95 <- function(v) { v <- as.numeric(v); m <- mean(v); se <- sd(v)/sqrt(length(v)); c(m-1.96*se, m+1.96*se) }
+pch_q <- c(16,17,18)
+par(mfrow=c(2,2), mar=c(4,4,2,1))
+for (tr in traits) for (M in M_vals) {
+  sub <- res[res$trait==tr & res$M==M,]
+  plot(NA, xlim=c(0.5,2.5), ylim=c(0,2), xaxt="n", xlab="", ylab="relative power (vs ras-ss)",
+       main=sprintf("%s, M=%d", tr, M))
+  abline(h=1, lty=2)
+  axis(1, at=1:2, labels=c("indiv","pure ras() (num_rep=5)"))
+  for (k in seq_along(q_rates)) {
+    s <- sub[sub$q==q_rates[k],]
+    den <- mean(as.numeric(s$ss_pow))
+    rels <- c(mean(as.numeric(s$in_pow)), mean(as.numeric(s$pu_pow))) / den
+    b <- sapply(list(s$in_pow, s$pu_pow), ci95) / den
+    xj <- c(1,2) + (k-2)*0.18
+    points(xj, rels, pch=pch_q[k], col="red")
+    segments(xj, b[1,], xj, b[2,], col="red")
+  }
+  pow_ss <- sapply(seq_along(q_rates), function(k) mean(as.numeric(sub[sub$q==q_rates[k],"ss_pow"])))
+  legend("topleft", legend=sprintf("q=%.1f, power(ras-ss)=%.2f", q_rates, pow_ss),
+         pch=pch_q, col="red", bty="n", cex=0.8)
+}
+```
+
+```{r fig_fpr, fig.cap="Fig 3. False regions called per rep (FPR-A) while true signal is present. All three methods sit around 0, meaning every call they make lands on a true region. The false-call rate under the null is the type I error in Table 1 below."}
+par(mfrow=c(2,2), mar=c(4,4,2,1))
+for (tr in traits) for (M in M_vals) {
+  a  <- agg[agg$trait==tr & agg$M==M,]
+  se <- aggregate(cbind(ss_fpr, in_fpr, pu_fpr) ~ trait+M+q, data=res,
+                  function(x) sd(as.numeric(x))/sqrt(length(x)))
+  se <- se[se$trait==tr & se$M==M,]
+  ys  <- rbind(as.numeric(a$ss_fpr), as.numeric(a$in_fpr), as.numeric(a$pu_fpr))
+  ses <- rbind(as.numeric(se$ss_fpr), as.numeric(se$in_fpr), as.numeric(se$pu_fpr))
+  bp <- barplot(ys, beside=TRUE, col=c("red","grey70","purple"),
+                ylim=c(0, max(0.06, ys + 1.96*ses)), names.arg=a$q,
+                xlab="causal rate (q)", ylab="FPR-A", main=sprintf("%s, M=%d", tr, M))
+  for (i in 1:3) for (j in 1:3)
+    segments(bp[i,j], max(0, ys[i,j]-1.96*ses[i,j]), bp[i,j], ys[i,j]+1.96*ses[i,j])
+  legend("topleft", legend=c("ras-ss","indiv","pure ras() (num_rep=5)"), fill=c("red","grey70","purple"), bty="n")
+}
+```
+
+# More visualizations
+
 ```{r results}
 # type I with exact binomial CIs
 fmt_ci <- function(rate, n) { b <- binom.test(round(rate*n), n)$conf.int; sprintf("%.2f (%.2f-%.2f)", rate, b[1], b[2]) }
 t1_tab <- type1
 for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] <- fmt_ci(type1[i,j], 200)
 knitr::kable(t1_tab, caption="Type I error at calibrated thresholds (exact 95% CI), 200 null reps per trait")
-
-knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption="Runtime seconds per rep, single core")
 
 # per-region detection rate is the metric here, since CPD
 # usually locks onto 1-2 of the 3 peaks on these synthetic profiles
@@ -263,7 +323,7 @@ for (tr in traits) for (M in M_vals) {
        ylab="power (fraction of M regions)", main=sprintf("%s, M=%d", tr, M))
   lines(a$q, a$in_pow, type="b", col="red"); lines(a$q, a$pu_pow, type="b", col="purple")
 }
-legend("bottomright", legend=c("ras-ss","indiv","pure ras()"), col=c("blue","red","purple"), lty=1, bty="n")
+legend("bottomright", legend=c("ras-ss","indiv","pure ras() (num_rep=5)"), col=c("blue","red","purple"), lty=1, bty="n")
 
 # ras-ss vs the individual-level run on the same data. if on the dashed line, they agree
 par(mfrow=c(1,2), mar=c(4,4,2,1))
@@ -271,18 +331,18 @@ plot(agg$in_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
      xlab="individual-level power", ylab="ras-ss power", main="ras-ss vs individual-level")
 abline(0,1, lty=2)
 plot(agg$pu_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
-     xlab="pure ras() power", ylab="ras-ss power", main="ras-ss vs pure RAS run")
+     xlab="pure ras() (num_rep=5) power", ylab="ras-ss power", main="ras-ss vs pure RAS run")
 abline(0,1, lty=2)
 
-# FPR, average number of false regions called per rep
+# FPR-A, average number of false regions called per rep
 fpr_tab <- aggregate(cbind(ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
-names(fpr_tab)[4:6] <- c("ras-ss","indiv","pure ras()")
+names(fpr_tab)[4:6] <- c("ras-ss","indiv","pure ras() (num_rep=5)")
 fpr_tab[,4:6] <- round(fpr_tab[,4:6], 2)
 knitr::kable(fpr_tab, caption="FPR-A: average false regions per rep (0 = nothing spurious)")
 
 # the paper's power definition: detected EVERY true region
 tab <- agg[, c("trait","M","q","ss_power","in_power","pu_power")]
-names(tab)[4:6] <- c("ras-ss","indiv","pure ras()")
+names(tab)[4:6] <- c("ras-ss","indiv","pure ras() (num_rep=5)")
 tab[,4:6] <- round(tab[,4:6], 2)
 knitr::kable(tab, caption="Power = detected ALL M true regions; low for M=3 because the CPD usually catches only 1-2 of the 3 peaks")
 ```
