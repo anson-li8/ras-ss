@@ -394,9 +394,9 @@ aria-hidden="true"></span> </a>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 5
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 2
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>ras-ss/</code> <span
@@ -419,21 +419,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -535,15 +532,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree8b54f1e4df3ff92be9f425dcf7daef220399cd5atargetblank8b54f1ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree3df293f06f560b980d99003726b20b8a9116c4c7targetblank3df293fa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/8b54f1e4df3ff92be9f425dcf7daef220399cd5a" target="_blank">8b54f1e</a>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/3df293f06f560b980d99003726b20b8a9116c4c7" target="_blank">3df293f</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree8b54f1e4df3ff92be9f425dcf7daef220399cd5atargetblank8b54f1ea"
+id="strongRepositoryversionstrongahrefhttpsansonli8githubcomansonli8rassstree3df293f06f560b980d99003726b20b8a9116c4c7targetblank3df293fa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -553,7 +550,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/8b54f1e4df3ff92be9f425dcf7daef220399cd5a" target="_blank">8b54f1e</a>.
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/tree/3df293f06f560b980d99003726b20b8a9116c4c7" target="_blank">3df293f</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -573,16 +570,6 @@ Ignored files:
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
     Ignored:    analysis/03_simulation_cache/
-
-Unstaged changes:
-    Modified:   README.md
-    Modified:   analysis/00_problem_statement.Rmd
-    Modified:   analysis/01_simulation.Rmd
-    Modified:   analysis/02_simulation.Rmd
-    Modified:   analysis/03_simulation.Rmd
-    Modified:   analysis/_site.yml
-    Modified:   analysis/about.Rmd
-    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -627,6 +614,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/3df293f06f560b980d99003726b20b8a9116c4c7/analysis/03_simulation.Rmd" target="_blank">3df293f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+commit changes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/3df293f06f560b980d99003726b20b8a9116c4c7/docs/03_simulation.html" target="_blank">3df293f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+commit changes
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1150,6 +1171,43 @@ ratio on it is undefined. Points on the line = ras-ss agrees with the
 individual-level method.
 </p>
 </div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fig_rel_power-1">
+Past versions of fig_rel_power-1.png
+</button>
+</p>
+<div id="fig-fig_rel_power-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/3df293f06f560b980d99003726b20b8a9116c4c7/docs/figure/03_simulation.Rmd/fig_rel_power-1.png" target="_blank">3df293f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow=c(2,2), mar=c(4,4,2,1))
 for (tr in traits) for (M in M_vals) {
   a  &lt;- agg[agg$trait==tr &amp; agg$M==M,]
@@ -1173,6 +1231,43 @@ present. All three methods sit around 0, meaning every call they make
 lands on a true region. The false-call rate under the null is the type I
 error in Table 1 below.
 </p>
+</div>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-fig_fpr-1">
+Past versions of fig_fpr-1.png
+</button>
+</p>
+<div id="fig-fig_fpr-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://anson-li8@github.com/anson-li8/ras-ss/blob/3df293f06f560b980d99003726b20b8a9116c4c7/docs/figure/03_simulation.Rmd/fig_fpr-1.png" target="_blank">3df293f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="more-visualizations" class="section level1">
