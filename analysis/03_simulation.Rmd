@@ -158,23 +158,25 @@ print(cal_res)
 
 ```{r full_grid, cache=TRUE, results='hide'}
 n_null <- 200; n_pow <- 50
-sl <- slope_thresh; dv <- davies_thresh
-# save after each scenario so a crash doesn't lose the whole run.
-# v2 stores raw FN counts; the type-I file is the older one, leave it alone
+sl <- slope_thresh; dv <- davies_thresh # calibrated detection thresholds
+# save after each scenario so a pause doesn't lose the whole run.
+# v2 stores raw FN counts, the type-I file is the older one, unchanged
 ckpt <- "03_partial_v2.rds"
 t1f  <- "03_partial.rds_type1"
 
 # type I per trait
 type1_done <- if (file.exists(t1f)) readRDS(t1f) else list()
 for (tr in traits) {
-  if (!is.null(type1_done[[tr]])) { cat("skip null", tr, "\n"); next }
+  if (!is.null(type1_done[[tr]])) { cat("skip null", tr, "\n"); next } # if its already in checkpoint, skip
   cat("null", tr, "\n")
   hits <- do.call(rbind, future_lapply(seq_len(n_null), function(s) {
     r <- run_rep(rep(0, n_snps), tr, 5000 + s)
+    # run across all three method, ss=summary stats, in=paired individual, pu=pure 5 rep run
     d_ss <- run_detect(r$scan, sl=sl, sr=sl, dav=dv)
     d_in <- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
     pp <- quiet(native_run_via_ras(rep(0, n_snps), 6000 + s))
     d_pu <- run_detect(pp, sl=sl, sr=sl, dav=dv)
+    # called at least one region = false positive
     c(ss = length(d_ss$tau)>0, indiv = length(d_in$tau)>0, pure = length(d_pu$tau)>0)
   }, future.seed = TRUE))
   type1_done[[tr]] <- colMeans(hits); saveRDS(type1_done, t1f)
@@ -187,11 +189,13 @@ done <- if (file.exists(ckpt)) readRDS(ckpt) else list()
 for (tr in traits) for (M in M_vals) for (q in q_rates) {
   key <- sprintf("%s_M%d_q%.1f", tr, M, q)
   if (key %in% names(done)) { cat("skip", key, "\n"); next }
+  # if checkpointed already, skip
   cat("power", key, "\n")
   starts <- region_starts[[as.character(M)]]
   pw <- do.call(rbind, future_lapply(seq_len(n_pow), function(s) {
-    b <- make_beta(M, q, c_eff[[tr]], s)
+    b <- make_beta(M, q, c_eff[[tr]], s) # these are signal reps, region detection is expected
     r <- run_rep(b, tr, 1000 + s)
+    # run across all three method, ss=summary stats, in=paired individual, pu=pure 5 rep run
     d_ss <- run_detect(r$scan, sl=sl, sr=sl, dav=dv)
     d_in <- run_detect(list(x=r$scan$x, y=indiv_scan(r$scan, r$X_t, r$y_t, r$b_disc)), sl=sl, sr=sl, dav=dv)
     pp <- quiet(native_run_via_ras(b, 2000 + s))
@@ -200,25 +204,29 @@ for (tr in traits) for (M in M_vals) for (q in q_rates) {
       in_fn = count_fn(d_in$tau,starts), in_fpr = count_fp(d_in$tau,starts),
       pu_fn = count_fn(d_pu$tau,starts), pu_fpr = count_fp(d_pu$tau,starts))
   }, future.seed = TRUE))
+  # save to RDS
   done[[key]] <- data.frame(trait=tr, M=M, q=q, pw); saveRDS(done, ckpt)
 }
+# 12 scenarios x 50 reps = 600 rows
 res <- do.call(rbind, done)
-res$ss_power <- res$ss_fn == 0   # caught every true region
+# power defined as catching every region, like original paper
+res$ss_power <- res$ss_fn == 0   
 res$in_power <- res$in_fn == 0
 res$pu_power <- res$pu_fn == 0
+# collapse to one row per scenario, averaging each column
 agg <- aggregate(cbind(ss_power, in_power, pu_power, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 ```
 
 ```{r bench, cache=TRUE}
-# per-rep runtime, single core. Cohort simulation is paid once up front and
-# excluded from ras-ss/indiv so the comparison isolates the scan step.
+# per-rep runtime, single core. cohort simulation once and excluded from ras-ss/indiv so the comparison isolates the scan step
 nb <- 30
-bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"]))
-bb <- make_beta(3, 0.5, c_eff$continuous, 7)
+bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"])) # run f(s) nb times, averaging elapsed time
+bb <- make_beta(3, 0.5, c_eff$continuous, 7) # one fixed true-effect vector
 
-cohorts <- lapply(1:nb, function(s) sim_cohorts(bb, "continuous", 900000+s))
-grid_x <- seq(1, n_snps, by = skip1)
+cohorts <- lapply(1:nb, function(s) sim_cohorts(bb, "continuous", 900000+s)) # pre-simulated all 30 discovery/target cohorts once
+grid_x <- seq(1, n_snps, by = skip1) # pivotal SNP positions, needed to wrap indiv_scan's output into scan-like object for run_detect
 
+# three measurements with same pre-simulated cohorts, so it is fair comparison
 t_ss <- bench(function(s) { co <- cohorts[[s]]
   scan <- scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter)
   invisible(run_detect(scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
@@ -234,13 +242,13 @@ t_pu <- bench(function(s) { pp <- quiet(native_run_via_ras(bb, 920000+s))
 fmt_ci <- function(rate, n) { b <- binom.test(round(rate*n), n)$conf.int; sprintf("%.2f (%.2f-%.2f)", rate, b[1], b[2]) }
 t1_tab <- type1
 for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] <- fmt_ci(type1[i,j], 200)
-knitr::kable(t1_tab, caption="Type I error at the calibrated thresholds (exact 95% CI), 200 null reps per trait")
+knitr::kable(t1_tab, caption="Type I error at calibrated thresholds (exact 95% CI), 200 null reps per trait")
 
 knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption="Wall-clock seconds per rep, single core")
+             caption="Runtime seconds per rep, single core")
 
-# per-region detection rate is the readable metric here, since the CPD
-# usually locks onto 1-2 of the 3 peaks on these saturated synthetic profiles
+# per-region detection rate is the metric here, since CPD
+# usually locks onto 1-2 of the 3 peaks on these synthetic profiles
 res$ss_pow <- 1 - res$ss_fn / res$M
 res$in_pow <- 1 - res$in_fn / res$M
 res$pu_pow <- 1 - res$pu_fn / res$M
@@ -257,7 +265,7 @@ for (tr in traits) for (M in M_vals) {
 }
 legend("bottomright", legend=c("ras-ss","indiv","pure ras()"), col=c("blue","red","purple"), lty=1, bty="n")
 
-# ras-ss vs the individual-level run on the same data; on the dashed line = they agree
+# ras-ss vs the individual-level run on the same data. if on the dashed line, they agree
 par(mfrow=c(1,2), mar=c(4,4,2,1))
 plot(agg$in_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="blue",
      xlab="individual-level power", ylab="ras-ss power", main="ras-ss vs individual-level")
@@ -266,13 +274,13 @@ plot(agg$pu_pow, agg$ss_pow, xlim=c(0,1), ylim=c(0,1), pch=16, col="purple",
      xlab="pure ras() power", ylab="ras-ss power", main="ras-ss vs gold standard")
 abline(0,1, lty=2)
 
-# FPR-A: average number of false regions called per rep
+# FPR, average number of false regions called per rep
 fpr_tab <- aggregate(cbind(ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 names(fpr_tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 fpr_tab[,4:6] <- round(fpr_tab[,4:6], 2)
 knitr::kable(fpr_tab, caption="FPR-A: average false regions per rep (0 = nothing spurious)")
 
-# the paper's own definition: detected every true region
+# the paper's power definition: detected EVERY true region
 tab <- agg[, c("trait","M","q","ss_power","in_power","pu_power")]
 names(tab)[4:6] <- c("ras-ss","indiv","pure ras()")
 tab[,4:6] <- round(tab[,4:6], 2)
