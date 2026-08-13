@@ -217,7 +217,7 @@ res$pu_power <- res$pu_fn == 0
 agg <- aggregate(cbind(ss_power, in_power, pu_power, ss_fpr, in_fpr, pu_fpr) ~ trait + M + q, data=res, mean)
 ```
 
-```{r bench, cache=TRUE}
+```{r bench, cache=TRUE, message=FALSE}
 # per-rep runtime, single core. cohort simulation once and excluded from ras-ss/indiv so the comparison isolates the scan step
 nb <- 30
 bench <- function(f) mean(sapply(1:nb, function(s) system.time(f(s))["elapsed"])) # run f(s) nb times, averaging elapsed time
@@ -229,12 +229,12 @@ grid_x <- seq(1, n_snps, by = skip1) # pivotal SNP positions, needed to wrap ind
 # three measurements with same pre-simulated cohorts, so it is fair comparison
 t_ss <- bench(function(s) { co <- cohorts[[s]]
   scan <- scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter)
-  invisible(run_detect(scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+  quiet(run_detect(scan, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 t_in <- bench(function(s) { co <- cohorts[[s]]
   prof <- indiv_scan(list(x=grid_x), co$X_t, co$y_t, co$disc$beta)
-  invisible(run_detect(list(x=grid_x, y=prof), sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+  quiet(run_detect(list(x=grid_x, y=prof), sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 t_pu <- bench(function(s) { pp <- quiet(native_run_via_ras(bb, 920000+s))
-  invisible(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
+  quiet(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })
 ```
 
 ```{r results}
