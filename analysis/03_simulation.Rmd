@@ -38,7 +38,7 @@ c_eff <- list(continuous = 0.5, dichotomous = 0.8)
 base_seed <- 35
 
 # detection thresholds, picked on null reps (see calibrate chunk)
-best_ws <- 30; slope_thresh <- 1e-6; davies_thresh <- 1e-4
+best_ws <- 30; slope_thresh <- 1e-6; davies_thresh <- 1e-5
 
 R_true <- matrix(0, n_snps, n_snps)
 for (b in 0:(n_blocks-1)) { 
@@ -163,7 +163,7 @@ print(cal_res)
 # Simulation
 
 ```{r full_grid, cache=TRUE, results='hide'}
-n_null <- 200; n_pow <- 50
+n_null <- 500; n_pow <- 100
 sl <- slope_thresh; dv <- davies_thresh # calibrated detection thresholds
 # save after each scenario so a pause doesn't lose the whole run.
 # v2 stores raw FN counts, the type-I file is the older one, unchanged
