@@ -17,7 +17,6 @@ navbar:
     href: about.html
   - text: License
     href: license.html
-  right:
   - icon: fab fa-github
     text: Source code
     href: https://github.com/anson-li8/ras-ss
