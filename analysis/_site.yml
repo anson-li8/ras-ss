@@ -1,22 +1,26 @@
-name: "ras-ss"
+name: ras-ss
 output_dir: ../docs
 navbar:
-  title: "ras-ss"
+  title: ras-ss
   left:
-    - text: Home
-      href: index.html
-    - text: Problem Statement
-      href: 00_problem_statement.html
-    - text: Pilot Study
-      href: 01_simulation.html
-    - text: Validation
-      href: 02_simulation.html
-    - text: Paper Replication
-      href: 03_simulation.html
-    - text: About
-      href: about.html
-    - text: License
-      href: license.html
+  - text: Home
+    href: index.html
+  - text: Problem Statement
+    href: 00_problem_statement.html
+  - text: Pilot Study
+    href: 01_simulation.html
+  - text: Validation
+    href: 02_simulation.html
+  - text: Paper Replication
+    href: 03_simulation.html
+  - text: About
+    href: about.html
+  - text: License
+    href: license.html
+  right:
+  - icon: fab fa-github
+    text: Source code
+    href: https://github.com/anson-li8/ras-ss
 output:
   workflowr::wflow_html:
     toc: yes
