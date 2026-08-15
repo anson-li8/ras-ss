@@ -323,7 +323,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-08-13
+<strong>Last updated:</strong> 2026-08-14
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -370,15 +370,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree90cbf4f52702e6fd847fa0f03d6e3b05b5497232targetblank90cbf4fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4targetblank3efa9e3a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/90cbf4f52702e6fd847fa0f03d6e3b05b5497232" target="_blank">90cbf4f</a>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4" target="_blank">3efa9e3</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree90cbf4f52702e6fd847fa0f03d6e3b05b5497232targetblank90cbf4fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4targetblank3efa9e3a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -388,7 +388,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/90cbf4f52702e6fd847fa0f03d6e3b05b5497232" target="_blank">90cbf4f</a>.
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4" target="_blank">3efa9e3</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -408,9 +408,6 @@ Ignored files:
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
     Ignored:    analysis/03_simulation_cache/
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
 
 </code></pre>
 <p>
@@ -454,6 +451,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4/analysis/index.Rmd" target="_blank">3efa9e3</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+update page info to match new simulation results
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/943a3415c20099e7732f190062a7053a0408437a/docs/index.html" target="_blank">943a341</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-13
+</td>
+<td>
+fix source code icon not showing
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -637,12 +668,14 @@ runtime.</li>
 project overview, status, and citations.</li>
 </ul>
 <p><strong>Status:</strong> Simulation-validated at two scales. A real
-summary-statistic run is pending. On the 1,000-SNP paper replication,
-ras-ss controls type I error (0.06–0.07; CIs cover 0.05), is close to
-the individual-level method on power, calls ~0 false regions, and runs
-faster than the 5-averaged original. On the 300-SNP validation, ras-ss
-agrees with the individual-level method on 199 of 200 signal reps at a
-type I error (0.038), within the original paper’s range.</p>
+summary-statistic run is pending. On the 1,000-SNP paper replication
+(500 null / 100 signal reps), ras-ss controls type I error at exactly
+0.05 for both traits, is close to the individual-level method on power,
+calls ~0 false regions, and runs in about a fifth of the time of the
+5-averaged original (6.8 s/rep vs 30.0 s/rep). On the 300-SNP
+validation, ras-ss agrees with the individual-level paired method on 199
+of 200 signal reps at a type I error (0.038), within the original
+paper’s range.</p>
 </div>
 </div>
 </div>

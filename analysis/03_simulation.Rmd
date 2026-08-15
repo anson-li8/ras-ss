@@ -247,7 +247,7 @@ t_pu <- bench(function(s) { pp <- quiet(native_run_via_ras(bb, 920000+s))
 
 ```{r bench-results}
 knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption="Runtime seconds per rep, single core")
+             caption="Total runtime seconds per rep, single core (includes CPD step, so see following for more clear difference)")
 ```
 
 ```{r bench-scan, cache=TRUE, message=FALSE}
