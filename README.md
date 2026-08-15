@@ -22,11 +22,7 @@ profile into RAS's **own, unmodified** change-point detection.
 
 Simulation-validated at two scales; a real summary-statistic run is pending.
 
-**Paper Replication (1,000-SNP, paper design):** ras-ss controls type I error 
-(0.06–0.07; exact 95% CIs cover 0.05), is close to the individual-level method on 
-power across all scenarios, results in ~0 false regions (FPR-A ≈ 0), and runs for 
-~7 s/rep vs ~30 s/rep for the 5-averaged original (the pure run includes its 
-own cohort simulation, so treat 30 as upper bound).
+**Paper Replication (1,000-SNP, paper design):** With 500 null reps per trait and 100 signal reps per scenario, ras-ss controls type I error at exactly 0.05 for both traits (exact 95% CIs ≈ 0.03–0.08), is close to the individual-level method on power across all scenarios, calls ~0 false regions (FPR-A ≈ 0), and runs for 6.8 s/rep vs 30.0 s/rep for the 5-averaged original (the pure run includes its own cohort simulation, so treat 30 as upper bound).
 
 **Validation (300-SNP toy):** On identical simulated data, ras-ss is consistent 
 with the individual-level method on **199 of 200** signal replicates and 
