@@ -162,7 +162,7 @@ print(cal_res)
 
 # Simulation
 
-```{r full_grid, cache=TRUE, results='hide'}
+```{r full_grid, cache=TRUE, results='hide', message=FALSE}
 n_null <- 500; n_pow <- 100
 sl <- slope_thresh; dv <- davies_thresh # calibrated detection thresholds
 # save after each scenario so a pause doesn't lose the whole run.
