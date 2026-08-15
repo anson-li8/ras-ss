@@ -370,15 +370,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4targetblank3efa9e3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree315ee63cd7f257980e2a0d7562b85c37b8a3983atargetblank315ee63a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4" target="_blank">3efa9e3</a>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/315ee63cd7f257980e2a0d7562b85c37b8a3983a" target="_blank">315ee63</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4targetblank3efa9e3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree315ee63cd7f257980e2a0d7562b85c37b8a3983atargetblank315ee63a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -388,7 +388,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/3efa9e3f0d5c1ffd509b71e88b2a022dad1b76d4" target="_blank">3efa9e3</a>.
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/315ee63cd7f257980e2a0d7562b85c37b8a3983a" target="_blank">315ee63</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -451,6 +451,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/315ee63cd7f257980e2a0d7562b85c37b8a3983a/analysis/about.Rmd" target="_blank">315ee63</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+clarify runtime improvement by algorithm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/315ee63cd7f257980e2a0d7562b85c37b8a3983a/docs/about.html" target="_blank">315ee63</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+clarify runtime improvement by algorithm
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -685,10 +719,13 @@ to the missing resampling average. On a 1,000-SNP chromosome replicating
 the paper’s full simulation design (see <em>Paper Replication</em>),
 ras-ss controls type I error at exactly 0.05 for both traits (500 null
 reps, 95% CIs ≈ 0.03–0.08), is close to the individual-level paired
-method on power across all scenarios, calls ~0 false regions, and runs
-in about a fifth of the time of the 5-averaged original (6.8 s/rep vs
-30.0 s/rep). A real summary-statistic run is the next step and is not
-yet done; this site will be updated when it is.</p>
+method on power across all scenarios, calls ~0 false regions, and
+generates its association profile ~10× faster than the paired
+individual-level scan (0.045 vs 0.48 s/rep, closed-form matrix algebra
+vs per-window regressions), though total per-rep time is similar because
+both share the same change-point-detection step. A real
+summary-statistic run is the next step and is not yet done; this site
+will be updated when it is.</p>
 <p>This is my project in <strong>Dr. Han’s lab</strong>. The method it
 extends is Jiang &amp; Zhang, <em>Empowering genome-wide association
 studies via a visualizable test based on the regional association

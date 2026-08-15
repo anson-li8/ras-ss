@@ -544,15 +544,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstreeda5526ceabb1bdc349307a6743e2428244f3dabetargetblankda5526ca">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree315ee63cd7f257980e2a0d7562b85c37b8a3983atargetblank315ee63a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/da5526ceabb1bdc349307a6743e2428244f3dabe" target="_blank">da5526c</a>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/315ee63cd7f257980e2a0d7562b85c37b8a3983a" target="_blank">315ee63</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstreeda5526ceabb1bdc349307a6743e2428244f3dabetargetblankda5526ca"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree315ee63cd7f257980e2a0d7562b85c37b8a3983atargetblank315ee63a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -562,7 +562,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/da5526ceabb1bdc349307a6743e2428244f3dabe" target="_blank">da5526c</a>.
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/315ee63cd7f257980e2a0d7562b85c37b8a3983a" target="_blank">315ee63</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -626,6 +626,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/315ee63cd7f257980e2a0d7562b85c37b8a3983a/analysis/03_simulation.Rmd" target="_blank">315ee63</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+clarify runtime improvement by algorithm
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/75623405bf4527f2200ae3d833b26cf3eab63686/docs/03_simulation.html" target="_blank">7562340</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1254,9 +1288,10 @@ t_in &lt;- bench(function(s) { co &lt;- cohorts[[s]]
 t_pu &lt;- bench(function(s) { pp &lt;- quiet(native_run_via_ras(bb, 920000+s))
   quiet(run_detect(pp, sl=slope_thresh, sr=slope_thresh, dav=davies_thresh)) })</code></pre>
 <pre class="r"><code>knitr::kable(data.frame(method=c(&quot;ras-ss&quot;,&quot;indiv&quot;,&quot;pure ras()&quot;), s_per_rep=round(c(t_ss,t_in,t_pu),1)),
-             caption=&quot;Runtime seconds per rep, single core&quot;)</code></pre>
+             caption=&quot;Total runtime seconds per rep, single core (includes CPD step, so see following for more clear difference)&quot;)</code></pre>
 <table>
-<caption>Runtime seconds per rep, single core</caption>
+<caption>Total runtime seconds per rep, single core (includes CPD step,
+so see following for more clear difference)</caption>
 <thead>
 <tr class="header">
 <th align="left">method</th>
