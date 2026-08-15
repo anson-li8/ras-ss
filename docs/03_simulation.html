@@ -509,6 +509,9 @@ aria-hidden="true"></span> <strong>Cache:</strong> detected </a>
 The following chunks had caches available:
 <ul>
 <li>
+bench-scan
+</li>
+<li>
 bench
 </li>
 <li>
@@ -541,15 +544,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree469d9a7f866f64b248bbe5aff0b06fed454f97fatargetblank469d9a7a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstreeda5526ceabb1bdc349307a6743e2428244f3dabetargetblankda5526ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/469d9a7f866f64b248bbe5aff0b06fed454f97fa" target="_blank">469d9a7</a>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/da5526ceabb1bdc349307a6743e2428244f3dabe" target="_blank">da5526c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstree469d9a7f866f64b248bbe5aff0b06fed454f97fatargetblank469d9a7a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomansonli8ansonli8rassstreeda5526ceabb1bdc349307a6743e2428244f3dabetargetblankda5526ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -559,7 +562,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/469d9a7f866f64b248bbe5aff0b06fed454f97fa" target="_blank">469d9a7</a>.
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/tree/da5526ceabb1bdc349307a6743e2428244f3dabe" target="_blank">da5526c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -579,10 +582,6 @@ Ignored files:
     Ignored:    analysis/01_simulation_cache/
     Ignored:    analysis/02_simulation_cache/
     Ignored:    analysis/03_simulation_cache/
-
-Untracked files:
-    Untracked:  03_partial.rds_type1
-    Untracked:  03_partial_v2.rds
 
 </code></pre>
 <p>
@@ -627,6 +626,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/da5526ceabb1bdc349307a6743e2428244f3dabe/analysis/03_simulation.Rmd" target="_blank">da5526c</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+workflowr::wflow_publish("analysis/03_simulation.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/3454522900efc7ecc2aa341aac0702240403d1df/analysis/03_simulation.Rmd" target="_blank">3454522</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+stale comments/captions on 03_simulation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://github.com-ansonli8/anson-li8/ras-ss/blob/e9c959f0e8e15c18eec17b590985815a5fd8e5bc/docs/03_simulation.html" target="_blank">e9c959f</a>
+</td>
+<td>
+Anson Li
+</td>
+<td>
+2026-08-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1175,7 +1225,7 @@ for (tr in traits) for (M in M_vals) for (q in q_rates) {
   # save to RDS
   done[[key]] &lt;- data.frame(trait=tr, M=M, q=q, pw); saveRDS(done, ckpt)
 }
-# 12 scenarios x 50 reps = 600 rows
+# 12 scenarios x 100 reps = 1200 rows
 res &lt;- do.call(rbind, done)
 # power defined as catching every region, like original paper
 res$ss_power &lt;- res$ss_fn == 0   
@@ -1225,6 +1275,36 @@ t_pu &lt;- bench(function(s) { pp &lt;- quiet(native_run_via_ras(bb, 920000+s))
 <tr class="odd">
 <td align="left">pure ras()</td>
 <td align="right">30.0</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># isolate algorithmic difference, with profile generation only (no CPD step)
+# scan_ss = closed-form matrix algebra, and indiv_scan = multiple lm() calls
+t_ss_scan &lt;- bench(function(s) { co &lt;- cohorts[[s]]
+  scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter) })
+t_in_scan &lt;- bench(function(s) { co &lt;- cohorts[[s]]
+  indiv_scan(list(x=grid_x), co$X_t, co$y_t, co$disc$beta) })
+
+knitr::kable(data.frame(step=c(&quot;ras-ss&quot;, &quot;individual-level version&quot;),
+                        s_per_rep=round(c(t_ss_scan, t_in_scan), 3)),
+             caption=&quot;Algorithmic speedup, profile-generation time only (excludes the shared CPD step)&quot;)</code></pre>
+<table>
+<caption>Algorithmic speedup, profile-generation time only (excludes the
+shared CPD step)</caption>
+<thead>
+<tr class="header">
+<th align="left">step</th>
+<th align="right">s_per_rep</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ras-ss</td>
+<td align="right">0.045</td>
+</tr>
+<tr class="even">
+<td align="left">individual-level version</td>
+<td align="right">0.482</td>
 </tr>
 </tbody>
 </table>
@@ -1395,10 +1475,10 @@ Anson Li
 <pre class="r"><code># type I with exact binomial CIs
 fmt_ci &lt;- function(rate, n) { b &lt;- binom.test(round(rate*n), n)$conf.int; sprintf(&quot;%.2f (%.2f-%.2f)&quot;, rate, b[1], b[2]) }
 t1_tab &lt;- type1
-for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] &lt;- fmt_ci(type1[i,j], 200)
-knitr::kable(t1_tab, caption=&quot;Type I error at calibrated thresholds (exact 95% CI), 200 null reps per trait&quot;)</code></pre>
+for (i in seq_len(nrow(type1))) for (j in seq_len(ncol(type1))) t1_tab[i,j] &lt;- fmt_ci(type1[i,j], n_null)
+knitr::kable(t1_tab, caption=sprintf(&quot;Type I error at calibrated thresholds (exact 95%% CI), %d null reps per trait&quot;, n_null))</code></pre>
 <table>
-<caption>Type I error at calibrated thresholds (exact 95% CI), 200 null
+<caption>Type I error at calibrated thresholds (exact 95% CI), 500 null
 reps per trait</caption>
 <thead>
 <tr class="header">
@@ -1411,15 +1491,15 @@ reps per trait</caption>
 <tbody>
 <tr class="odd">
 <td align="left">continuous</td>
-<td align="left">0.05 (0.02-0.08)</td>
-<td align="left">0.05 (0.02-0.09)</td>
-<td align="left">0.01 (0.00-0.04)</td>
+<td align="left">0.05 (0.03-0.07)</td>
+<td align="left">0.05 (0.03-0.07)</td>
+<td align="left">0.01 (0.00-0.02)</td>
 </tr>
 <tr class="even">
 <td align="left">dichotomous</td>
-<td align="left">0.05 (0.02-0.09)</td>
-<td align="left">0.05 (0.02-0.08)</td>
-<td align="left">0.01 (0.00-0.04)</td>
+<td align="left">0.05 (0.03-0.07)</td>
+<td align="left">0.05 (0.03-0.07)</td>
+<td align="left">0.01 (0.00-0.02)</td>
 </tr>
 </tbody>
 </table>
