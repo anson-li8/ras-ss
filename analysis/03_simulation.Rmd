@@ -250,6 +250,19 @@ knitr::kable(data.frame(method=c("ras-ss","indiv","pure ras()"), s_per_rep=round
              caption="Runtime seconds per rep, single core")
 ```
 
+```{r bench-scan, cache=TRUE, message=FALSE}
+# isolate algorithmic difference, with profile generation only (no CPD step)
+# scan_ss = closed-form matrix algebra, and indiv_scan = multiple lm() calls
+t_ss_scan <- bench(function(s) { co <- cohorts[[s]]
+  scan_ss(co$disc$beta, co$targ$z, R_emp, prune_filter) })
+t_in_scan <- bench(function(s) { co <- cohorts[[s]]
+  indiv_scan(list(x=grid_x), co$X_t, co$y_t, co$disc$beta) })
+
+knitr::kable(data.frame(step=c("ras-ss", "individual-level version"),
+                        s_per_rep=round(c(t_ss_scan, t_in_scan), 3)),
+             caption="Algorithmic speedup, profile-generation time only (excludes the shared CPD step)")
+```
+
 # Paper-style visualizations
 
 ```{r fig_rel_power, fig.cap="Fig 2. Power of the individual-level runs relative to ras-ss (dashed line = same as ras-ss). Point shapes are the three causal rates; bars are each method's 95% CI divided by ras-ss's power. Per-region power is plotted because 'all M regions' is ~0 on these synthetic peaks, so a ratio on it is undefined. Points on the line = ras-ss agrees with the individual-level method."}
