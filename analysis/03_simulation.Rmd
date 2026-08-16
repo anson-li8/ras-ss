@@ -5,6 +5,8 @@ output: html_document
 
 *The main simulation study, replicating the design of Jiang & Zhang (2025) on a simulated 1,000-SNP chromosome. Pilot and validation on the 300-SNP toy: [Pilot Study](01_simulation.html), [Validation](02_simulation.html).*
 
+Note: Jiang & Zhang's Simulation Study simulated phenotypes on *real* ABCD chr21 genotypes. Until those can be accessed, this page uses a synthetic 1,000-SNP chromosome with a similar design.
+
 # Setup and Config
 
 ```{r setup, results='hide', warning=FALSE}
